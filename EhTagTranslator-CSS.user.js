@@ -8,109 +8,24 @@
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
-var GithubWiki = "https://github.com/Mapaler/EhTagTranslator/wiki";
-var dataset = [];
-var row = function ()
-{
-	var obj =
-	{
+var wiki_rows_URL="https://github.com/Mapaler/EhTagTranslator/wiki/rows"; //GitHub wiki 行名列表的地址
+var ds = [];
+var row = function(){
+	var obj = {
 		name:"",
-		translation:"",
+		cname:"",
 		tags:[],
 	}
 	return obj;
 }
-var tag = function ()
-{
-	var obj =
-	{
+var tag = function(){
+	var obj = {
 		name:"",
-		translation:"",
-		summary:"",
+		cname:"",
+		indo:"",
 	}
 	return obj;
 }
-//最初的按钮加载地
-var btnInsertPlace = document.getElementsByClassName("pagehead-actions")[0];
-
-//生成设置窗口DOM
-var crtInsertPlace = document.getElementsByClassName("container")[0] || document.body;
-var crtWindow = buildCreatCSS();
-crtInsertPlace.appendChild(crtWindow);
-
-//生成生成CSS窗口
-function buildCreatCSS()
-{
-	var set = document.createElement("div");
-	set.id = "EhTagTranslator-CSS";
-	set.className = "select-menu-modal";
-	//自定义CSS
-	var style = document.createElement("style");
-	set.appendChild(style);
-	style.type = "text/css";
-	style.innerHTML +=
-		[
-			".PUBD_dLink" + "{\r\n" + [
-				'width:100%',
-				'height:300px',
-				'overflow:scroll',
-				'border:1px solid #becad8',
-			].join(';\r\n') + "\r\n}",
-			"#PixivUserBatchDownloadDirectLink a" + "{\r\n" + [
-				'display:inline',
-				'padding:0',
-				'background:none',
-				'color:	#258fb8',
-				'white-space:nowrap',
-			].join(';\r\n') + "\r\n}",
-		].join('\r\n');
-
-	//标题行
-	var h2 = document.createElement("h2");
-	h2.innerHTML = "直接下载链接";
-
-	//设置内容
-	var ul = document.createElement("ul");
-	ul.className = "notification-list message-thread-list";
-
-	//导出-Batch
-	var li = document.createElement("li");
-	//li.className = "thread";
-	//var divTime = document.createElement("div");
-	//divTime.className = "time date";
-	var divName = document.createElement("div");
-	divName.className = "name";
-	var divText = document.createElement("div");
-	divText.className = "text";
-	//li.appendChild(divTime);
-	li.appendChild(divName);
-	li.appendChild(divText);
-	ul.appendChild(li);
-
-	divName.innerHTML = "用<a href=\"https://addons.mozilla.org/firefox/addon/downthemall/\" target=\"_blank\">DownThemAll!</a>的批量下载，重命名掩码设置为“*title*”<br />" +
-		"如果发生403错误，使用<a href=\"https://addons.mozilla.org/firefox/addon/referrer-control/\" target=\"_blank\">RefControl</a>添加站点“pixiv.net”，设置“伪装-发送站点根目录”";
-	//divTime.innerHTML = "保存为bat文件运行"
-	var ipt = document.createElement("div");
-	ipt.className = "PUBD_dLink";
-	divText.appendChild(ipt);
-
-	//确定按钮行
-	var confirmbar = document.createElement("div");
-	confirmbar.className = "_notification-request-permission";
-	confirmbar.style.display = "block";
-	var btnClose = document.createElement("button");
-	btnClose.className = "_button";
-	btnClose.innerHTML = "关闭";
-	btnClose.onclick = function () { set.parentNode.removeChild(set); }
-
-	confirmbar.appendChild(btnClose);
-
-	set.appendChild(h2);
-	set.appendChild(ul);
-	set.appendChild(confirmbar);
-	return set;
-}
-
 //访GM_xmlhttpRequest函数v1.0
 if(typeof(GM_xmlhttpRequest) == "undefined")
 {
@@ -130,3 +45,26 @@ if(typeof(GM_xmlhttpRequest) == "undefined")
 	}
 }
 
+GM_xmlhttpRequest({
+	method: "GET",
+	url: wiki_rows_URL,
+	onload: function(response) {
+		dealRows(response.responseText,ds);
+	}
+});
+
+//快速模式处理多图的回调函数
+function dealRows(response, dataset)
+{
+	var parser = new DOMParser();
+	PageDOM = parser.parseFromString(response, "text/html");
+
+	var wiki_body = document.getElementsByClassName("wiki-body")[0];
+	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
+	
+	for(var ri=0;ri<table.rows.length;ri++)
+	{
+		var row = table.rows[ri];
+		console.log(row.cells[0].innerHTML);
+	}
+}
