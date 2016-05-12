@@ -74,9 +74,22 @@
 
 ![ehwiki](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3sqabsm7aj20pu0amwi8.jpg)
 
-常用翻译站点
+对于这种有两部分的Tag
+
+![双语Tag](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3srn3ur2ej207w02mjrk.jpg)
+
+打开Tag相关作品可看到，竖杠前的才是真实Tag（也可查看ehwiki Tag定义）
+
+![真实Tag](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3srnuxz1uj205901v0sn.jpg)
+
+Wiki中英文名只能填写真实Tag部分
+
+![填写方法](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3srphp9gaj20kl05w75e.jpg)
+
+###常用翻译站点
 
 [谷歌翻译](http://translate.google.cn/)、[必应翻译](http://www.bing.com/translator/)、[百度翻译](http://fanyi.baidu.com/#auto/zh/)、[爱词霸（金山词霸）](http://www.iciba.com/)
+
 ## License|许可协议
 ###EhTagTranslator Copyright(C) 2016 by Mapaler
 
