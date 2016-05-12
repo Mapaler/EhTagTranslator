@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        EhTagBuilder
 // @namespace   http://www.mapaler.com/
-// @description Translate E-Hentai tags to Chinese.
+// @description Build EhTagTranslater from Wiki.
 // @include     *://github.com/Mapaler/EhTagTranslator*
+// @icon        http://exhentai.org/favicon.ico
 // @version     1.0.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
