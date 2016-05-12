@@ -6,12 +6,12 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     1.0.0
+// @version     1.0.1
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
-//(function() {
+(function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
@@ -341,7 +341,7 @@ function startCSSBuild(dataset)
 }
 
 //生成按钮
-function buildButton(title, icon)
+function buildButton(title, icon, modal)
 {
 	var li = document.createElement("li");
 	var select_menu = document.createElement("div");
@@ -356,22 +356,7 @@ function buildButton(title, icon)
 		span.appendChild(icon);
 	span.innerHTML += title;
 	button.appendChild(span);
-	select_menu.appendChild(buildMenuModal("menu", null, "请选择任务", null, [
-		buildMenuList([
-			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
-					startProgram(ds);
-				}
-			),
-			buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
-					alert("设想中功能，暂未开发，仅占位");
-				}
-			)
-		]),
-		buildMenuList([
-			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),
-			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
-		])
-	]));
+	select_menu.appendChild(modal);
 	return li;
 }
 
@@ -559,5 +544,23 @@ function buildSVG(mode,check)
 	
 	return CloseSvg;
 }
-buttonInserPlace.insertBefore(buildButton(" EhTagBuilder ", buildSVG("eh")),buttonInserPlace.getElementsByTagName("li")[0]);
-//})();
+
+var menu_modal = buildMenuModal("menu", null, "请选择任务", null, [
+		buildMenuList([
+			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
+					startProgram(ds);
+				}
+			),
+			buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
+					alert("设想中功能，暂未开发，仅占位");
+				}
+			)
+		]),
+		buildMenuList([
+			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),
+			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
+		])
+	]);
+	
+buttonInserPlace.insertBefore(buildButton(" EhTagBuilder ", buildSVG("eh"), menu_modal),buttonInserPlace.getElementsByTagName("li")[0]);
+})();
