@@ -9,10 +9,11 @@
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
+//(function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
-var windowInserPlace = document.getElementsByClassName("repository-meta")[0]; //窗口插入位置
+var windowInserPlace = document.getElementsByClassName("reponav")[0]; //窗口插入位置
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -211,13 +212,6 @@ function startProgram(dataset){
 //检测下载完成情况
 function startProgramCheck(dataset)
 {
-	/*
-	var cssoWindow = document.getElementById("css-output");
-	if (cssoWindow)
-	{
-		var items = cssoWindow.getElementsByClassName("select-menu-list")[0].getElementsByClassName("select-menu-item");
-	}
-	*/
 	if (rowsCount > 0 && rowsCurrent >= rowsCount)
 	{
 		console.debug("获取完成");
@@ -228,7 +222,7 @@ function startProgramCheck(dataset)
 		
 		if (!document.getElementById("css-output"))
 		{
-			windowInserPlace.appendChild(buildMenuModal("window", "css-output", "CSS输出结果", null,
+			windowInserPlace.appendChild(buildMenuModal("window", "css-output", "用户样式版EhTagTranslator", null,
 				[
 					buildMenuList([
 						buildMenuItem("CSS文本",
@@ -291,7 +285,6 @@ function startCSSBuild(dataset)
 ,"    border-radius:5px;"
 ,"    float:left;"
 ,"    position:fixed;"
-,"    top:25px;"
 ,"    z-index:999;"
 ,"    padding:2px;"
 ,"    box-shadow: 0px 0px 5px #888888;"
@@ -319,11 +312,19 @@ function startCSSBuild(dataset)
 ,"  a[id^=\"ta_" + row.name + ":" + tag.name.replace(" ","_") + "\"]:before{"
 ,"    content:\"" + tag.cname + "\";"
 ,"  }"
+//▲CSS内容部分
+			)
+			if (tag.info.content.length > 0)
+			{
+				cssAry.push(""
+//▼CSS内容部分
 ,"  a[id^=\"ta_" + row.name + ":" + tag.name.replace(" ","_") + "\"]:hover:after,a[id^=\"ta_" + row.name + ":" + tag.name.replace(" ","_") + "\"]:focus:after{"
 ,"    content:" + (tag.info.type?"url(" + tag.info.content + ")":"\"" + tag.info.content +　"\"") + ";"
 ,"  }"
 //▲CSS内容部分
-			)
+				)
+			}
+			
 		}
 	}
 	
@@ -365,7 +366,7 @@ function buildButton(title, icon)
 			)
 		]),
 		buildMenuList([
-			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发")},null,true),
+			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),
 			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
 		])
 	]));
@@ -556,6 +557,5 @@ function buildSVG(mode,check)
 	
 	return CloseSvg;
 }
-
-
 buttonInserPlace.insertBefore(buildButton(" EhTagBuilder ", buildSVG("eh")),buttonInserPlace.getElementsByTagName("li")[0]);
+//})();
