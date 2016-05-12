@@ -31,7 +31,8 @@
   
   然后复制生成的CSS文本，粘贴到编辑框中。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
-  ![粘贴代码](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
+  ![粘贴代码](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3sn1uyx5tj20io0dtq6z.jpg)
+
 ###使用效果
 由于CSS选择器技术限制，CSS版将无法更换tag左方的类别名。
 
