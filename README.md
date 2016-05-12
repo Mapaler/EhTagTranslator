@@ -9,7 +9,9 @@
 [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。Chrome安装Tampermonkey扩展。再安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两者都有）。
 ##用户样式版EhTagTranslator使用方法
 ###CSS生成方法
-先安装“EhTagBuilder”脚本，之后本项目页面下即会显示操作菜单。
+先[安装“EhTagBuilder”脚本](https://greasyfork.org/scripts/19619)（←到Greasy Fork安装可以自动更新脚本的哦）
+
+之后本项目页面下即会显示操作菜单。
 
 ![操作菜单](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sl56gmqpj20o10axwhc.jpg)
 
