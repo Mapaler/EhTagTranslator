@@ -54,7 +54,9 @@
 ##添加翻译
 在本项目Wiki中添加翻译，贡献你的一份力量。[链接地址](https://github.com/Mapaler/EhTagTranslator/wiki)
 
-![Wiki地址](https://github.com/Mapaler/EhTagTranslator/wiki)
+![Wiki地址](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sontcz4ej20e005aq3g.jpg)
+
+请先阅读主页的说明
 
 进入了Tag页面后，点击右上方的编辑按钮进行编辑
 
