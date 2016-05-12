@@ -7,7 +7,8 @@
 
 ##软件需求
 [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。Chrome安装Tampermonkey扩展。再安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两者都有）。
-##CSS生成方法
+##用户样式版EhTagTranslator使用方法
+###CSS生成方法
 先安装“EhTagBuilder”脚本，之后本项目页面下即会显示操作菜单。
 
 ![操作菜单](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sl56gmqpj20o10axwhc.jpg)
@@ -16,7 +17,7 @@
 
 ![输出窗口](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3slcidjl1j20a20aijsn.jpg)
 
-##CSS安装方法
+###CSS安装方法
 有三种安装方式。
 
 1. ![从文件安装](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sm9sinwlj20ow0bqq77.jpg)
@@ -32,3 +33,17 @@
   ![粘贴代码](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
   
   然后复制生成的CSS文本，粘贴到编辑框中。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
+###使用效果
+由于CSS选择器技术限制，CSS版将无法更换tag左方的类别名。
+
+![CSS使用效果](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3smnu3k49j20jo0c4422.jpg)
+## License|许可协议
+###EhTagTranslator Copyright(C) 2016 by Mapaler
+
+此程序是免费软件。你可以将它根据“GNU通用公共许可证第三版(GPLv3)”重新分发和/或修改。[LICENSE](https://github.com/Mapaler/EhTagTranslator/blob/master/LICENSE)
+
+如果你想分发你修改后的程序，但是你不想要公布修改后的源代码，请与我联系。
+###EhTagTranslator项目 Wiki数据库
+Wiki数据库内容归全体编辑者共同所有，但在Wiki里发布内容即表示您允许将您编辑的内容无偿且自由的使用到EhTagTranslator中。
+
+允许第三方程序使用本项目Wiki数据库，但请使用的项目提交一份Issues，附上项目的简介地址。
