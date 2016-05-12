@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        EhTagTranslator
+// @name        EhTagBuilder
 // @namespace   http://www.mapaler.com/
 // @description Translate E-Hentai tags to Chinese.
 // @include     *://github.com/Mapaler/EhTagTranslator*
@@ -557,4 +557,4 @@ function buildSVG(mode,check)
 }
 
 
-buttonInserPlace.insertBefore(buildButton(" EhTagTranslator ", buildSVG("eh")),buttonInserPlace.getElementsByTagName("li")[0]);
+buttonInserPlace.insertBefore(buildButton(" EhTagBuilder ", buildSVG("eh")),buttonInserPlace.getElementsByTagName("li")[0]);
