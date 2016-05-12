@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        EhTagTranslator-CSS
+// @name        EhTagTranslator
 // @namespace   http://www.mapaler.com/
 // @description Translate E-Hentai tags to Chinese.
 // @include     *://github.com/Mapaler/EhTagTranslator*
@@ -22,8 +22,7 @@ var rowObj = function(){
 		tags:[],
 		addTagFromName: function(rowObj)
 		{
-			if (rowObj == undefined)
-				rowObj = this;
+			if (rowObj == undefined) rowObj = this;
 			GM_xmlhttpRequest({
 				method: "GET",
 				url: wiki_URL + (this.name.length?"/"+this.name:""),
@@ -61,14 +60,6 @@ if(typeof(GM_xmlhttpRequest) == "undefined")
 		xhr.send(GM_param.data ? GM_param.data : null);
 	}
 }
-
-GM_xmlhttpRequest({
-	method: "GET",
-	url: wiki_URL + (rows_title.length?"/"+rows_title:""),
-	onload: function(response) {
-		dealRows(response.responseText,ds);
-	}
-});
 
 //处理行的页面
 function dealRows(response, dataset)
@@ -304,8 +295,6 @@ function buildWindow()
 	return set;
 }
 
-var inserPlace = document.getElementsByClassName("pagehead-actions")[0];
-inserPlace.insertBefore(buildButton(),inserPlace.getElementsByTagName("li")[0]);
 //生成按钮
 function buildButton()
 {
@@ -324,15 +313,16 @@ function buildButton()
 }
 
 //生成菜单窗口
-function buildMenuModal(mode)
+function buildMenuModal(mode, title, filters, list)
 {
+	
 	var modal_holder = document.createElement("div");
 	modal_holder.className = "select-menu-modal-holder js-menu-content js-navigation-container js-active-navigation-container";
 	var modal = document.createElement("div");
 	modal.className = "select-menu-modal subscription-menu-modal js-menu-content";
 	modal_holder.appendChild(modal);
 	var header = document.createElement("div");
-	header .className = "select-menu-header js-navigation-enable";
+	header.className = "select-menu-header js-navigation-enable";
 	modal.appendChild(header);
 
 	var CloseSvg = buildSVG("Close");
@@ -346,40 +336,163 @@ function buildMenuModal(mode)
 	filters .className = "select-menu-filters";
 	modal.appendChild(filters);
 	*/
-	var list1  = document.createElement("div");
-	list1.className = "select-menu-list js-navigation-container js-active-navigation-container";
-	modal.appendChild(list1);
-	
-	var item1  = document.createElement("div");
-	item1.className = "select-menu-item js-navigation-item";
-	list1.appendChild(item1);
-	item1.appendChild(buildSVG("true"));
-	
-	var list2  = document.createElement("div");
-	list2.className = "select-menu-list";
+	//var list1 = document.createElement("div");
+	//list1.className = "select-menu-list js-navigation-container js-active-navigation-container";
+	modal.appendChild(
+		buildMenuList([
+			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
+					GM_xmlhttpRequest({
+						method: "GET",
+						url: wiki_URL + (rows_title.length?"/"+rows_title:""),
+						onload: function(response) {
+							dealRows(response.responseText,ds);
+						}
+					})
+				}
+			),
+			buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
+					alert("设想中功能，暂未开发，仅占位");
+				}
+			)
+		])
+	);
+	/*
+	list1.appendChild(buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
+			GM_xmlhttpRequest({
+				method: "GET",
+				url: wiki_URL + (rows_title.length?"/"+rows_title:""),
+				onload: function(response) {
+					dealRows(response.responseText,ds);
+				}
+			})
+		}
+	));
+	list1.appendChild(buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
+			alert("设想中功能，暂未开发，仅占位");
+		}
+	));
+	*/
+	/*
+	var list2 = document.createElement("div");
+	list2.className = "select-menu-list js-navigation-container js-active-navigation-container";
 	modal.appendChild(list2);
-	
+	list2.appendChild(buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发")},null,true));
+	list2.appendChild(buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true));
+	*/
+	modal.appendChild(
+		buildMenuList([
+			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发")},null,true),
+			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
+		])
+	);
 	return modal_holder;
 }
 
-//生成svg
-function buildSVG(mode)
+//构建一个菜单列表框架
+function buildMenuList(items)
 {
+	var list = document.createElement("div");
+	list.className = "select-menu-list js-navigation-container";
+	for(var ii = 0; ii < items.length; ii++)
+	{
+		if (items[ii])
+			list.appendChild(items[ii]);
+	}
+	return list;
+}
+
+//构建一个菜单列表项
+function buildMenuItem(heading, description, icon, callback, href, setting)
+{
+	if (heading == undefined) heading = "未设定";
+	if (!href)
+	{
+		if (callback == undefined) callback = function(){alert("未设置任何功能")};
+		var item = document.createElement("div");
+		item.onclick = callback;
+	}
+	else
+	{
+		var item = document.createElement("a");
+		item.target = "_blank";
+		item.href = href;
+	}
+	if (!setting)
+	{
+		item.className = "select-menu-item js-navigation-item";
+	}
+	else
+	{
+		item.className = "select-menu-item select-menu-action";
+	}
+	
+	if (icon != undefined) item.appendChild(icon);
+		
+	var item_text = document.createElement("div");
+	item_text.className = "select-menu-item-text";
+	item.appendChild(item_text);
+	
+	if (description != undefined)
+	{
+		var item_heading = document.createElement("span");
+		item_heading.className = "select-menu-item-heading";
+		item_heading.innerHTML = heading;
+		var item_description = document.createElement("span");
+		item_description.className = "description";
+		item_description.innerHTML = description;
+		item_text.appendChild(item_heading);
+		item_text.appendChild(item_description);
+	}
+	else
+	{
+		item_text.innerHTML = heading;
+	}
+	return item;
+}
+//生成svg
+function buildSVG(mode,check)
+{
+	if (check == undefined) check = false;
 	var CloseSvgDiv = document.createElement("div");
+	var innerHTML = "";
 	switch (mode) {
 		case "Close":
-			CloseSvgDiv.innerHTML = '<svg aria-label="Close" class="octicon octicon-x js-menu-close" height="16" role="img" version="1.1" viewBox="0 0 12 16" width="12"><path d="M7.48 8l3.75 3.75-1.48 1.48-3.75-3.75-3.75 3.75-1.48-1.48 3.75-3.75L0.77 4.25l1.48-1.48 3.75 3.75 3.75-3.75 1.48 1.48-3.75 3.75z"/></svg>';
+			innerHTML = '<svg aria-label="Close" class="octicon octicon-x js-menu-close" height="16" role="img" version="1.1" viewBox="0 0 12 16" width="12"><path d="M7.48 8l3.75 3.75-1.48 1.48-3.75-3.75-3.75 3.75-1.48-1.48 3.75-3.75L0.77 4.25l1.48-1.48 3.75 3.75 3.75-3.75 1.48 1.48-3.75 3.75z"/></svg>';
 			break;
 
 		case "Settings":
-			CloseSvgDiv.innerHTML = '<svg width="14" viewBox="0 0 14 16" version="1.1" height="16" class="octicon octicon-gear" aria-hidden="true"><path d="M14 8.77V7.17l-1.94-0.64-0.45-1.09 0.88-1.84-1.13-1.13-1.81 0.91-1.09-0.45-0.69-1.92H6.17l-0.63 1.94-1.11 0.45-1.84-0.88-1.13 1.13 0.91 1.81-0.45 1.09L0 7.23v1.59l1.94 0.64 0.45 1.09-0.88 1.84 1.13 1.13 1.81-0.91 1.09 0.45 0.69 1.92h1.59l0.63-1.94 1.11-0.45 1.84 0.88 1.13-1.13-0.92-1.81 0.47-1.09 1.92-0.69zM7 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>';
+			innerHTML = '<svg width="14" viewBox="0 0 14 16" version="1.1" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true"><path d="M14 8.77V7.17l-1.94-0.64-0.45-1.09 0.88-1.84-1.13-1.13-1.81 0.91-1.09-0.45-0.69-1.92H6.17l-0.63 1.94-1.11 0.45-1.84-0.88-1.13 1.13 0.91 1.81-0.45 1.09L0 7.23v1.59l1.94 0.64 0.45 1.09-0.88 1.84 1.13 1.13 1.81-0.91 1.09 0.45 0.69 1.92h1.59l0.63-1.94 1.11-0.45 1.84 0.88 1.13-1.13-0.92-1.81 0.47-1.09 1.92-0.69zM7 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>';
 			break;
-	
-		case "true":
+
+		case "check":
+			innerHTML = '<svg width="12" viewBox="0 0 12 16" version="1.1" height="16" class="octicon octicon-check select-menu-item-icon" aria-hidden="true"><path d="M12 5L4 13 0 9l1.5-1.5 2.5 2.5 6.5-6.5 1.5 1.5z"/></svg>';
+			break;
+
+		case "question":
+			innerHTML = '<svg width="14" viewBox="0 0 14 16" version="1.1" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true"><path d="M6 10h2v2H6V10z m4-3.5c0 2.14-2 2.5-2 2.5H6c0-0.55 0.45-1 1-1h0.5c0.28 0 0.5-0.22 0.5-0.5v-1c0-0.28-0.22-0.5-0.5-0.5h-1c-0.28 0-0.5 0.22-0.5 0.5v0.5H4c0-1.5 1.5-3 3-3s3 1 3 2.5zM7 2.3c3.14 0 5.7 2.56 5.7 5.7S10.14 13.7 7 13.7 1.3 11.14 1.3 8s2.56-5.7 5.7-5.7m0-1.3C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7S10.86 1 7 1z"/></svg>';
+			break;
+
+		case "css":
+			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAADCUlEQVR42l3RYWjUdRzH8ffv97//7fTaOL2c6+66rNi52Q3Uyors5sYokh50I+iBGVFtoqGI+SQIKoiKkGCxedbOFqGWIJqFSiRoNKOU3DVpixZZc9PVJnO33f2v2/1/3x5s3arPw++DFx8+XyUiVFTYsiToQwGgUMpC40Epi3zeQf81y2JLg9aIVqA0f07nKBSLygMQXbGUziNPoBRo5aHSDuMp1XD1skPPB4cpnf+RrbURVtwaxgouQy+9mcffPwCAB8CyLKqX1IACZWw+O9xP/3e9xGrjrF3TzEztOvb29cGFQbY94GP18lvQSi0AGpubvGFKsy7vvPk5T7bu4OVdzWit+SciwtjYGK/v3M5qKZ/nAeWh0hvlwMcneLhpEy0tLWSzWbq7uxkaGiIQCJBMJqmrq8OyLED+Cyhl4/dGOfPlJfZ27QTg3De9nDr9IZFQDd9+MsDAFyepuDNGpTMDYsqIByA7NU3Pe58yMnyNXC4HQNOGZkZGdpDpu0hVZIZVqkSDVWBZOIhBl0toACef48LZk4QCXg4dOogxBp/PR9vzbXR1pTj2VS/JPZ0cmzHcEAGvF+ZHRESovyMsv57ukJ9O7ZGGWFTS6bSUSiX5f0ZHR+WppofkSufbEo9GRETmGogRZnN5/rg2wZpYlFTnLhKJOC9sa2ffvhTj4+MAhEIhIivrsW27XGAOEEMp5/BSx1Hyvhpui8LB1M+8+FwP35/bzdObN2OMAWB0appnUvu5Ojm1MKIYwRSKuAbS6TSZTIaO/R8xOXGJQrGKtvZ2lFI4jsPwxA3u3rSdH959YwEAMMYFBNd1SSQSNDY24rouSim01jiOwyuvvkZs/SPc0/woR9Md/wYEZVlseew+khtbWHv/elbdFae6ejnGGAYGB/n6/EXWtT7LhoYGqjym/MY5QGksv58H743Tf+U6ppghvnKW4eEsx4//Qtaqp3X3Wyxa5KXSI/i0IPOCEhEW+7xye7gagMlsDm0rgkE/CmHiep6i68UfCKKVoJVCI/z+22UKjqP+BndsSOE7UsTgAAAAAElFTkSuQmCC"/>';
+			break;
+
+		case "js":
+			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biAzMCBNYXIgMjAwOCAxNzoyMjo0NyAtMDUwMNSe+EoAAAAHdElNRQfYBAYRMSwLM2/oAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGPC/xhBQAAAtBJREFUeNpdU11IU3EU/93tTje1vJujzS1xZVNnhdeMStG8ha/VDYKUICYk9RLYW1FBIERv0atFTSgqCllPvRiaDyp9qFPLsTQ12nB96Fzuy3117nVL24HD/3DO+f3u/57z+zNWqxWJRAKpVEr2ZDIpe9Yu2fy1dAhzyxCW1sBPhQy7sjW/3w82GAwi1whUTkcXufgrDMvsMhBLyKVbub0swzD/JS5WL93NgCEBvRn+YjVg1UHQ/PDbIwnw7qhxVSbIAY/TwXMlWrgXV8AqgAodwKk36vMBCAQWsmDJmJtHcQoM7NI9bHV7RdHeBnVBISZGPsL56AnEjnPgG+oRDYfgdDzDzPgnZ1pCpuHoHsIrNqXSOHbX2LhvU2OQwYXbAEUe+OYWcDtMsFRZqTlJeZbq7XBP3BDL9x/A188zAhDRskarjdOXlkIRq6CmIgLnw/H+HbDOwt4iwDH6Vp6gvemwTG6prICO+sNxcHgzBgVUGoRWAzCWmemHVESgQu/IPK70vACUGvQOeyjuo1qeXJP64rEoJJxkikmXe0EKOD1Ni6GpMSwGXw8isBgggoLNWKGkmpL6SmRgFqc0qCIBZeineLazHWyeRv6KRVcKsakJfE0lLJweYmM9+KoymkUceoMWz3sew/P9Txet2cUe2gknp9VArVHj3sN+HG+shf1EszwLJCOwn6Q4uY7paQ8Ghidx+XwjVKkoXGFTL+Db0EHg9wqtKQyxdR+6b/ch4V2BdXsR9LTbVdrZbDAEhZnDteun5XVuNcZkMqGz0jfANxwUxI62zLAkl7gV8sKRJh2n4uQx0sZT0siHwfse0zGfz/dPiV2UdNJNLEdam1FdR+8nLZWYDEES7nEXRvuHsOCZW8hKXb6B2WyWgwtWb7F/DVdJtmfyWezJfTQkhdlAFC8NRbjz4ItZlrLX690kyBolLXQYydVb0rR4LFHvQk4v/gIj/RRmaCXZ1wAAAABJRU5ErkJggg=="/>';
+			break;
+			
 		default:
-			CloseSvgDiv.innerHTML = '<svg width="12" viewBox="0 0 12 16" version="1.1" height="16" class="octicon octicon-check select-menu-item-icon" aria-hidden="true"><path d="M12 5L4 13 0 9l1.5-1.5 2.5 2.5 6.5-6.5 1.5 1.5z"/></svg>';
+			innerHTML = '<svg width="12" viewBox="0 0 12 16" version="1.1" height="16" class="octicon octicon-check select-menu-item-icon" aria-hidden="true"></svg>';
 			break;
 	}
-	var CloseSvg = CloseSvgDiv.getElementsByTagName("svg")[0];
+	if(!check)
+	{
+		innerHTML = innerHTML.replace("octicon-check","");
+	}
+	CloseSvgDiv.innerHTML = innerHTML;
+	var CloseSvg = CloseSvgDiv.firstChild;
 	return CloseSvg;
 }
+
+
+var inserPlace = document.getElementsByClassName("pagehead-actions")[0];
+inserPlace.insertBefore(buildButton(),inserPlace.getElementsByTagName("li")[0]);
