@@ -52,6 +52,7 @@
 ![附加组件管理器上](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smvltaadj20dv05bwex.jpg)
 
 ##添加翻译
+###编辑Wiki
 在本项目Wiki中添加翻译，贡献你的一份力量。[链接地址](https://github.com/Mapaler/EhTagTranslator/wiki)
 
 ![Wiki地址](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sontcz4ej20e005aq3g.jpg)
@@ -64,6 +65,18 @@
 
 请参照已有格式添加或者修改内容。
 
+###翻译Tag
+遇到看不懂的Tag时，点击Tag，然后选择“Show Tag Definition”
+
+![未知Tag](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sq8m9qngj20fn0agwgb.jpg)
+
+之后在弹出的ehwiki中能看到英文解释，将这段拿去翻译来理解。
+
+![ehwiki](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3sqabsm7aj20pu0amwi8.jpg)
+
+常用翻译站点
+
+[谷歌翻译](http://translate.google.cn/)、[必应翻译](http://www.bing.com/translator/)、[百度翻译](http://fanyi.baidu.com/#auto/zh/)、[爱词霸（金山词霸）](http://www.iciba.com/)
 ## License|许可协议
 ###EhTagTranslator Copyright(C) 2016 by Mapaler
 
