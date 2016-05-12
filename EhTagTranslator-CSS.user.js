@@ -308,37 +308,7 @@ function buildButton()
 	var span = document.createElement("span");
 	span.innerHTML = " EhTagTranslator ";
 	button.appendChild(span);
-	select_menu.appendChild(buildMenuModal("menu"));
-	return li;
-}
-
-//生成菜单窗口
-function buildMenuModal(mode, title, filters, list)
-{
-	
-	var modal_holder = document.createElement("div");
-	modal_holder.className = "select-menu-modal-holder js-menu-content js-navigation-container js-active-navigation-container";
-	var modal = document.createElement("div");
-	modal.className = "select-menu-modal subscription-menu-modal js-menu-content";
-	modal_holder.appendChild(modal);
-	var header = document.createElement("div");
-	header.className = "select-menu-header js-navigation-enable";
-	modal.appendChild(header);
-
-	var CloseSvg = buildSVG("Close");
-	header.appendChild(CloseSvg);
-	var title = document.createElement("span");
-	title.className = "select-menu-title";
-	title.innerHTML = "请选择任务";
-	header.appendChild(title);
-	/*
-	var filters  = document.createElement("div");
-	filters .className = "select-menu-filters";
-	modal.appendChild(filters);
-	*/
-	//var list1 = document.createElement("div");
-	//list1.className = "select-menu-list js-navigation-container js-active-navigation-container";
-	modal.appendChild(
+	select_menu.appendChild(buildMenuModal("menu", "请选择任务", null, [
 		buildMenuList([
 			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
 					GM_xmlhttpRequest({
@@ -354,37 +324,41 @@ function buildMenuModal(mode, title, filters, list)
 					alert("设想中功能，暂未开发，仅占位");
 				}
 			)
-		])
-	);
-	/*
-	list1.appendChild(buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
-			GM_xmlhttpRequest({
-				method: "GET",
-				url: wiki_URL + (rows_title.length?"/"+rows_title:""),
-				onload: function(response) {
-					dealRows(response.responseText,ds);
-				}
-			})
-		}
-	));
-	list1.appendChild(buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
-			alert("设想中功能，暂未开发，仅占位");
-		}
-	));
-	*/
-	/*
-	var list2 = document.createElement("div");
-	list2.className = "select-menu-list js-navigation-container js-active-navigation-container";
-	modal.appendChild(list2);
-	list2.appendChild(buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发")},null,true));
-	list2.appendChild(buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true));
-	*/
-	modal.appendChild(
+		]),
 		buildMenuList([
 			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发")},null,true),
 			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
 		])
-	);
+	]));
+	return li;
+}
+
+//生成菜单窗口
+function buildMenuModal(mode, stitle, filters, lists)
+{
+	
+	var modal_holder = document.createElement("div");
+	modal_holder.className = "select-menu-modal-holder js-menu-content js-navigation-container js-active-navigation-container";
+	var modal = document.createElement("div");
+	modal.className = "select-menu-modal subscription-menu-modal js-menu-content";
+	modal_holder.appendChild(modal);
+	var header = document.createElement("div");
+	header.className = "select-menu-header js-navigation-enable";
+	modal.appendChild(header);
+
+	var CloseSvg = buildSVG("Close");
+	header.appendChild(CloseSvg);
+	var title = document.createElement("span");
+	title.className = "select-menu-title";
+	title.innerHTML = stitle;
+	header.appendChild(title);
+
+	for(var li = 0; li < lists.length; li++)
+	{
+		var list = lists[li];
+		if (list)
+			modal.appendChild(list);
+	}
 	return modal_holder;
 }
 
@@ -395,8 +369,9 @@ function buildMenuList(items)
 	list.className = "select-menu-list js-navigation-container";
 	for(var ii = 0; ii < items.length; ii++)
 	{
-		if (items[ii])
-			list.appendChild(items[ii]);
+		var item = items[ii];
+		if (item)
+			list.appendChild(item);
 	}
 	return list;
 }
