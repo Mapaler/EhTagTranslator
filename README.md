@@ -16,27 +16,34 @@
 点击“生成CSS”，程序运行后会生成窗口显示输出的用户样式。
 
 ![输出窗口](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3slcidjl1j20a20aijsn.jpg)
-
 ###CSS安装方法
 有三种安装方式。
 
-1. ![从文件安装](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sm9sinwlj20ow0bqq77.jpg)
+1. 点击“直接下载CSS文件”，然后在Stylish菜单中选择“安装文件”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
-  点击“直接下载CSS文件”，然后在Stylish菜单中选择“安装文件”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
-2. ![从URL安装](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sme5420dj20pb0f8tdz.jpg)
+  ![从文件安装](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sm9sinwlj20ow0bqq77.jpg)
+2. 复制“直接下载CSS文件”的链接地址，然后在附加组件管理器中选择“从 URL 安装...”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
-  复制“直接下载CSS文件”的链接地址，然后在附加组件管理器中选择“从 URL 安装...”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
-3. ![新建空白](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
+  ![从URL安装](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3sme5420dj20pb0f8tdz.jpg)
+3. 在Stylish菜单中选择“编写新样式”-“空白样式...”。
 
-  在Stylish菜单中选择“编写新样式”-“空白样式...”。
-  
-  ![粘贴代码](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
+  ![新建空白](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
   
   然后复制生成的CSS文本，粘贴到编辑框中。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
+  
+  ![粘贴代码](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smf9bgt9j20tt0fbgr4.jpg)
 ###使用效果
 由于CSS选择器技术限制，CSS版将无法更换tag左方的类别名。
 
 ![CSS使用效果](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3smnu3k49j20jo0c4422.jpg)
+###更新数据库
+目前版本为了节省流量在同一页面上不会重复获取数据库，需刷新页面再获取。不过在编辑Wiki页面保存的同时就已经刷新了，不需重复刷新。若不确定，观察运行程序是否会出现获取进度窗口即可。
+
+在工具栏按钮上或者附加组件管理器中点击右键选择编辑，然后替换新的代码保存即可。
+
+![按钮上](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3smv77s1hj207k078gmn.jpg)
+
+![附加组件管理器上](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smvltaadj20dv05bwex.jpg)
 ## License|许可协议
 ###EhTagTranslator Copyright(C) 2016 by Mapaler
 
