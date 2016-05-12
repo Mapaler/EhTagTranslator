@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     1.0.1
+// @version     1.0.2
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -519,6 +519,10 @@ function buildSVG(mode,check)
 			innerHTML = '<svg width="16" viewBox="0 0 16 16" version="1.1" height="16" class="octicon octicon-desktop-download select-menu-item-icon" aria-hidden="true"><path d="M4 6h3V0h2v6h3L8 10 4 6z m11-4H11v1h4v8H1V3h4v-1H1c-0.55 0-1 0.45-1 1v9c0 0.55 0.45 1 1 1h5.34c-0.25 0.61-0.86 1.39-2.34 2h8c-1.48-0.61-2.09-1.39-2.34-2h5.34c0.55 0 1-0.45 1-1V3c0-0.55-0.45-1-1-1z"/></svg>';
 			break;
 
+		case "book":
+			innerHTML = '<svg width="16" viewBox="0 0 16 16" version="1.1" height="16" class="octicon octicon-book select-menu-item-icon" aria-hidden="true"><path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"/></svg>';
+			break;
+
 		case "css":
 			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAADCUlEQVR42l3RYWjUdRzH8ffv97//7fTaOL2c6+66rNi52Q3Uyors5sYokh50I+iBGVFtoqGI+SQIKoiKkGCxedbOFqGWIJqFSiRoNKOU3DVpixZZc9PVJnO33f2v2/1/3x5s3arPw++DFx8+XyUiVFTYsiToQwGgUMpC40Epi3zeQf81y2JLg9aIVqA0f07nKBSLygMQXbGUziNPoBRo5aHSDuMp1XD1skPPB4cpnf+RrbURVtwaxgouQy+9mcffPwCAB8CyLKqX1IACZWw+O9xP/3e9xGrjrF3TzEztOvb29cGFQbY94GP18lvQSi0AGpubvGFKsy7vvPk5T7bu4OVdzWit+SciwtjYGK/v3M5qKZ/nAeWh0hvlwMcneLhpEy0tLWSzWbq7uxkaGiIQCJBMJqmrq8OyLED+Cyhl4/dGOfPlJfZ27QTg3De9nDr9IZFQDd9+MsDAFyepuDNGpTMDYsqIByA7NU3Pe58yMnyNXC4HQNOGZkZGdpDpu0hVZIZVqkSDVWBZOIhBl0toACef48LZk4QCXg4dOogxBp/PR9vzbXR1pTj2VS/JPZ0cmzHcEAGvF+ZHRESovyMsv57ukJ9O7ZGGWFTS6bSUSiX5f0ZHR+WppofkSufbEo9GRETmGogRZnN5/rg2wZpYlFTnLhKJOC9sa2ffvhTj4+MAhEIhIivrsW27XGAOEEMp5/BSx1Hyvhpui8LB1M+8+FwP35/bzdObN2OMAWB0appnUvu5Ojm1MKIYwRSKuAbS6TSZTIaO/R8xOXGJQrGKtvZ2lFI4jsPwxA3u3rSdH959YwEAMMYFBNd1SSQSNDY24rouSim01jiOwyuvvkZs/SPc0/woR9Md/wYEZVlseew+khtbWHv/elbdFae6ejnGGAYGB/n6/EXWtT7LhoYGqjym/MY5QGksv58H743Tf+U6ppghvnKW4eEsx4//Qtaqp3X3Wyxa5KXSI/i0IPOCEhEW+7xye7gagMlsDm0rgkE/CmHiep6i68UfCKKVoJVCI/z+22UKjqP+BndsSOE7UsTgAAAAAElFTkSuQmCC"/>';
 			break;
@@ -551,14 +555,15 @@ var menu_modal = buildMenuModal("menu", null, "请选择任务", null, [
 					startProgram(ds);
 				}
 			),
-			buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
+			/*buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
 					alert("设想中功能，暂未开发，仅占位");
 				}
-			)
+			)*/
 		]),
 		buildMenuList([
-			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),
-			buildMenuItem("查看EhTagTranslator使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true)
+			/*buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),*/
+			buildMenuItem("查看EhTagBuilder使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true),
+			buildMenuItem("编辑翻译数据库",null,buildSVG("book"),null,"https://github.com/Mapaler/EhTagTranslator/wiki",true),
 		])
 	]);
 	
