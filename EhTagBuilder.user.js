@@ -1,7 +1,9 @@
 // ==UserScript==
 // @name        EhTagBuilder
+// @name:zh-CN	E绅士标签构建者
 // @namespace   http://www.mapaler.com/
 // @description Build EhTagTranslater from Wiki.
+// @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
 // @version     1.0.0
