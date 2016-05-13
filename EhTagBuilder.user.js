@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     1.0.3
+// @version     1.0.4
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -16,6 +16,8 @@ var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki �
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
 var windowInserPlace = document.getElementsByClassName("reponav")[0]; //窗口插入位置
+var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
+var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "本地Debug版"; //本程序的版本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -159,10 +161,13 @@ function dealTags(response, dataset)
 	{
 		var trow = table.rows[ri];
 		var tag = new tagObj;
-		tag.name = trow.cells[0].textContent;
-		tag.cname = trow.cells[1].textContent;
-		tag.info = getTrueImgUrlInfo(trow.cells[2]);
-		dataset.push(tag);
+		if (trow.cells.length > 2 && trow.cells[0].textContent.replace(/\s/ig,"").length > 0)
+		{//没有足够单元格，或没英文原名的跳过
+			tag.name = trow.cells[0].textContent;
+			tag.cname = trow.cells[1].textContent;
+			tag.info = getTrueImgUrlInfo(trow.cells[2]);
+			dataset.push(tag);
+		}
 	}
 	rowsCurrent++;
 }
@@ -267,10 +272,18 @@ function startProgramCheck(dataset)
 //开始构建CSS
 function startCSSBuild(dataset)
 {
+	var date = new Date();
+	
 	var cssAry = [];
 	cssAry.push(
+ "/* 本CSS由 " + scriptName + " v" + scriptVersion + " 构建"
+," * 构建时间为"
+," * " + date.toString()
+," */"
+	);
+	cssAry.push(
 //▼CSS内容部分
-"@namespace url(http://www.w3.org/1999/xhtml);"
+ "@namespace url(http://www.w3.org/1999/xhtml);"
 ,""
 ,"@-moz-document"
 ,"    url-prefix('http://exhentai.org/g/'), "
@@ -298,7 +311,7 @@ function startCSSBuild(dataset)
 ,"    opacity: 1;"
 ,"  }"
 //▲CSS内容部分
-	)
+	);
 	
 	for (var ri = 0; ri < dataset.length; ri++)
 	{
@@ -315,7 +328,7 @@ function startCSSBuild(dataset)
 ,"    content:\"" + tag.cname + "\";"
 ,"  }"
 //▲CSS内容部分
-			)
+			);
 			if (tag.info.content.length > 0)
 			{
 				cssAry.push(""
@@ -324,7 +337,7 @@ function startCSSBuild(dataset)
 ,"    content:" + (tag.info.type?"url(" + tag.info.content + ")":"\"" + tag.info.content +　"\"") + ";"
 ,"  }"
 //▲CSS内容部分
-				)
+				);
 			}
 			
 		}
