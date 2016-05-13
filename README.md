@@ -51,9 +51,10 @@
 
 ![附加组件管理器上](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smvltaadj20dv05bwex.jpg)
 
-##添加翻译
-###编辑Wiki
-在本项目Wiki中添加翻译，贡献你的一份力量。[链接地址](https://github.com/Mapaler/EhTagTranslator/wiki)
+##编辑Wiki添加翻译
+EhTagTranslator是一个免费开源项目，Tag翻译数据库由各位网友自行编辑。
+
+希望您在享受他人成果的同时，在本项目Wiki中添加翻译，贡献你的一份力量。[链接地址](https://github.com/Mapaler/EhTagTranslator/wiki)
 
 ![Wiki地址](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sontcz4ej20e005aq3g.jpg)
 
