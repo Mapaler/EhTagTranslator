@@ -5,6 +5,10 @@
 
 这次决定采用开放式编辑的新方法，数据库用本项目的wiki攥写，然后由js生成css，由css来完成翻译显示。
 
+v1.1.0支持简介图文混编。
+
+![新版功能](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3ttk2a3pij20by0lv0wc.jpg)
+
 ##软件需求
 [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。Chrome安装Tampermonkey扩展。再安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两浏览器都有）。
 
