@@ -59,37 +59,6 @@
 
 请先阅读主页的说明
 
-进入了Tag页面后，点击右上方的编辑按钮进行编辑
-
-![编辑按钮](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3sog6ublej20jr0dktbc.jpg)
-
-请参照已有格式添加或者修改内容。
-
-###翻译Tag
-遇到看不懂的Tag时，点击Tag，然后选择“Show Tag Definition”
-
-![未知Tag](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sq8m9qngj20fn0agwgb.jpg)
-
-之后在弹出的ehwiki中能看到英文解释，将这段拿去翻译来理解。
-
-![ehwiki](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3sqabsm7aj20pu0amwi8.jpg)
-
-对于这种有两部分的Tag
-
-![双语Tag](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3srn3ur2ej207w02mjrk.jpg)
-
-打开Tag相关作品可看到，竖杠前的才是真实Tag（也可查看ehwiki Tag定义）
-
-![真实Tag](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3srnuxz1uj205901v0sn.jpg)
-
-Wiki中英文名只能填写真实Tag部分
-
-![填写方法](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3srphp9gaj20kl05w75e.jpg)
-
-###常用翻译站点
-
-[谷歌翻译](http://translate.google.cn/)、[必应翻译](http://www.bing.com/translator/)、[百度翻译](http://fanyi.baidu.com/#auto/zh/)、[爱词霸（金山词霸）](http://www.iciba.com/)
-
 ## License|许可协议
 ###EhTagTranslator Copyright(C) 2016 by Mapaler
 
