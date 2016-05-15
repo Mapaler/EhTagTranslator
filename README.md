@@ -3,14 +3,18 @@
 
 上一版为JS写的[Etag](https://greasyfork.org/scripts/17966)，每次数据库需要重新更新上传。
 
-这次决定采用开放式编辑的新方法，数据库用本项目的wiki攥写，然后由js生成css，由css来完成翻译显示。
+这次决定采用开放式编辑的新方法，数据库用本项目的wiki攥写，然后由js生成css，由css来完成翻译显示。支持显示Tag简介。
 
-v1.1.0支持简介图文混编。
-
-![新版功能](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3ttk2a3pij20by0lv0wc.jpg)
+![新版功能](http://ww3.sinaimg.cn/large/6c84b2d6jw1f3w60j9dcej20cb0al401.jpg)
 
 ##软件需求
-[![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。Chrome安装Tampermonkey扩展。再安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两浏览器都有）。
+1. 用户脚本扩展，用于安装EhTagBuilder从翻译数据库生成用户样式版EhTagTranslator。
+ * [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。
+ * Chrome安装Tampermonkey扩展。
+2. 用户样式扩展，用于安装用户样式版EhTagTranslator。
+ * 安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两浏览器都有）。
+
+无法访问GitHub的网友，可以在别人能访问的电脑上使用EhTagBuilder生成用户样式版EhTagTranslator安装到自己电脑。
 
 ##用户样式版EhTagTranslator使用方法
 ###CSS生成方法
@@ -47,13 +51,13 @@ v1.1.0支持简介图文混编。
 ![CSS使用效果](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3smnu3k49j20jo0c4422.jpg)
 
 ###更新数据库
-目前版本为了节省流量在同一页面上不会重复获取数据库，需刷新页面再获取。不过在编辑Wiki页面保存的同时就已经刷新了，不需重复刷新。若不确定，观察运行程序是否会出现获取进度窗口即可。
-
 在工具栏按钮上或者附加组件管理器中点击右键选择编辑，然后替换新的代码保存即可。
 
 ![按钮上](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3smv77s1hj207k078gmn.jpg)
 
 ![附加组件管理器上](http://ww2.sinaimg.cn/large/6c84b2d6gw1f3smvltaadj20dv05bwex.jpg)
+
+目前版本在同一页面上不会重复获取数据库，需刷新页面再获取。不过Wiki编辑者在保存Wiki页面的时候就刷新了，不需重复刷新。若不确定，观察运行程序是否会出现获取进度窗口即可。
 
 ##编辑Wiki添加翻译
 EhTagTranslator是一个免费开源项目，Tag翻译数据库由各位网友自行编辑。
