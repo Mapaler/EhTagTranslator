@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.0.0
+// @version     2.0.1
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -185,7 +185,7 @@ function getInfoString(dom, creatImage)
 {
 	if (creatImage == undefined) creatImage = true;
 	var info = [];
-	if (typeof(dom.childNodes) != "undefined")
+	if (dom.childNodes != undefined)
 	{
 		for (var ci = 0; ci < dom.childNodes.length; ci++)
 		{
@@ -801,7 +801,7 @@ function resetOption(part)
 {
 	function partReset(name,value,ispart)
 	{
-		if (!ispart || ispart && typeof(GM_getValue(name)) == "undefined")
+		if (!ispart || ispart && GM_getValue(name) == undefined)
 			GM_setValue(name, value);
 	}
 	var cssAry = [];
@@ -860,7 +860,7 @@ function saveOption()
 	}
 	function setValue(dom)
 	{
-		if (dom.name && typeof(dom.value) != "undefined")
+		if (dom.name && dom.value != undefined)
 		{
 			if (dom.type == "checkbox")
 				GM_setValue(dom.name, dom.checked);
@@ -880,12 +880,12 @@ function reloadOption()
 	}
 	function getValue(dom)
 	{
-		if (dom.name && typeof(dom.value) != "undefined")
+		if (dom.name && dom.value != undefined)
 		{
 			var value = GM_getValue(dom.name);
-			if (typeof(value) != "undefined")
+			if (value != undefined)
 			{
-				if (typeof(dom.type) != "undefined" && dom.type == "checkbox")
+				if (dom.type != undefined && dom.type == "checkbox")
 					dom.checked = value;
 				else
 					dom.value = value;
