@@ -6,12 +6,12 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     1.1.3
+// @version     2.0.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
-(function() {
+//(function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
@@ -21,43 +21,8 @@ var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
-var ds = [];
-var rowObj = function(){
-	var obj = {
-		name:"",
-		cname:"",
-		info:"",
-		tags:[],
-		addTagFromName: function(rowObj)
-		{
-			if (rowObj == undefined) rowObj = this;
-			GM_xmlhttpRequest({
-				method: "GET",
-				url: wiki_URL + (rowObj.name.length?"/"+rowObj.name:""),
-				onload: function(response) {
-					var page_get_w = document.getElementById("page-get");
-					if (page_get_w)
-					{
-						var statetxt = page_get_w.getElementsByClassName("page-get-" + rowObj.name)[0];
-						statetxt.style.color = "#0A0";
-						statetxt.innerHTML = "获取成功";
-					}
-					dealTags(response.responseText,rowObj.tags);
-				}
-			});
-		},
-	}
-	return obj;
-}
-var tagObj = function(){
-	var obj = {
-		type:0,
-		name:"",
-		cname:"",
-		info:"",
-	}
-	return obj;
-}
+
+
 //访GM_xmlhttpRequest函数v1.0
 if(typeof(GM_xmlhttpRequest) == "undefined")
 {
@@ -76,6 +41,95 @@ if(typeof(GM_xmlhttpRequest) == "undefined")
 		xhr.send(GM_param.data ? GM_param.data : null);
 	}
 }
+//仿GM_getValue函数v1.0
+if(typeof(GM_getValue) == "undefined")
+{
+	var GM_getValue = function(name, type){
+		var value = localStorage.getItem(name);
+		if (value == undefined) return value;
+		if ((/^(?:true|false)$/i.test(value) && type == undefined) || type == "boolean")
+		{
+			if (/^true$/i.test(value))
+				return true;
+			else if (/^false$/i.test(value))
+				return false;
+			else
+				return Boolean(value);
+		}
+		else if((/^\-?[\d\.]+$/i.test(value) && type == undefined) || type == "number")
+			return Number(value);
+		else
+			return value;
+	}
+}
+//仿GM_setValue函数v1.0
+if(typeof(GM_setValue) == "undefined")
+{
+	var GM_setValue = function(name, value){
+		localStorage.setItem(name, value);
+	}
+}
+//仿GM_deleteValue函数v1.0
+if(typeof(GM_deleteValue) == "undefined")
+{
+	var GM_deleteValue = function(name){
+		localStorage.removeItem(name);
+	}
+}
+//仿GM_listValues函数v1.0
+if(typeof(GM_listValues) == "undefined")
+{
+	var GM_listValues = function(){
+		var keys = [];
+		for (var ki = 0; ki < localStorage.length; ki++)
+		{
+			keys.push(localStorage.key(ki));
+		}
+		return keys;
+	}
+}
+
+
+
+
+var ds = [];
+var rowObj = function(){
+	var obj = {
+		name:"",
+		cname:"",
+		info:"",
+		tags:[],
+		addTagFromName: function(rowObj)
+		{
+			if (rowObj == undefined) rowObj = this;
+			GM_xmlhttpRequest({
+				method: "GET",
+				url: wiki_URL + (rowObj.name.length?"/"+rowObj.name:""),
+				onload: function(response) {
+					var page_get_w = document.getElementById("ETB_page-get");
+					if (page_get_w)
+					{
+						var statetxt = page_get_w.getElementsByClassName("page-get-" + rowObj.name)[0];
+						statetxt.classList.add("page-load");
+						statetxt.innerHTML = "获取成功";
+					}
+					dealTags(response.responseText,rowObj.tags);
+				}
+			});
+		},
+	}
+	return obj;
+}
+var tagObj = function(){
+	var obj = {
+		type:0,
+		name:"",
+		cname:"",
+		info:"",
+	}
+	return obj;
+}
+
 
 //处理行的页面
 function dealRows(response, dataset)
@@ -83,11 +137,11 @@ function dealRows(response, dataset)
 	var parser = new DOMParser();
 	PageDOM = parser.parseFromString(response, "text/html");
 	
-	var page_get_w = document.getElementById("page-get");
+	var page_get_w = document.getElementById("ETB_page-get");
 	if (page_get_w)
 	{
 		var statetxt = page_get_w.getElementsByClassName("page-get-rows")[0];
-		statetxt.style.color = "#0A0";
+		statetxt.classList.add("page-load");
 		statetxt.innerHTML = "获取成功";
 	}
 				
@@ -100,7 +154,7 @@ function dealRows(response, dataset)
 		var row = new rowObj;
 		row.name = trow.cells[0].textContent;
 		row.cname = trow.cells[1].textContent;
-		row.info = getTrueImgUrlInfo(trow.cells[2]);
+		row.info = trow.cells[2];
 		row.addTagFromName();
 		dataset.push(row);
 		
@@ -111,8 +165,8 @@ function dealRows(response, dataset)
 					{
 						var div = document.createElement("div");
 						var span1 = document.createElement("span");
-						span1.style.fontWeight = "bold";
-						span1.innerHTML = row.cname + " "; 
+						span1.className = "page-title"; 
+						span1.innerHTML = row.cname ; 
 						div.appendChild(span1);
 						var span2 = document.createElement("span");
 						span2.className = "page-get-" + row.name;
@@ -120,19 +174,29 @@ function dealRows(response, dataset)
 						div.appendChild(span2);
 						return div;
 					})()
-					,null,null,null,null,true)
+				)
 			);
 		}
 	}
 }
 
 //获取介绍是图片还是文字
-function getTrueImgUrlInfo(dom)
+function getInfoString(dom, creatImage)
 {
+	if (creatImage == undefined) creatImage = true;
 	var info = [];
-	for (var ci = 0; ci < dom.childNodes.length; ci++)
+	if (typeof(dom.childNodes) != "undefined")
 	{
-		var node = dom.childNodes[ci];
+		for (var ci = 0; ci < dom.childNodes.length; ci++)
+		{
+			var node = dom.childNodes[ci];
+			info = info.concat(getDomInfoString(node, creatImage))
+		}
+	}
+	
+	function getDomInfoString(node,creatImage)
+	{
+		var info = [];
 		switch (node.nodeName) {
 			case "BR":
 				info.push(
@@ -142,11 +206,14 @@ function getTrueImgUrlInfo(dom)
 				);
 				break;
 			case "IMG":
-				info.push(
-					 "url(\""
-					,node.getAttribute("data-canonical-src")
-					,"\")"
-				);
+				if (creatImage)
+				{
+					info.push(
+						"url(\""
+						,node.getAttribute("data-canonical-src")
+						,"\")"
+					);
+				}
 				break;
 			case "#text":
 			default:
@@ -159,6 +226,7 @@ function getTrueImgUrlInfo(dom)
 				);
 				break;
 		}
+		return info;
 	}
 	return info.join("");
 }
@@ -190,8 +258,8 @@ function dealTags(response, dataset)
 		if (trow.cells.length > 2)
 		{//没有足够单元格的跳过
 			tag.name = trow.cells[0].textContent;
-			tag.cname = getTrueImgUrlInfo(trow.cells[1]);
-			tag.info = getTrueImgUrlInfo(trow.cells[2]);
+			tag.cname = trow.cells[1];
+			tag.info = trow.cells[2];
 			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0;
 			dataset.push(tag);
 		}
@@ -215,17 +283,17 @@ function startProgram(dataset){
 	}
 	if (!downOver)
 	{
-		var page_get_w = document.getElementById("page-get");
+		var page_get_w = document.getElementById("ETB_page-get");
 		if (!page_get_w)
 		{
-			windowInserPlace.appendChild(buildMenuModal("window", "page-get", "数据获取进度", null, [
+			windowInserPlace.appendChild(buildMenuModal("window", "ETB_page-get", "数据获取进度", null, [
 				buildMenuList([
 					buildMenuItem((function()    
 						{
 							var div = document.createElement("div");
 							var span1 = document.createElement("span");
-							span1.style.fontWeight = "bold";
-							span1.innerHTML = "列表页面 "; 
+							span1.className = "page-title"; 
+							span1.innerHTML = "列表页面"; 
 							div.appendChild(span1);
 							var span2 = document.createElement("span");
 							span2.className = "page-get-rows";
@@ -233,9 +301,18 @@ function startProgram(dataset){
 							div.appendChild(span2);
 							return div;
 						})()
-						,null,null,null,null,true)
+					)
 				])
-			]
+			],
+			[
+				".ETB_page-get .page-title" + "{\r\n" + [
+					'font-weight: bold',
+					'margin-right: 15px',
+				].join(';\r\n') + "\r\n}",
+				".ETB_page-get .page-load" + "{\r\n" + [
+					'color: #0A0',
+				].join(';\r\n') + "\r\n}",
+			].join('\r\n')
 			));
 		}
 		else
@@ -251,34 +328,39 @@ function startProgramCheck(dataset)
 	{
 		console.debug("获取完成");
 		clearInterval(downOverCheckHook);
-		var css = buildCSS(dataset);
+		var css = buildCSS(dataset
+			,GM_getValue("ETB_create-info","boolean")
+			,GM_getValue("ETB_create-info-image","boolean")
+			);
 		var downBlob = new Blob([css], {'type': 'text\/css'});
 		var downurl = window.URL.createObjectURL(downBlob);
 		
-		var css_output_w = document.getElementById("css-output");
+		var css_output_w = document.getElementById("ETB_css-output");
 		if (!css_output_w)
 		{
-			windowInserPlace.appendChild(buildMenuModal("window", "css-output", "用户样式版EhTagTranslator", null,
+			windowInserPlace.appendChild(buildMenuModal("window", "ETB_css-output", "用户样式版EhTagTranslator", null,
 				[
 					buildMenuList([
 						buildMenuItem("CSS文本",
 							(function()    
 							{
 								var textarea = document.createElement("textarea");
-								textarea.className = "txta";
+								textarea.id = "ETB_css-textarea";
+								textarea.name = textarea.id;
+								textarea.className = "txta " + textarea.id;
 								textarea.value = css;
 								textarea.wrap = "off";
+								textarea.setAttribute("readonly",true);
 								return textarea;
 							})()
-							,buildSVG("css"),null,null,true),
-						buildMenuItem("直接下载CSS文件",null,buildSVG("download"),null,downurl,true)
+							,buildSVG("css")),
+						buildMenuItem("直接下载CSS文件",null,buildSVG("download"),downurl,1)
 					])
 				],
 				[
-					".css-output .txta" + "{\r\n" + [
-						'width:260px',
-						'max-width:260px',
-						'min-width:260px',
+					".ETB_css-output .txta" + "{\r\n" + [
+						'resize: vertical',
+						'width:100%',
 						'height:300px',
 					].join(';\r\n') + "\r\n}",
 				].join('\r\n')
@@ -287,8 +369,10 @@ function startProgramCheck(dataset)
 		else
 		{
 			css_output_w.style.display = "block";
+			css_output_w.getElementsByClassName("ETB_css-textarea")[0].value = css;
+			css_output_w.getElementsByTagName("a")[0].href = downurl;
 		}
-		var page_get_w = document.getElementById("page-get");
+		var page_get_w = document.getElementById("ETB_page-get");
 		if (page_get_w)
 		{
 			page_get_w.parentNode.removeChild(page_get_w);
@@ -303,17 +387,21 @@ function startProgramCheck(dataset)
 }
 
 //开始构建CSS
-function buildCSS(dataset)
+function buildCSS(dataset, createInfo, createInfoImage)
 {
+	if (createInfo == undefined) createInfo = true;
+	if (createInfoImage == undefined) createInfoImage = true;
 	var date = new Date();
 	
 	var cssAry = [];
+//样式信息说明
 	cssAry.push(
- "/* 本CSS由 " + scriptName + " v" + scriptVersion + " 构建"
+ "/* EhTagTranslator 用户样式版，由 " + scriptName + " v" + scriptVersion + " 构建"
 ," * 构建时间为"
 ," * " + date.toString()
 ," */"
-	);
+	)
+//样式命名区间与应用范围
 	cssAry.push(
 //▼CSS内容部分
  "@namespace url(http://www.w3.org/1999/xhtml);"
@@ -322,29 +410,11 @@ function buildCSS(dataset)
 ,"    url-prefix('http://exhentai.org/g/'), "
 ,"    url-prefix('http://g.e-hentai.org/g/')"
 ,"{"
-,"  #taglist a:before{"
-,"    font-size:12px;"
-,"  }"
-,"  #taglist a:hover:after,#taglist a:focus:after{"
-,"    color:#fff;"
-,"    font-size:15px;"
-,"    background: #666;"
-,"    border: 1px solid #fff;"
-,"    border-radius:5px;"
-,"    float:left;"
-,"    position:fixed;"
-,"    z-index:999;"
-,"    padding:2px;"
-,"    box-shadow: 0px 0px 5px #888888;"
-,"    min-width:150px;"
-,"    max-width:260px;"
-,"    white-space:pre-wrap;"
-,"    font-size:12px;"
-,"    transition: opacity 1s;"
-,"    opacity: 1;"
-,"  }"
 //▲CSS内容部分
 	);
+
+	//链接通用样式部分
+	cssAry.push(GM_getValue("ETB_global-style"));
 	
 	for (var ri = 0; ri < dataset.length; ri++)
 	{
@@ -364,20 +434,24 @@ function buildCSS(dataset)
 ,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]{"
 ,"    font-size:0px;"
 ,"  }"
-,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]:before{"
-,"    content:" + tag.cname + ";"
+,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::before{"
+,"    content:" + getInfoString(tag.cname, createInfoImage) + ";"
 ,"  }"
 //▲CSS内容部分
 				);
-				if (tag.info.replace(/\s/ig,"").length > 0)
+				if (createInfo)
 				{
-					cssAry.push(""
+					var info = getInfoString(tag.info, createInfoImage);
+					if (info.replace(/\s/ig,"").length > 0)
+					{
+						cssAry.push(""
 //▼CSS内容部分
-,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]:hover:after,a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]:focus:after{"
-,"    content:" + tag.info + ";"
+,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::after{"
+,"    content:" + getInfoString(tag.info, createInfoImage) + ";"
 ,"  }"
 //▲CSS内容部分
-					);
+						);
+					}
 				}
 			}
 			else
@@ -392,9 +466,9 @@ function buildCSS(dataset)
 		}
 	}
 	
-	cssAry.push(""
+	cssAry.push(
 //▼CSS内容部分
-,"}"
+ "}"
 //▲CSS内容部分
 	)
 	
@@ -500,27 +574,38 @@ function buildMenuList(items)
 }
 
 //构建一个菜单列表项
-function buildMenuItem(heading, description, icon, callback, href, setting)
+function buildMenuItem(heading, description, icon, callback, type)
 {
 	if (heading == undefined) heading = "未设定";
-	if (!href)
+	
+	var item = document.createElement("div");
+	if (type == 3)
 	{
-		var item = document.createElement("div");
-		if (callback != undefined) item.onclick = callback;
+		var item = document.createElement("label");
+		item.setAttribute('for', callback);
 	}
-	else
+	else if (typeof(callback) == "string")
 	{
 		var item = document.createElement("a");
 		item.target = "_blank";
-		item.href = href;
-	}
-	if (!setting)
-	{
-		item.className = "select-menu-item js-navigation-item";
+		item.href = callback;
 	}
 	else
 	{
-		item.className = "select-menu-item select-menu-action";
+		if (callback) item.onclick = callback;
+	}
+	
+	item.className = "select-menu-item";
+	
+	switch (type) {
+		case 0:
+			item.classList.add("js-navigation-item");
+			break;
+		case 1:
+			item.classList.add("select-menu-action");
+			break;
+		default:
+			break;
 	}
 	
 	if (icon != undefined) item.appendChild(icon);
@@ -611,24 +696,224 @@ function buildSVG(mode,check)
 	
 	return CloseSvg;
 }
+//打开设置窗口
+function startOption()
+{
+	var option_modal_w = document.getElementById("ETB_option");
+	if (!option_modal_w)
+	{
+		windowInserPlace.appendChild(
+			buildMenuModal("window", "ETB_option", scriptName + " 设置", null, [
+					buildMenuList([
+						buildMenuItem("生成简介","生成光标移动到Tag上时出现的简介。",
+							(function(){
+								var chk1 = document.createElement("input");
+								chk1.type = "checkbox";
+								chk1.id = "ETB_create-info";
+								chk1.name = "ETB_create-info";
+								chk1.className = "octicon octicon-question select-menu-item-icon ETB_create-info";
+								return chk1;
+							})()
+							,"ETB_create-info",3),
+						buildMenuItem("生成简介图片","生成简介中的图片。",
+							(function(){
+								var chk2 = document.createElement("input");
+								chk2.type = "checkbox";
+								chk2.id = "ETB_create-info-image";
+								chk2.name = "ETB_create-info-image";
+								chk2.className = "octicon octicon-question select-menu-item-icon ETB_create-info-image";
+								return chk2;
+							})()
+							,"ETB_create-info-image",3),
+						buildMenuItem("Tag通用样式",
+							(function(){
+								var div = document.createElement("div");
+								var span1 = document.createElement("span");
+								span1.innerHTML = "Tag统一应用的样式，可修改为自己喜爱的样式。"; 
+								div.appendChild(span1);
+								var textarea = document.createElement("textarea");
+								textarea.id = "ETB_global-style";
+								textarea.name = "ETB_global-style";
+								textarea.className = "txta ETB_global-style";
+								textarea.value = GM_getValue("ETB_global-style")?GM_getValue("ETB_global-style"):"";
+								textarea.wrap = "off";
+								div.appendChild(textarea);
+								return div;
+							})()
+							,null,"ETB_global-style",3),
+					]),
+					buildMenuList([
+						buildMenuItem(
+							(function(){
+								var div = document.createElement("div");
+								var btn1 = document.createElement("button");
+								btn1.innerHTML = "重置";
+								btn1.id = "ETB_reset-option";
+								btn1.name = "ETB_reset-option";
+								btn1.className = "btn btn-sm btn-danger ETB_reset-option";
+								btn1.onclick = function(){
+									resetOption();
+								}
+								div.appendChild(btn1);
+								/*
+								var btn2 = document.createElement("button");
+								btn2.innerHTML = "取消";
+								btn2.className = "btn btn-sm";
+								div.appendChild(btn2);
+								*/
+								var btn3 = document.createElement("button");
+								btn3.innerHTML = "保存";
+								btn3.id = "ETB_save-option";
+								btn3.name = "ETB_save-option";
+								btn3.className = "btn btn-sm btn-primary ETB_save-option";
+								btn3.onclick = function(){
+									saveOption();
+								}
+								div.appendChild(btn3);
+								return div;
+							})()
+							,null,null,null,1),
+					]),
+				],
+				[
+					".ETB_option .select-menu-item-text" + "{\r\n" + [
+						'font-weight: normal',
+					].join(';\r\n') + "\r\n}",
+					".ETB_option .txta" + "{\r\n" + [
+						'resize: vertical',
+						'width: 100%',
+						'height: 150px',
+					].join(';\r\n') + "\r\n}",
+					".ETB_option .ETB_save-option" + "{\r\n" + [
+						'float: right',
+					].join(';\r\n') + "\r\n}",
+				].join('\r\n')
+			)
+		);
+	}
+	else
+	{
+		option_modal_w.style.display = "block";
+	}
+}
+//重置设置
+function resetOption(part)
+{
+	function partReset(name,value,ispart)
+	{
+		if (!ispart || ispart && typeof(GM_getValue(name)) == "undefined")
+			GM_setValue(name, value);
+	}
+	var cssAry = [];
+	cssAry.push(
+//▼CSS内容部分
+ "  #taglist a::before{"
+,"    font-size:12px;"
+,"  }"
+,"  #taglist a::after{"
+,"    color:#fff;"
+,"    font-size:12pt;"
+,"    background: #666;"
+,"    border: 1px solid #fff;"
+,"    border-radius:5px;"
+,"    float:left;"
+,"    position:fixed;"
+,"    z-index:999;"
+,"    padding:2px;"
+,"    box-shadow: 3px 3px 5px #888;"
+,"    min-width:150px;"
+,"    max-width:260px;"
+,"    white-space:pre-wrap;"
+,"    opacity: 0;"
+,"    transition: opacity 0.2s;"
+,"    transform: translate(15px,25px);"
+,"    pointer-events:none;"
+,"  }"
+,"  #taglist a:hover::after,#taglist a:focus::after{"
+,"    opacity: 1;"
+,"    transition: opacity 0.5s;"
+,"  }"
+//▲CSS内容部分
+	);
+	partReset("ETB_global-style",cssAry.join("\r\n"),part);
+	partReset("ETB_create-info","true",part);
+	partReset("ETB_create-info-image","true",part);
+	
+	reloadOption();
+}
+//访问设置用递归函数
+function visitChildNodes(dom, callback)
+{
+	callback(dom);
+	for (var ci = 0; ci < dom.childNodes.length; ci++)
+	{
+		visitChildNodes(dom.childNodes[ci], callback);
+	}
+}
+//保存设置
+function saveOption()
+{
+	var option_modal_w = document.getElementById("ETB_option");
+	if (option_modal_w)
+	{
+		 visitChildNodes(option_modal_w,setValue);
+	}
+	function setValue(dom)
+	{
+		if (dom.name && typeof(dom.value) != "undefined")
+		{
+			if (dom.type == "checkbox")
+				GM_setValue(dom.name, dom.checked);
+			else
+				GM_setValue(dom.name, dom.value);
+		}
+	}
+	option_modal_w.style.display = "none";
+}
+//重新加载设置窗口
+function reloadOption()
+{
+	var option_modal_w = document.getElementById("ETB_option");
+	if (option_modal_w)
+	{
+		 visitChildNodes(option_modal_w, getValue);
+	}
+	function getValue(dom)
+	{
+		if (dom.name && typeof(dom.value) != "undefined")
+		{
+			var value = GM_getValue(dom.name);
+			if (typeof(value) != "undefined")
+			{
+				if (typeof(dom.type) != "undefined" && dom.type == "checkbox")
+					dom.checked = value;
+				else
+					dom.value = value;
+			}
+		}
+	}
+}
+
+
+resetOption(true); //重置设置
 
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
 			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
 					startProgram(ds);
 				}
-			),
+			,0),
 			/*buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
 					alert("设想中功能，暂未开发，仅占位");
 				}
-			)*/
+			,0)*/
 		]),
 		buildMenuList([
-			/*buildMenuItem("设置选项",null,buildSVG("Settings"),function(){alert("暂未开发，欢迎提供需求思路。")},null,true),*/
-			buildMenuItem("查看使用帮助",null,buildSVG("question"),null,"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",true),
-			buildMenuItem("贡献翻译",null,buildSVG("book"),null,"https://github.com/Mapaler/EhTagTranslator/wiki",true),
+			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){startOption();reloadOption();},1),
+			buildMenuItem("查看使用帮助",null,buildSVG("question"),"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",1),
+			buildMenuItem("贡献翻译",null,buildSVG("book"),"https://github.com/Mapaler/EhTagTranslator/wiki",1),
 		])
 	]);
 	
 buttonInserPlace.insertBefore(buildButton(" " + scriptName + " ", buildSVG("eh"), menu_modal),buttonInserPlace.getElementsByTagName("li")[0]);
-})();
+//})();
