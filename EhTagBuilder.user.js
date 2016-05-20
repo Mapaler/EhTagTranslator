@@ -6,12 +6,12 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.0.1
+// @version     2.0.2
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
-//(function() {
+(function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
@@ -331,6 +331,7 @@ function startProgramCheck(dataset)
 		var css = buildCSS(dataset
 			,GM_getValue("ETB_create-info","boolean")
 			,GM_getValue("ETB_create-info-image","boolean")
+			,GM_getValue("ETB_create-cname-image","boolean")
 			);
 		var downBlob = new Blob([css], {'type': 'text\/css'});
 		var downurl = window.URL.createObjectURL(downBlob);
@@ -387,10 +388,11 @@ function startProgramCheck(dataset)
 }
 
 //开始构建CSS
-function buildCSS(dataset, createInfo, createInfoImage)
+function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 {
 	if (createInfo == undefined) createInfo = true;
 	if (createInfoImage == undefined) createInfoImage = true;
+	if (createCnameImage == undefined) createCnameImage = true;
 	var date = new Date();
 	
 	var cssAry = [];
@@ -435,19 +437,19 @@ function buildCSS(dataset, createInfo, createInfoImage)
 ,"    font-size:0px;"
 ,"  }"
 ,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::before{"
-,"    content:" + getInfoString(tag.cname, createInfoImage) + ";"
+,"    content:" + getInfoString(tag.cname, createCnameImage) + ";"
 ,"  }"
 //▲CSS内容部分
 				);
 				if (createInfo)
 				{
-					var info = getInfoString(tag.info, createInfoImage);
-					if (info.replace(/\s/ig,"").length > 0)
+					var sinfo = getInfoString(tag.info, createInfoImage);
+					if (sinfo.replace(/\s/ig,"").length > 0)
 					{
 						cssAry.push(""
 //▼CSS内容部分
 ,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::after{"
-,"    content:" + getInfoString(tag.info, createInfoImage) + ";"
+,"    content:" + sinfo + ";"
 ,"  }"
 //▲CSS内容部分
 						);
@@ -725,11 +727,21 @@ function startOption()
 								return chk2;
 							})()
 							,"ETB_create-info-image",3),
+						buildMenuItem("生成中文名图片","生成中文名中的图片，一般为名称前的小图标。",
+							(function(){
+								var chk2 = document.createElement("input");
+								chk2.type = "checkbox";
+								chk2.id = "ETB_create-cname-image";
+								chk2.name = "ETB_create-cname-image";
+								chk2.className = "octicon octicon-question select-menu-item-icon ETB_create-cname-image";
+								return chk2;
+							})()
+							,"ETB_create-cname-image",3),
 						buildMenuItem("Tag通用样式",
 							(function(){
 								var div = document.createElement("div");
 								var span1 = document.createElement("span");
-								span1.innerHTML = "Tag统一应用的样式，可修改为自己喜爱的样式。"; 
+								span1.innerHTML = "Tag统一应用的样式，可修改为自己喜爱的样式。不会自己写CSS的用户可每次更新本脚本后重置一下，应用最新的通用样式。"; 
 								div.appendChild(span1);
 								var textarea = document.createElement("textarea");
 								textarea.id = "ETB_global-style";
@@ -839,6 +851,7 @@ function resetOption(part)
 	partReset("ETB_global-style",cssAry.join("\r\n"),part);
 	partReset("ETB_create-info","true",part);
 	partReset("ETB_create-info-image","true",part);
+	partReset("ETB_create-cname-image","true",part);
 	
 	reloadOption();
 }
@@ -900,7 +913,7 @@ resetOption(true); //重置设置
 
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
-			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，显示速度快，但功能有限。请使用Stylish扩展安装。",buildSVG("css"),function(){
+			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylish扩展安装。手机火狐也可使用。",buildSVG("css"),function(){
 					startProgram(ds);
 				}
 			,0),
@@ -917,4 +930,4 @@ var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersio
 	]);
 	
 buttonInserPlace.insertBefore(buildButton(" " + scriptName + " ", buildSVG("eh"), menu_modal),buttonInserPlace.getElementsByTagName("li")[0]);
-//})();
+})();
