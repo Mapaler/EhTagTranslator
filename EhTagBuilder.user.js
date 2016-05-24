@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.0.2
+// @version     2.0.3
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -431,12 +431,13 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 			var tag = row.tags[ti];
 			if (tag.type == 0)
 			{
+				var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
 				cssAry.push(""
 //▼CSS内容部分
-,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]{"
+,"  a[id=\"ta_" + tagid + "\"]{"
 ,"    font-size:0px;"
 ,"  }"
-,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::before{"
+,"  a[id=\"ta_" + tagid + "\"]::before{"
 ,"    content:" + getInfoString(tag.cname, createCnameImage) + ";"
 ,"  }"
 //▲CSS内容部分
@@ -448,7 +449,7 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 					{
 						cssAry.push(""
 //▼CSS内容部分
-,"  a[id=\"ta_" + (row.name=="misc"?"":row.name + ":") + tag.name.replace(/ /ig,"_") + "\"]::after{"
+,"  a[id=\"ta_" + tagid + "\"]::after{"
 ,"    content:" + sinfo + ";"
 ,"  }"
 //▲CSS内容部分
@@ -459,8 +460,8 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 			else
 			{ //将注释写成CSS注释
 				cssAry.push(
- "/* " + tag.cname
-," * " + tag.info
+ "/* " + getInfoString(tag.cname, false)
+," * " + getInfoString(tag.info, false)
 ," */"
 				);
 			}
@@ -834,7 +835,7 @@ function resetOption(part)
 ,"    padding:2px;"
 ,"    box-shadow: 3px 3px 5px #888;"
 ,"    min-width:150px;"
-,"    max-width:260px;"
+,"    max-width:300px;"
 ,"    white-space:pre-wrap;"
 ,"    opacity: 0;"
 ,"    transition: opacity 0.2s;"
