@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.0.3
+// @version     2.1.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -18,6 +18,8 @@ var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; /
 var windowInserPlace = document.getElementsByClassName("reponav")[0]; //窗口插入位置
 var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
 var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "本地Debug版"; //本程序的版本
+var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
+var wikiVersion = 1; //当前Wiki版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -113,6 +115,7 @@ var rowObj = function(){
 						statetxt.classList.add("page-load");
 						statetxt.innerHTML = "获取成功";
 					}
+					console.debug("正在处理 %s %s 页面",rowObj.name,rowObj.cname);
 					dealTags(response.responseText,rowObj.tags);
 				}
 			});
@@ -145,7 +148,21 @@ function dealRows(response, dataset)
 		statetxt.innerHTML = "获取成功";
 	}
 				
-	var wiki_body = PageDOM.getElementById("wiki-body");
+	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
+	var linksn = wiki_body.getElementsByTagName("a");
+	for (var ai=0;ai<linksn.length;ai++)
+	{
+		if (linksn[ai].getAttribute("href") == "ETB_wiki-version")
+		{
+			var new_wiki_version = Number(linksn[ai].textContent.replace(/\D/ig,""));
+			if (new_wiki_version > wikiVersion)
+			{
+				alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
+			}
+			break;
+		}
+	}
+	
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	rowsCount = table.rows.length;
 	for(var ri=0;ri<table.rows.length;ri++)
@@ -217,7 +234,7 @@ function getInfoString(dom, creatImage)
 				break;
 			case "#text":
 			default:
-				if ((ci==0 || ci==(dom.childNodes.length-1)) && node.textContent == "\n")
+				if ((ci==0 || ci==(dom.childNodes.length-1) || dom.childNodes.length < 2) && node.textContent == "\n")
 					break;
 				info.push(
 					"\""
@@ -248,7 +265,7 @@ function dealTags(response, dataset)
 	var parser = new DOMParser();
 	PageDOM = parser.parseFromString(response, "text/html");
 	
-	var wiki_body = PageDOM.getElementById("wiki-body");
+	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	
 	for(var ri=0;ri<table.rows.length;ri++)
@@ -261,7 +278,15 @@ function dealTags(response, dataset)
 			tag.cname = trow.cells[1];
 			tag.info = trow.cells[2];
 			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0;
+			if (tag.type == 1 && getInfoString(tag.cname,true).replace(/\s/ig,"").length < 1)
+			{
+				console.error("发现无中文名的错误行%d %s",ri,tag.name);
+			}
 			dataset.push(tag);
+		}
+		else
+		{
+			console.error("发现无3单元格的错误行%d %s",ri,tag.name);
 		}
 	}
 	rowsCurrent++;
@@ -403,26 +428,66 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ," * " + date.toString()
 ," */"
 	)
-//样式命名区间与应用范围
+//样式命名区间
 	cssAry.push(
 //▼CSS内容部分
  "@namespace url(http://www.w3.org/1999/xhtml);"
-,""
+//▲CSS内容部分
+	);
+
+//表里通用样式
+	cssAry.push(""
+//▼CSS内容部分
+,"/* 表里通用样式 */"
 ,"@-moz-document"
-,"    url-prefix('http://exhentai.org/g/'), "
+,"    url-prefix('http://exhentai.org/g/'),"
+,"    url-prefix('http://g.e-hentai.org/g/')"
+,"{"
+,GM_getValue("ETB_global-style")
+,"}"
+//▲CSS内容部分
+	);
+
+//表站样式
+	cssAry.push(""
+//▼CSS内容部分
+,"/* 表站样式 */"
+,"@-moz-document"
+,"    url-prefix('http://g.e-hentai.org/g/')"
+,"{"
+,GM_getValue("ETB_global-style-eh")
+,"}"
+//▲CSS内容部分
+	);
+
+//里站样式
+	cssAry.push(""
+//▼CSS内容部分
+,"/* 里站样式 */"
+,"@-moz-document"
+,"    url-prefix('http://exhentai.org/g/')"
+,"{"
+,GM_getValue("ETB_global-style-ex")
+,"}"
+//▲CSS内容部分
+	);
+
+//翻译内容
+	cssAry.push(""
+//▼CSS内容部分
+,"/* 翻译内容 */"
+,"@-moz-document"
+,"    url-prefix('http://exhentai.org/g/'),"
 ,"    url-prefix('http://g.e-hentai.org/g/')"
 ,"{"
 //▲CSS内容部分
 	);
-
-	//链接通用样式部分
-	cssAry.push(GM_getValue("ETB_global-style"));
-	
 	for (var ri = 0; ri < dataset.length; ri++)
 	{
 		var row = dataset[ri];
-		cssAry.push( //添加行名的注释
- "/* " + row.name
+//添加行名的注释
+		cssAry.push(""
+,"/* " + row.name
 ," * " + row.cname
 ," */"
 		);
@@ -473,7 +538,7 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 //▼CSS内容部分
  "}"
 //▲CSS内容部分
-	)
+	);
 	
 	var css = cssAry.join("\r\n");
 	return css;
@@ -673,7 +738,11 @@ function buildSVG(mode,check)
 		case "book":
 			innerHTML = '<svg width="16" viewBox="0 0 16 16" version="1.1" height="16" class="octicon octicon-book select-menu-item-icon" aria-hidden="true"><path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"/></svg>';
 			break;
-
+		
+		case "code":
+			innerHTML = '<svg width="14" viewBox="0 0 14 16" version="1.1" height="16" class="octicon octicon-code select-menu-item-icon" aria-hidden="true"><path d="M9.5 3l-1.5 1.5 3.5 3.5L8 11.5l1.5 1.5 4.5-5L9.5 3zM4.5 3L0 8l4.5 5 1.5-1.5L2.5 8l3.5-3.5L4.5 3z"/></svg>'
+			break;
+			
 		case "css":
 			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAADCUlEQVR42l3RYWjUdRzH8ffv97//7fTaOL2c6+66rNi52Q3Uyors5sYokh50I+iBGVFtoqGI+SQIKoiKkGCxedbOFqGWIJqFSiRoNKOU3DVpixZZc9PVJnO33f2v2/1/3x5s3arPw++DFx8+XyUiVFTYsiToQwGgUMpC40Epi3zeQf81y2JLg9aIVqA0f07nKBSLygMQXbGUziNPoBRo5aHSDuMp1XD1skPPB4cpnf+RrbURVtwaxgouQy+9mcffPwCAB8CyLKqX1IACZWw+O9xP/3e9xGrjrF3TzEztOvb29cGFQbY94GP18lvQSi0AGpubvGFKsy7vvPk5T7bu4OVdzWit+SciwtjYGK/v3M5qKZ/nAeWh0hvlwMcneLhpEy0tLWSzWbq7uxkaGiIQCJBMJqmrq8OyLED+Cyhl4/dGOfPlJfZ27QTg3De9nDr9IZFQDd9+MsDAFyepuDNGpTMDYsqIByA7NU3Pe58yMnyNXC4HQNOGZkZGdpDpu0hVZIZVqkSDVWBZOIhBl0toACef48LZk4QCXg4dOogxBp/PR9vzbXR1pTj2VS/JPZ0cmzHcEAGvF+ZHRESovyMsv57ukJ9O7ZGGWFTS6bSUSiX5f0ZHR+WppofkSufbEo9GRETmGogRZnN5/rg2wZpYlFTnLhKJOC9sa2ffvhTj4+MAhEIhIivrsW27XGAOEEMp5/BSx1Hyvhpui8LB1M+8+FwP35/bzdObN2OMAWB0appnUvu5Ojm1MKIYwRSKuAbS6TSZTIaO/R8xOXGJQrGKtvZ2lFI4jsPwxA3u3rSdH959YwEAMMYFBNd1SSQSNDY24rouSim01jiOwyuvvkZs/SPc0/woR9Md/wYEZVlseew+khtbWHv/elbdFae6ejnGGAYGB/n6/EXWtT7LhoYGqjym/MY5QGksv58H743Tf+U6ppghvnKW4eEsx4//Qtaqp3X3Wyxa5KXSI/i0IPOCEhEW+7xye7gagMlsDm0rgkE/CmHiep6i68UfCKKVoJVCI/z+22UKjqP+BndsSOE7UsTgAAAAAElFTkSuQmCC"/>';
 			break;
@@ -710,79 +779,106 @@ function startOption()
 					buildMenuList([
 						buildMenuItem("生成简介","生成光标移动到Tag上时出现的简介。",
 							(function(){
-								var chk1 = document.createElement("input");
-								chk1.type = "checkbox";
-								chk1.id = "ETB_create-info";
-								chk1.name = "ETB_create-info";
-								chk1.className = "octicon octicon-question select-menu-item-icon ETB_create-info";
-								return chk1;
+								var chk = document.createElement("input");
+								chk.type = "checkbox";
+								chk.id = "ETB_create-info";
+								chk.name = chk.id;
+								chk.className = "octicon octicon-question select-menu-item-icon " + chk.id;
+								return chk;
 							})()
 							,"ETB_create-info",3),
 						buildMenuItem("生成简介图片","生成简介中的图片。",
 							(function(){
-								var chk2 = document.createElement("input");
-								chk2.type = "checkbox";
-								chk2.id = "ETB_create-info-image";
-								chk2.name = "ETB_create-info-image";
-								chk2.className = "octicon octicon-question select-menu-item-icon ETB_create-info-image";
-								return chk2;
+								var chk = document.createElement("input");
+								chk.type = "checkbox";
+								chk.id = "ETB_create-info-image";
+								chk.name = chk.id;
+								chk.className = "octicon octicon-question select-menu-item-icon " + chk.id;
+								return chk;
 							})()
 							,"ETB_create-info-image",3),
 						buildMenuItem("生成中文名图片","生成中文名中的图片，一般为名称前的小图标。",
 							(function(){
-								var chk2 = document.createElement("input");
-								chk2.type = "checkbox";
-								chk2.id = "ETB_create-cname-image";
-								chk2.name = "ETB_create-cname-image";
-								chk2.className = "octicon octicon-question select-menu-item-icon ETB_create-cname-image";
-								return chk2;
+								var chk = document.createElement("input");
+								chk.type = "checkbox";
+								chk.id = "ETB_create-cname-image";
+								chk.name = chk.id;
+								chk.className = "octicon octicon-question select-menu-item-icon " + chk.id;
+								return chk;
 							})()
 							,"ETB_create-cname-image",3),
 						buildMenuItem("Tag通用样式",
 							(function(){
 								var div = document.createElement("div");
-								var span1 = document.createElement("span");
-								span1.innerHTML = "Tag统一应用的样式，可修改为自己喜爱的样式。不会自己写CSS的用户可每次更新本脚本后重置一下，应用最新的通用样式。"; 
+								var span1 = document.createElement("div");
+								span1.innerHTML = "Tag统一应用的样式，可修改为自己喜爱的样式。"; 
 								div.appendChild(span1);
+								//表里共用
 								var textarea = document.createElement("textarea");
 								textarea.id = "ETB_global-style";
-								textarea.name = "ETB_global-style";
-								textarea.className = "txta ETB_global-style";
-								textarea.value = GM_getValue("ETB_global-style")?GM_getValue("ETB_global-style"):"";
+								textarea.name = textarea.id;
+								textarea.className = "txta " + textarea.id;
 								textarea.wrap = "off";
+								var label = document.createElement("label");
+								label.setAttribute('for', textarea.id);
+								label.innerHTML = "表里共用样式";
+								div.appendChild(label);
+								div.appendChild(textarea);
+								//表站
+								var textarea = document.createElement("textarea");
+								textarea.id = "ETB_global-style-eh";
+								textarea.name = textarea.id;
+								textarea.className = "txta " + textarea.id;
+								textarea.wrap = "off";
+								var label = document.createElement("label");
+								label.setAttribute('for', textarea.id);
+								label.innerHTML = "表站样式";
+								div.appendChild(label);
+								div.appendChild(textarea);
+								//里站
+								var textarea = document.createElement("textarea");
+								textarea.id = "ETB_global-style-ex";
+								textarea.name = textarea.id;
+								textarea.className = "txta " + textarea.id;
+								textarea.wrap = "off";
+								var label = document.createElement("label");
+								label.setAttribute('for', textarea.id);
+								label.innerHTML = "里站样式";
+								div.appendChild(label);
 								div.appendChild(textarea);
 								return div;
 							})()
-							,null,"ETB_global-style",3),
+							,buildSVG("css")),
 					]),
 					buildMenuList([
+						buildMenuItem("其他用户分享的通用样式",null,buildSVG("code"),"https://github.com/Mapaler/EhTagTranslator/labels/%E6%A0%B7%E5%BC%8F%E5%88%86%E4%BA%AB",1),
 						buildMenuItem(
 							(function(){
 								var div = document.createElement("div");
-								var btn1 = document.createElement("button");
-								btn1.innerHTML = "重置";
-								btn1.id = "ETB_reset-option";
-								btn1.name = "ETB_reset-option";
-								btn1.className = "btn btn-sm btn-danger ETB_reset-option";
-								btn1.onclick = function(){
+								var btn = document.createElement("button");
+								btn.innerHTML = "重置";
+								btn.id = "ETB_reset-option";
+								btn.name = btn.id;
+								btn.className = "btn btn-sm btn-danger " + btn.id;
+								btn.onclick = function(){
 									resetOption();
 								}
-								div.appendChild(btn1);
+								div.appendChild(btn);
 								/*
 								var btn2 = document.createElement("button");
 								btn2.innerHTML = "取消";
 								btn2.className = "btn btn-sm";
 								div.appendChild(btn2);
 								*/
-								var btn3 = document.createElement("button");
-								btn3.innerHTML = "保存";
-								btn3.id = "ETB_save-option";
-								btn3.name = "ETB_save-option";
-								btn3.className = "btn btn-sm btn-primary ETB_save-option";
-								btn3.onclick = function(){
+								var btn = document.createElement("button");
+								btn.innerHTML = "保存";
+								btn.id = "ETB_save-option";
+								btn.name = btn.id;
+								btn.className = "btn btn-sm btn-primary " +　btn.id;
+								btn.onclick = function(){
 									saveOption();
 								}
-								div.appendChild(btn3);
+								div.appendChild(btn);
 								return div;
 							})()
 							,null,null,null,1),
@@ -795,7 +891,7 @@ function startOption()
 					".ETB_option .txta" + "{\r\n" + [
 						'resize: vertical',
 						'width: 100%',
-						'height: 150px',
+						'height: 100px',
 					].join(';\r\n') + "\r\n}",
 					".ETB_option .ETB_save-option" + "{\r\n" + [
 						'float: right',
@@ -818,17 +914,24 @@ function resetOption(part)
 			GM_setValue(name, value);
 	}
 	var cssAry = [];
+	var cssAry_eh = [];
+	var cssAry_ex = [];
 	cssAry.push(
 //▼CSS内容部分
- "  #taglist a::before{"
+ "  #taglist a{"
+,"    background:inherit;"
+,"    border-color: inherit;"
+,"  }"
+,"  #taglist a::before{"
 ,"    font-size:12px;"
 ,"  }"
 ,"  #taglist a::after{"
-,"    color:#fff;"
-,"    font-size:12pt;"
-,"    background: #666;"
-,"    border: 1px solid #fff;"
+,"    background: inherit;"
+,"    border-style: solid;"
+,"    border-width: 1px;"
+,"    border-color: inherit;"
 ,"    border-radius:5px;"
+,"    font-size:12pt;"
 ,"    float:left;"
 ,"    position:fixed;"
 ,"    z-index:999;"
@@ -849,10 +952,29 @@ function resetOption(part)
 ,"  }"
 //▲CSS内容部分
 	);
-	partReset("ETB_global-style",cssAry.join("\r\n"),part);
+	cssAry_eh.push(
+//▼CSS内容部分
+ "  #taglist a::after{"
+,"    color:#5c0d11;"
+,"  }"
+//▲CSS内容部分
+	);
+	cssAry_ex.push(
+//▼CSS内容部分
+ "  #taglist a::after{"
+,"    color:#dddddd;"
+,"  }"
+//▲CSS内容部分
+	);
+	
+	partReset("ETB_option-version",optionVersion,part);
+	
 	partReset("ETB_create-info","true",part);
 	partReset("ETB_create-info-image","true",part);
 	partReset("ETB_create-cname-image","true",part);
+	partReset("ETB_global-style",cssAry.join("\r\n"),part);
+	partReset("ETB_global-style-eh",cssAry_eh.join("\r\n"),part);
+	partReset("ETB_global-style-ex",cssAry_ex.join("\r\n"),part);
 	
 	reloadOption();
 }
@@ -910,7 +1032,19 @@ function reloadOption()
 }
 
 
-resetOption(true); //重置设置
+/*
+ * 开始实际执行的程序
+ */
+
+if (!GM_getValue("ETB_option-version"))
+{
+	resetOption(false); //新用户重置设置
+}
+else if (GM_getValue("ETB_option-version", "number") < optionVersion)
+{ //老用户提醒更改设置
+	alert(scriptName + " 本次程序版本更新改变了设置结构，建议先重置设置否则可能会导致无法正常使用。");
+	resetOption(true);
+}
 
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
