@@ -6,7 +6,7 @@
 // @description:zh-CN	自动将E绅士大缩略图域名改为手机站域名，并可以一键复制各站点格式的缩略图。
 // @include     http://exhentai.org/g/*
 // @include     http://g.e-hentai.org/g/*
-// @version     1.0.0
+// @version     1.1.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -17,6 +17,41 @@ if(typeof(GM_setClipboard) == "undefined")
 		alert(str);
 		console.debug("使用GM_setClipboard，值为",str);
 	}
+}
+
+//发送网页通知
+function spawnNotification(theBody, theIcon, theTitle)
+{
+	var options = {
+		body: theBody,
+		icon: theIcon
+	}
+	if (!("Notification" in window))
+	{
+		alert(theBody);
+	}
+	else if (Notification.permission === "granted") {
+		Notification.requestPermission(function (permission) {
+		// If the user is okay, let's create a notification
+		var n = new Notification(theTitle, options);
+		});
+	}
+	// Otherwise, we need to ask the user for permission
+	else if (Notification.permission !== 'denied') {
+		Notification.requestPermission(function (permission) {
+		// If the user is okay, let's create a notification
+		if (permission === "granted") {
+			var n = new Notification(theTitle, options);
+		}
+		});
+	}
+}
+
+//复制同时发送消息
+function setClipboardWithNotification(str)
+{
+	GM_setClipboard(str);
+	spawnNotification(str,str,"已复制到剪贴板");
 }
 
 var thumbnailPattern = "https?://(\\d+\\.\\d+\\.\\d+\\.\\d+|ul\\.ehgt\\.org|ehgt\\.org/t|exhentai\\.org/t)/(\\w+)/(\\w+)/(\\w+)\-(\\d+)\-(\\d+)\-(\\d+)\-(\\w+)_(l|250).jpg"; //缩略图地址正则匹配式
@@ -104,7 +139,7 @@ var gdtlObj = function(){
 				var btn = document.createElement("button");
 				btn.className = "EWHT-btn";
 				btn.innerHTML = text;
-				btn.onclick = function(){GM_setClipboard(href)}
+				btn.onclick = function(){setClipboardWithNotification(href)}
 				li.appendChild(btn);
 				return li
 			}
