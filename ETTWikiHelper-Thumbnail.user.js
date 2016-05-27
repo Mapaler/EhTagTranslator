@@ -4,9 +4,12 @@
 // @namespace   http://www.mapaler.com/
 // @description Help to get thumbnail for write EhTagTranslator's wiki info.
 // @description:zh-CN	自动将E绅士大缩略图域名改为手机站域名，并可以一键复制各站点格式的缩略图。
-// @include     http://exhentai.org/g/*
-// @include     http://g.e-hentai.org/g/*
-// @version     1.1.0
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/$/
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/g/\d+/\w+/.*$/
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(index\.php)?\?.*$/
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
+// @version     1.5.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 
@@ -47,13 +50,6 @@ function spawnNotification(theBody, theIcon, theTitle)
 	}
 }
 
-//复制同时发送消息
-function setClipboardWithNotification(str)
-{
-	GM_setClipboard(str);
-	spawnNotification(str,str,"已复制到剪贴板");
-}
-
 var thumbnailPattern = "https?://(\\d+\\.\\d+\\.\\d+\\.\\d+|ul\\.ehgt\\.org|ehgt\\.org/t|exhentai\\.org/t)/(\\w+)/(\\w+)/(\\w+)\-(\\d+)\-(\\d+)\-(\\d+)\-(\\w+)_(l|250).jpg"; //缩略图地址正则匹配式
 var gdtlObj = function(){
 	var obj = {
@@ -73,18 +69,6 @@ var gdtlObj = function(){
 			else this.dom = dom;
 			var img = dom.getElementsByTagName("img")[0];
 			var addsrc = this.addImgFromSrc(img.src);
-			//img.src = img.src.replace(/http:\/\/\d+\.\d+\.\d+\.\d+\//ig,"http://ul.ehgt.org/");
-			img.src = this.getSrc("手");
-			
-			function creat_li(text,href){
-				var li = document.createElement("li");
-				li.className = "EWHT-li";
-				var btn = document.createElement("button");
-				btn.className = "EWHT-btn";
-				btn.innerHTML = text;
-				li.appendChild(btn);
-				return li
-			}
 
 			if (addsrc)
 				return true;
@@ -106,6 +90,13 @@ var gdtlObj = function(){
 			this.extension = regResult[8];
 			this.size = regResult[9];
 			return true;
+		},
+		replaceImgSrcFrom_gdtlDom: function(dom,type)
+		{
+			if (dom == undefined) dom = this.dom;
+			else this.dom = dom;
+			var img = dom.getElementsByTagName("img")[0];
+			img.src = this.getSrc(type);
 		},
 		getSrc: function(type)
 		{
@@ -139,7 +130,10 @@ var gdtlObj = function(){
 				var btn = document.createElement("button");
 				btn.className = "EWHT-btn";
 				btn.innerHTML = text;
-				btn.onclick = function(){setClipboardWithNotification(href)}
+				btn.onclick = function(){
+					GM_setClipboard(href);
+					spawnNotification(href,href,"已复制到剪贴板 - " +　text);
+				}
 				li.appendChild(btn);
 				return li
 			}
@@ -155,46 +149,104 @@ var gdtlObj = function(){
 	return obj;
 }
 
+
 var gdt = document.getElementById("gdt");
-var style = document.createElement("style");
-style.type = "text/css";
-var styleTxt = [
-	[".gdtl","{"
-	,[
-		,"position:relative"
-	].join(';\r\n '),"}"].join('\r\n'),
-	[".EWHT-ul","{"
-	,[
-		,"position:absolute"
-		,"top:0px"
-		,"right:0px"
-		,"list-style:none"
-		,"padding:0px"
-		,"margin:0px"
-	].join(';\r\n '),"}"].join('\r\n'),
-	[".EWHT-ul .EWHT-btn","{"
-	,[
-		,"padding:0px"
-		,"font-size:12px"
-		,"width:18px"
-	].join(';\r\n '),"}"].join('\r\n'),
-].join('\r\n');
-style.innerHTML = styleTxt;
-
-gdt.insertBefore(style,gdt.firstChild);
-
-var gdtls = gdt.getElementsByClassName("gdtl");
-if (gdtls.length>0)
+var itg = document.getElementsByClassName("itg")[0];
+if (gdt) //画廊
 {
-	for (var gdi = 0; gdi < gdtls.length ; gdi++)
+	var style = document.createElement("style");
+	style.type = "text/css";
+	var styleTxt = [
+		[".gdtl","{"
+		,[
+			,"position:relative"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul","{"
+		,[
+			,"position:absolute"
+			,"top:0px"
+			,"right:0px"
+			,"list-style:none"
+			,"padding:0px"
+			,"margin:0px"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul .EWHT-btn","{"
+		,[
+			,"padding:0px"
+			,"font-size:12px"
+			,"width:18px"
+		].join(';\r\n '),"}"].join('\r\n'),
+	].join('\r\n');
+	style.innerHTML = styleTxt;
+
+	gdt.insertBefore(style,gdt.firstChild);
+
+	var gdtls = gdt.getElementsByClassName("gdtl");
+	if (gdtls.length>0)
 	{
-		var gdtl_this = new gdtlObj;
-		var addRes = gdtl_this.addImgFrom_gdtlDom(gdtls[gdi]);
-		if (addRes) gdtl_this.addBtnList(gdtls[gdi]);
-		else console.debug("没有添加按钮");
+		for (var gdi = 0; gdi < gdtls.length ; gdi++)
+		{
+			var gdtl_this = new gdtlObj;
+			var addRes = gdtl_this.addImgFrom_gdtlDom(gdtls[gdi]);
+			if (addRes) {
+				gdtl_this.addBtnList(gdtls[gdi]);
+				gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"手");
+			}
+			else console.debug("添加网址失败");
+		}
+	}
+	else
+	{
+		console.debug("小图模式，本脚本不起作用。");
 	}
 }
-else
+else if (itg) //搜索列表
 {
-	console.debug("小图模式，本脚本不起作用。");
+	var style = document.createElement("style");
+	style.type = "text/css";
+	var styleTxt = [
+		[".id1","{"
+		,[
+			,"position:relative"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul","{"
+		,[
+			,"position:absolute"
+			,"top:30px"
+			,"right:0px"
+			,"list-style:none"
+			,"padding:0px"
+			,"margin:0px"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul .EWHT-btn","{"
+		,[
+			,"padding:0px"
+			,"font-size:12px"
+			,"width:18px"
+		].join(';\r\n '),"}"].join('\r\n'),
+	].join('\r\n');
+	style.innerHTML = styleTxt;
+
+	itg.insertBefore(style,itg.firstChild);
+
+	var id1s = itg.getElementsByClassName("id1");
+	if (id1s.length>0)
+	{
+		for (var id1i = 0; id1i < id1s.length ; id1i++)
+		{
+			var id3s = id1s[id1i].getElementsByClassName("id3")[0];
+			var id3_this = new gdtlObj;
+			var addRes = id3_this.addImgFrom_gdtlDom(id3s);
+			if (addRes) id3_this.addBtnList(id1s[id1i]);
+			else console.debug("添加网址失败");
+		}
+	}
+	else
+	{
+		console.debug("找不到图象列表。");
+	}
+}
+else //都不是
+{
+	console.debug("本脚本在该页面上不运行");
 }
