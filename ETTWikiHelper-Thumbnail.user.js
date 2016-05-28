@@ -9,10 +9,10 @@
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(index\.php)?\?.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
-// @version     1.5.0
+// @version     1.6.0
 // @grant       GM_setClipboard
 // ==/UserScript==
-
+				
 //没有扩展时的debug
 if(typeof(GM_setClipboard) == "undefined")
 {
@@ -130,10 +130,18 @@ var gdtlObj = function(){
 				var btn = document.createElement("button");
 				btn.className = "EWHT-btn";
 				btn.innerHTML = text;
-				btn.onclick = function(){
-					GM_setClipboard(href);
-					spawnNotification(href,href,"已复制到剪贴板 - " +　text);
+				btn.onclick = function(event){
+					var pressCtrl = false;
+					var e = event || window.event || arguments.callee.caller.arguments[0];
+					if(e && e.ctrlKey){ // 有按下 Ctrl 
+						pressCtrl = true;
+					}
+					
+					var str = pressCtrl?"![图](" + href + ")":href
+					GM_setClipboard(str);
+					spawnNotification(str,href,"已复制到剪贴板 - " +　text);
 				}
+				
 				li.appendChild(btn);
 				return li
 			}
