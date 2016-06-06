@@ -9,7 +9,8 @@
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(index\.php)?\?.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
-// @version     1.7.0
+// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/s/\w+/\d+-\d+.*$/
+// @version     1.8.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 				
@@ -54,6 +55,7 @@ var thumbnailPattern = "https?://(\\d+\\.\\d+\\.\\d+\\.\\d+|ul\\.ehgt\\.org|ehgt
 var gdtlObj = function(){
 	var obj = {
 		dom:"",
+		fullsrc:"",
 		domain:"",
 		path1:"",
 		path2:"",
@@ -78,17 +80,21 @@ var gdtlObj = function(){
 		addImgFromSrc: function(src)
 		{
 			if (src == undefined) return false;
+			this.fullsrc = src;
 			var regSrc = new RegExp(thumbnailPattern, "ig");
 			var regResult = regSrc.exec(src);
-			this.domain = regResult[1];
-			this.path1 = regResult[2];
-			this.path2 = regResult[3];
-			this.hash1 = regResult[4];
-			this.hash2 = regResult[5];
-			this.width = regResult[6];
-			this.height = regResult[7];
-			this.extension = regResult[8];
-			this.size = regResult[9];
+			if (regResult)
+			{
+				this.domain = regResult[1];
+				this.path1 = regResult[2];
+				this.path2 = regResult[3];
+				this.hash1 = regResult[4];
+				this.hash2 = regResult[5];
+				this.width = regResult[6];
+				this.height = regResult[7];
+				this.extension = regResult[8];
+				this.size = regResult[9];
+			}
 			return true;
 		},
 		replaceImgSrcFrom_gdtlDom: function(dom,type)
@@ -100,30 +106,36 @@ var gdtlObj = function(){
 		},
 		getSrc: function(type)
 		{
-			var srcA = [];
-			srcA.push("http://");
-			switch (type)
+			var resrc = "";
+			if (type == 0 || type == "y" || type == "原")
 			{
-				case 0:case "y":case "原":
-					srcA.push(this.domain);
-					break;
-				case 1:case "s":case "手": 
-					srcA.push("ul.ehgt.org");
-					break;
-				case 2:case "b":case "表": 
-					srcA.push("ehgt.org/t");
-					break;
-				case 3:case "l":case "里":
-				default:
-					srcA.push("exhentai.org/t");
-					break;
+				resrc = this.fullsrc;
+			}else
+			{
+				var srcA = [];
+				srcA.push("http://");
+				switch (type)
+				{
+					case 1:case "s":case "手": 
+						srcA.push("ul.ehgt.org");
+						break;
+					case 2:case "b":case "表": 
+						srcA.push("ehgt.org/t");
+						break;
+					case 3:case "l":case "里":
+					default:
+						srcA.push("exhentai.org/t");
+						break;
+				}
+				srcA.push("/",this.path1,"/",this.path2,"/",this.hash1,"-",this.hash2,"-",this.width,"-",this.height,"-",this.extension,"_",this.size,".jpg");
+				resrc = srcA.join("");
 			}
-			srcA.push("/",this.path1,"/",this.path2,"/",this.hash1,"-",this.hash2,"-",this.width,"-",this.height,"-",this.extension,"_",this.size,".jpg")
-			return srcA.join("");
+			return resrc;
 		},
-		addBtnList: function(dom)
+		addBtnList: function(dom,type)
 		{
 			if (dom == undefined) dom = this.dom;
+			if (type == undefined) type = 0;
 			function creat_li(text,href){
 				var li = document.createElement("li");
 				li.className = "EWHT-li";
@@ -164,13 +176,21 @@ var gdtlObj = function(){
 				li.appendChild(btn);
 				return li
 			}
-			var ul = document.createElement("ul");
-			ul.className = "EWHT-ul";
-			ul.appendChild(creat_li("里",this.getSrc("里")));
-			ul.appendChild(creat_li("表",this.getSrc("表")));
-			ul.appendChild(creat_li("手",this.getSrc("手")));
-			dom.appendChild(ul);
-
+			if (type == 0)
+			{
+				var ul = document.createElement("ul");
+				ul.className = "EWHT-ul";
+				ul.appendChild(creat_li("里",this.getSrc("里")));
+				ul.appendChild(creat_li("表",this.getSrc("表")));
+				ul.appendChild(creat_li("手",this.getSrc("手")));
+				dom.appendChild(ul);
+			}else if (type == 1)
+			{
+				var ul = document.createElement("ul");
+				ul.className = "EWHT-ul";
+				ul.appendChild(creat_li("原",this.getSrc("原")));
+				dom.appendChild(ul);
+			}
 		},
 	}
 	return obj;
@@ -179,6 +199,7 @@ var gdtlObj = function(){
 
 var gdt = document.getElementById("gdt");
 var itg = document.getElementsByClassName("itg")[0];
+var i3 = document.getElementById("i3");
 if (gdt) //画廊
 {
 	var style = document.createElement("style");
@@ -216,8 +237,8 @@ if (gdt) //画廊
 			var gdtl_this = new gdtlObj;
 			var addRes = gdtl_this.addImgFrom_gdtlDom(gdtls[gdi]);
 			if (addRes) {
-				gdtl_this.addBtnList(gdtls[gdi]);
-				gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"手");
+				gdtl_this.addBtnList(gdtls[gdi],0);
+				gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"里"); //替换默认的缩略图
 			}
 			else console.debug("添加网址失败");
 		}
@@ -264,7 +285,7 @@ else if (itg) //搜索列表
 			var id3s = id1s[id1i].getElementsByClassName("id3")[0];
 			var id3_this = new gdtlObj;
 			var addRes = id3_this.addImgFrom_gdtlDom(id3s);
-			if (addRes) id3_this.addBtnList(id1s[id1i]);
+			if (addRes) id3_this.addBtnList(id1s[id1i],0);
 			else console.debug("添加网址失败");
 		}
 	}
@@ -272,6 +293,39 @@ else if (itg) //搜索列表
 	{
 		console.debug("找不到图象列表。");
 	}
+}
+else if (i3) //搜索列表
+{
+	var style = document.createElement("style");
+	style.type = "text/css";
+	var styleTxt = [
+		["#i3","{"
+		,[
+			,"position:relative"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul","{"
+		,[
+			,"position:absolute"
+			,"top:-30px"
+			,"right:0px"
+			,"list-style:none"
+			,"padding:0px"
+			,"margin:0px"
+		].join(';\r\n '),"}"].join('\r\n'),
+		[".EWHT-ul .EWHT-btn","{"
+		,[
+			,"padding:0px"
+			,"font-size:12px"
+			,"width:18px"
+		].join(';\r\n '),"}"].join('\r\n'),
+	].join('\r\n');
+	style.innerHTML = styleTxt;
+
+	i3.insertBefore(style,i3.firstChild);
+	var i3_this = new gdtlObj;
+	var addRes = i3_this.addImgFrom_gdtlDom(i3);
+	if (addRes) i3_this.addBtnList(i3,1);
+	else console.debug("添加网址失败");
 }
 else //都不是
 {
