@@ -9,7 +9,7 @@
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(index\.php)?\?.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
-// @version     1.6.0
+// @version     1.7.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 				
@@ -132,12 +132,31 @@ var gdtlObj = function(){
 				btn.innerHTML = text;
 				btn.onclick = function(event){
 					var pressCtrl = false;
+					var pressAlt = false;
+					var pressShift = false;
 					var e = event || window.event || arguments.callee.caller.arguments[0];
+					console.log(e);
+					//ctrlKey
 					if(e && e.ctrlKey){ // 有按下 Ctrl 
 						pressCtrl = true;
 					}
+					//shiftKey
+					if(e && e.shiftKey){ // 有按下 Ctrl 
+						pressShift = true;
+					}
+					//altKey
+					if(e && e.altKey){ // 有按下 Ctrl 
+						pressAlt = true;
+					}
 					
-					var str = pressCtrl?"![图](" + href + ")":href
+					var str = href;
+					if (pressCtrl && !pressShift && !pressAlt) //只按Ctrl
+					{
+						str = "![图](" + href + ")";
+					}else if (!pressCtrl && !pressShift && pressAlt) //只按Alt
+					{
+						str = "![图](# \"" + href + "\")";
+					}
 					GM_setClipboard(str);
 					spawnNotification(str,href,"已复制到剪贴板 - " +　text);
 				}

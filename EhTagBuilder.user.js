@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.1.0
+// @version     2.2.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -19,7 +19,7 @@ var windowInserPlace = document.getElementsByClassName("reponav")[0]; //窗口�
 var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
 var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "本地Debug版"; //本程序的版本
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
-var wikiVersion = 1; //当前Wiki版本，用于提醒是否需要更新脚本
+var wikiVersion = 2; //当前Wiki版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -225,11 +225,36 @@ function getInfoString(dom, creatImage)
 			case "IMG":
 				if (creatImage)
 				{
-					info.push(
-						"url(\""
-						,node.getAttribute("data-canonical-src")
-						,"\")"
-					);
+					var osrc = node.getAttribute("data-canonical-src");
+					if (osrc)
+					{
+						if (osrc.indexOf("?")>0) //动态链接
+						{
+							var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
+							if(osrct.substr(osrct.length-1,1)=="h")
+							{
+								osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
+							}
+						}else //静态链接
+						{
+							if(osrc.substr(osrc.length-1,1)=="h")
+							{
+								osrc = osrc.substring(0,osrc.length-1);
+							}
+						}
+						info.push(
+							"url(\""
+							,osrc
+							,"\")"
+						);
+					}else if(node.title) //链接写在title
+					{
+						info.push(
+							"url(\""
+							,node.title
+							,"\")"
+						);
+					}
 				}
 				break;
 			case "#text":
