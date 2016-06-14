@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.2.1
+// @version     2.5.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -17,7 +17,7 @@ var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.getElementsByClassName("pagehead-actions")[0]; //按钮插入位置
 var windowInserPlace = document.getElementsByClassName("reponav")[0]; //窗口插入位置
 var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
-var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "本地Debug版"; //本程序的版本
+var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version : "LocalDebug"; //本程序的版本
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
 var wikiVersion = 2; //当前Wiki版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
@@ -83,15 +83,13 @@ if(typeof(GM_listValues) == "undefined")
 {
 	var GM_listValues = function(){
 		var keys = [];
-		for (var ki = 0,len= localStorage.length; ki <len; ki++)
+		for (var ki=0, kilen=localStorage.length; ki<kilen; ki++)
 		{
 			keys.push(localStorage.key(ki));
 		}
 		return keys;
 	}
 }
-
-
 
 
 var ds = [];
@@ -150,7 +148,7 @@ function dealRows(response, dataset)
 				
 	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
 	var linksn = wiki_body.getElementsByTagName("a");
-	for (var ai=0, len=linksn.length; ai<len; ai++)
+	for (var ai=0, ailen=linksn.length; ai<ailen; ai++)
 	{
 		if (linksn[ai].getAttribute("href") == "ETB_wiki-version")
 		{
@@ -165,7 +163,7 @@ function dealRows(response, dataset)
 	
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	rowsCount = table.rows.length;
-	for(var ri=0, len=table.rows.length; ri<table.rows.length; ri++)
+	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
 	{
 		var trow = table.rows[ri];
 		var row = new rowObj;
@@ -204,7 +202,7 @@ function getInfoString(dom, creatImage)
 	var info = [];
 	if (dom.childNodes != undefined)
 	{
-		for (var ci=0, len=dom.childNodes.length; ci<len; ci++)
+		for (var ci=0, cilen=dom.childNodes.length; ci<cilen; ci++)
 		{
 			var node = dom.childNodes[ci];
 			info = info.concat(getDomInfoString(node, creatImage))
@@ -293,7 +291,7 @@ function dealTags(response, dataset)
 	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	
-	for(var ri=0, len=table.rows.length; ri<len; ri++)
+	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
 	{
 		var trow = table.rows[ri];
 		var tag = new tagObj;
@@ -318,9 +316,9 @@ function dealTags(response, dataset)
 }
 
 //点击开始任务按钮
-function startProgram(dataset){
-	var downOver = startProgramCheck(dataset);
-	if (downOverCheckHook == undefined || !downOver)
+function startProgram(dataset, mode){
+	var downOver = startProgramCheck(dataset, mode);
+	if (!downOver || downOverCheckHook == undefined)
 	{
 		GM_xmlhttpRequest({
 			method: "GET",
@@ -329,99 +327,70 @@ function startProgram(dataset){
 				dealRows(response.responseText,dataset);
 			}
 		});
-		downOverCheckHook = setInterval(function () { startProgramCheck(dataset) }, 200);
+		downOverCheckHook = setInterval(function () { startProgramCheck(dataset, mode) }, 200);
 	}
 	if (!downOver)
 	{
-		var page_get_w = document.getElementById("ETB_page-get");
-		if (!page_get_w)
-		{
-			windowInserPlace.appendChild(buildMenuModal("window", "ETB_page-get", "数据获取进度", null, [
-				buildMenuList([
-					buildMenuItem((function()    
-						{
-							var div = document.createElement("div");
-							var span1 = document.createElement("span");
-							span1.className = "page-title"; 
-							span1.innerHTML = "列表页面"; 
-							div.appendChild(span1);
-							var span2 = document.createElement("span");
-							span2.className = "page-get-rows";
-							span2.innerHTML = "等待"; 
-							div.appendChild(span2);
-							return div;
-						})()
-					)
-				])
-			],
-			[
-				".ETB_page-get .page-title" + "{\r\n" + [
-					'font-weight: bold',
-					'margin-right: 15px',
-				].join(';\r\n') + "\r\n}",
-				".ETB_page-get .page-load" + "{\r\n" + [
-					'color: #0A0',
-				].join(';\r\n') + "\r\n}",
-			].join('\r\n')
-			));
-		}
-		else
-		{
-			page_get_w.style.display = "block";
-		}
+		buildDownloadProgress();
 	}
 }
+
+//创建下载进度窗口
+function buildDownloadProgress()
+{
+	var page_get_w = document.getElementById("ETB_page-get");
+	if (!page_get_w)
+	{
+		windowInserPlace.appendChild(buildMenuModal("window", "ETB_page-get", "数据获取进度", null, [
+			buildMenuList([
+				buildMenuItem((function()    
+					{
+						var div = document.createElement("div");
+						var span1 = document.createElement("span");
+						span1.className = "page-title"; 
+						span1.innerHTML = "列表页面"; 
+						div.appendChild(span1);
+						var span2 = document.createElement("span");
+						span2.className = "page-get-rows";
+						span2.innerHTML = "等待"; 
+						div.appendChild(span2);
+						return div;
+					})()
+				)
+			])
+		],
+		[
+			".ETB_page-get .page-title" + "{\r\n" + [
+				'font-weight: bold',
+				'margin-right: 15px',
+			].join(';\r\n') + "\r\n}",
+			".ETB_page-get .page-load" + "{\r\n" + [
+				'color: #0A0',
+			].join(';\r\n') + "\r\n}",
+		].join('\r\n')
+		));
+	}
+	else
+	{
+		page_get_w.style.display = "block";
+	}
+}
+
 //检测下载完成情况
-function startProgramCheck(dataset)
+function startProgramCheck(dataset, mode)
 {
 	if (rowsCount > 0 && rowsCurrent >= rowsCount)
 	{
 		console.debug("获取完成");
 		clearInterval(downOverCheckHook);
-		var css = buildCSS(dataset
-			,GM_getValue("ETB_create-info","boolean")
-			,GM_getValue("ETB_create-info-image","boolean")
-			,GM_getValue("ETB_create-cname-image","boolean")
-			);
-		var downBlob = new Blob([css], {'type': 'text\/css'});
-		var downurl = window.URL.createObjectURL(downBlob);
-		
-		var css_output_w = document.getElementById("ETB_css-output");
-		if (!css_output_w)
-		{
-			windowInserPlace.appendChild(buildMenuModal("window", "ETB_css-output", "用户样式版EhTagTranslator", null,
-				[
-					buildMenuList([
-						buildMenuItem("CSS文本",
-							(function()    
-							{
-								var textarea = document.createElement("textarea");
-								textarea.id = "ETB_css-textarea";
-								textarea.name = textarea.id;
-								textarea.className = "txta " + textarea.id;
-								textarea.value = css;
-								textarea.wrap = "off";
-								textarea.setAttribute("readonly",true);
-								return textarea;
-							})()
-							,buildSVG("css")),
-						buildMenuItem("直接下载CSS文件",null,buildSVG("download"),downurl,1)
-					])
-				],
-				[
-					".ETB_css-output .txta" + "{\r\n" + [
-						'resize: vertical',
-						'width:100%',
-						'height:300px',
-					].join(';\r\n') + "\r\n}",
-				].join('\r\n')
-			));
-		}
-		else
-		{
-			css_output_w.style.display = "block";
-			css_output_w.getElementsByClassName("ETB_css-textarea")[0].value = css;
-			css_output_w.getElementsByTagName("a")[0].href = downurl;
+		switch (mode) {
+			case 1:
+				buildJSOutput(dataset);
+				break;
+			case 0:
+			default:
+				buildCSSOutput(dataset);
+				break;
 		}
 		var page_get_w = document.getElementById("ETB_page-get");
 		if (page_get_w)
@@ -437,8 +406,58 @@ function startProgramCheck(dataset)
 	}
 }
 
+//获取完成后创建CSS输出窗口
+function buildCSSOutput(dataset)
+{
+	var css = createOutputCSS(dataset
+		,GM_getValue("ETB_create-info","boolean")
+		,GM_getValue("ETB_create-info-image","boolean")
+		,GM_getValue("ETB_create-cname-image","boolean")
+		);
+	var downBlob = new Blob([css], {'type': 'text\/css'});
+	var downurl = window.URL.createObjectURL(downBlob);
+	
+	var css_output_w = document.getElementById("ETB_css-output");
+	if (!css_output_w)
+	{
+		windowInserPlace.appendChild(buildMenuModal("window", "ETB_css-output", "用户样式版EhTagTranslator", null,
+			[
+				buildMenuList([
+					buildMenuItem("CSS文本",
+						(function()    
+						{
+							var textarea = document.createElement("textarea");
+							textarea.id = "ETB_css-textarea";
+							textarea.name = textarea.id;
+							textarea.className = "txta " + textarea.id;
+							textarea.value = css;
+							textarea.wrap = "off";
+							textarea.setAttribute("readonly",true);
+							return textarea;
+						})()
+						,buildSVG("css")),
+					buildMenuItem("直接下载CSS文件",null,buildSVG("download"),downurl,1)
+				])
+			],
+			[
+				".ETB_css-output .txta" + "{\r\n" + [
+					'resize: vertical',
+					'width:100%',
+					'height:300px',
+				].join(';\r\n') + "\r\n}",
+			].join('\r\n')
+		));
+	}
+	else
+	{
+		css_output_w.style.display = "block";
+		css_output_w.getElementsByClassName("ETB_css-textarea")[0].value = css;
+		css_output_w.getElementsByTagName("a")[0].href = downurl;
+	}
+}
+
 //开始构建CSS
-function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
+function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 {
 	if (createInfo == undefined) createInfo = true;
 	if (createInfoImage == undefined) createInfoImage = true;
@@ -507,22 +526,22 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"{"
 //▲CSS内容部分
 	);
-	for (var ri=0, len=dataset.length; ri<len; ri++)
-	{
-		var row = dataset[ri];
+
+	dataset.forEach(function(row){
+
 //添加行名的注释
 		cssAry.push(""
 ,"/* " + row.name
 ," * " + row.cname
 ," */"
 		);
-		for (var ti = 0,len= row.tags.length; ti <len; ti++)
+
+	row.tags.forEach(function(tag){
+
+		if (tag.type == 0)
 		{
-			var tag = row.tags[ti];
-			if (tag.type == 0)
-			{
-				var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
-				cssAry.push(""
+			var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
+			cssAry.push(""
 //▼CSS内容部分
 ,"  a[id=\"ta_" + tagid + "\"]{"
 ,"    font-size:0px;"
@@ -531,34 +550,34 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"    content:" + getInfoString(tag.cname, createCnameImage) + ";"
 ,"  }"
 //▲CSS内容部分
-				);
-				if (createInfo)
+			);
+			if (createInfo)
+			{
+				var sinfo = getInfoString(tag.info, createInfoImage);
+				if (sinfo.replace(/\s/ig,"").length > 0)
 				{
-					var sinfo = getInfoString(tag.info, createInfoImage);
-					if (sinfo.replace(/\s/ig,"").length > 0)
-					{
-						cssAry.push(""
+					cssAry.push(""
 //▼CSS内容部分
 ,"  a[id=\"ta_" + tagid + "\"]::after{"
 ,"    content:" + sinfo + ";"
 ,"  }"
 //▲CSS内容部分
-						);
-					}
+					);
 				}
 			}
-			else
-			{ //将注释写成CSS注释
-				cssAry.push(
+		}
+		else
+		{ //将注释写成CSS注释
+			cssAry.push(
  "/* " + getInfoString(tag.cname, false)
 ," * " + getInfoString(tag.info, false)
 ," */"
-				);
-			}
-			
+			);
 		}
-	}
-	
+			
+	})//row.tags.forEach
+	});//dataset.forEach
+
 	cssAry.push(
 //▼CSS内容部分
  "}"
@@ -569,6 +588,152 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 	return css;
 }
 
+//获取完成后创建JS输出窗口
+function buildJSOutput(dataset)
+{
+	var json = createOutputJSON(dataset
+		,GM_getValue("ETB_create-info","boolean")
+		,GM_getValue("ETB_create-info-image","boolean")
+		,GM_getValue("ETB_create-cname-image","boolean")
+		);
+	var downBlob = new Blob([json], {'type': 'text\/json'});
+	var downurl = window.URL.createObjectURL(downBlob);
+	
+	var js_output_w = document.getElementById("ETB_js-output");
+	if (!js_output_w)
+	{
+		windowInserPlace.appendChild(buildMenuModal("window", "ETB_js-output", "用户脚本版EhTagTranslator数据库", null,
+			[
+				buildMenuList([
+					buildMenuItem("JSON文本",
+						(function()    
+						{
+							var textarea = document.createElement("textarea");
+							textarea.id = "ETB_js-textarea";
+							textarea.name = textarea.id;
+							textarea.className = "txta " + textarea.id;
+							textarea.value = json;
+							textarea.setAttribute("readonly",true);
+							return textarea;
+						})()
+						,buildSVG("json")),
+					buildMenuItem("直接下载JSON文件",null,buildSVG("download"),downurl,1)
+				])
+			],
+			[
+				".ETB_js-output .txta" + "{\r\n" + [
+					'resize: vertical',
+					'width:100%',
+					'height:300px',
+				].join(';\r\n') + "\r\n}",
+			].join('\r\n')
+		));
+	}
+	else
+	{
+		js_output_w.style.display = "block";
+		js_output_w.getElementsByClassName("ETB_js-textarea")[0].value = json;
+		js_output_w.getElementsByTagName("a")[0].href = downurl;
+	}
+}
+
+//开始构建JSON
+function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage)
+{
+	if (createInfo == undefined) createInfo = true;
+	if (createInfoImage == undefined) createInfoImage = true;
+	if (createCnameImage == undefined) createCnameImage = true;
+	function doForAllTag(dom, tag, callback)
+	{
+		var tagDoms = dom.getElementsByTagName(tag);
+		for (var di=0, dilen=tagDoms.length; di<dilen; di++)
+		{
+			callback(tagDoms[di]);
+		}
+	}
+	function removeSelf(dom)
+	{
+		dom.parentNode.removeChild(dom);
+	}
+	function resetImageSrc(dom)
+	{
+		var osrc = dom.getAttribute("data-canonical-src");
+		if (osrc)
+		{
+			if (osrc.indexOf("?")>0) //动态链接
+			{
+				var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
+				if(osrct.substr(osrct.length-1,1)=="h")
+				{
+					osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
+				}
+			}else //静态链接
+			{
+				if(osrc.substr(osrc.length-1,1)=="h")
+				{
+					osrc = osrc.substring(0,osrc.length-1);
+				}
+			}
+			dom.src=osrc;
+			dom.removeAttribute("data-canonical-src");
+		}else if(dom.title) //链接写在title
+		{
+			dom.src=dom.title;
+			dom.removeAttribute("title");
+		}
+	}
+	var outArray = //重新生成处理过的数组
+	dataset.map(function(row_orignal){
+		var row=new rowObj;
+		row.name=row_orignal.name;
+		row.cname=row_orignal.cname;
+		row.info=row_orignal.info.cloneNode(true);
+		if (createInfo)
+		{
+
+			doForAllTag(row.info, "img", createInfoImage ? resetImageSrc : removeSelf);
+			row.info = row.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
+		}
+		else
+		{
+			row.info = "";
+		}
+		
+		row.tags = //重新生成处理过的Tag
+	row_orignal.tags.map(function(tag_orignal){
+		var tag=new tagObj;
+		tag.type=tag_orignal.type;
+		tag.name=tag_orignal.name;
+		tag.cname=tag_orignal.cname.cloneNode(true);
+		tag.info=tag_orignal.info.cloneNode(true);
+
+		doForAllTag(tag.cname, "img", createCnameImage ? resetImageSrc : removeSelf);
+		tag.cname = tag.cname.innerHTML.replace(/(?:^\n|\n$)/igm,"");
+
+		if (createInfo || tag.type==1)
+		{
+			doForAllTag(tag.info, "img", createInfoImage ? resetImageSrc : removeSelf);
+			tag.info = tag.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
+		}
+		else
+		{
+			tag.info = "";
+		}
+		return tag;
+	})//row.tags.forEach
+		return row;
+	});//dataset.forEach
+
+	var date = new Date();
+	var outJson = 
+	{
+		"scriptName":scriptName,
+		"scriptVersion":scriptVersion,
+		"date":date.getTime(),
+		"dataset":outArray
+	}
+	return JSON.stringify(outJson);
+}
 
 //生成按钮
 function buildButton(title, icon, modal)
@@ -639,7 +804,7 @@ function buildMenuModal(mode, id, stitle, filters, lists, sstyle)
 
 	if (lists != undefined)
 	{
-		for(var li = 0,len= lists.length; li <len; li++)
+		for(var li = 0, lilen=lists.length; li<lilen; li++)
 		{
 			var list = lists[li];
 			if (list)
@@ -656,7 +821,7 @@ function buildMenuList(items)
 	list.className = "select-menu-list js-navigation-container";
 	if (items != undefined)
 	{
-		for(var ii = 0,len= items.length; ii <len; ii++)
+		for(var ii=0, lilen=items.length; ii<lilen; ii++)
 		{
 			var item = items[ii];
 			if (item)
@@ -773,7 +938,11 @@ function buildSVG(mode,check)
 			break;
 
 		case "js":
-			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biAzMCBNYXIgMjAwOCAxNzoyMjo0NyAtMDUwMNSe+EoAAAAHdElNRQfYBAYRMSwLM2/oAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGPC/xhBQAAAtBJREFUeNpdU11IU3EU/93tTje1vJujzS1xZVNnhdeMStG8ha/VDYKUICYk9RLYW1FBIERv0atFTSgqCllPvRiaDyp9qFPLsTQ12nB96Fzuy3117nVL24HD/3DO+f3u/57z+zNWqxWJRAKpVEr2ZDIpe9Yu2fy1dAhzyxCW1sBPhQy7sjW/3w82GAwi1whUTkcXufgrDMvsMhBLyKVbub0swzD/JS5WL93NgCEBvRn+YjVg1UHQ/PDbIwnw7qhxVSbIAY/TwXMlWrgXV8AqgAodwKk36vMBCAQWsmDJmJtHcQoM7NI9bHV7RdHeBnVBISZGPsL56AnEjnPgG+oRDYfgdDzDzPgnZ1pCpuHoHsIrNqXSOHbX2LhvU2OQwYXbAEUe+OYWcDtMsFRZqTlJeZbq7XBP3BDL9x/A188zAhDRskarjdOXlkIRq6CmIgLnw/H+HbDOwt4iwDH6Vp6gvemwTG6prICO+sNxcHgzBgVUGoRWAzCWmemHVESgQu/IPK70vACUGvQOeyjuo1qeXJP64rEoJJxkikmXe0EKOD1Ni6GpMSwGXw8isBgggoLNWKGkmpL6SmRgFqc0qCIBZeineLazHWyeRv6KRVcKsakJfE0lLJweYmM9+KoymkUceoMWz3sew/P9Txet2cUe2gknp9VArVHj3sN+HG+shf1EszwLJCOwn6Q4uY7paQ8Ghidx+XwjVKkoXGFTL+Db0EHg9wqtKQyxdR+6b/ch4V2BdXsR9LTbVdrZbDAEhZnDteun5XVuNcZkMqGz0jfANxwUxI62zLAkl7gV8sKRJh2n4uQx0sZT0siHwfse0zGfz/dPiV2UdNJNLEdam1FdR+8nLZWYDEES7nEXRvuHsOCZW8hKXb6B2WyWgwtWb7F/DVdJtmfyWezJfTQkhdlAFC8NRbjz4ItZlrLX690kyBolLXQYydVb0rR4LFHvQk4v/gIj/RRmaCXZ1wAAAABJRU5ErkJggg=="/>';
+			innerHTML = '<img width="16" height="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biAzMCBNYXIgMjAwOCAxNzoyMjo0NyAtMDUwMNSe+EoAAAAHdElNRQfYBAYRMSwLM2/oAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGPC/xhBQAAAtBJREFUeNpdU11IU3EU/93tTje1vJujzS1xZVNnhdeMStG8ha/VDYKUICYk9RLYW1FBIERv0atFTSgqCllPvRiaDyp9qFPLsTQ12nB96Fzuy3117nVL24HD/3DO+f3u/57z+zNWqxWJRAKpVEr2ZDIpe9Yu2fy1dAhzyxCW1sBPhQy7sjW/3w82GAwi1whUTkcXufgrDMvsMhBLyKVbub0swzD/JS5WL93NgCEBvRn+YjVg1UHQ/PDbIwnw7qhxVSbIAY/TwXMlWrgXV8AqgAodwKk36vMBCAQWsmDJmJtHcQoM7NI9bHV7RdHeBnVBISZGPsL56AnEjnPgG+oRDYfgdDzDzPgnZ1pCpuHoHsIrNqXSOHbX2LhvU2OQwYXbAEUe+OYWcDtMsFRZqTlJeZbq7XBP3BDL9x/A188zAhDRskarjdOXlkIRq6CmIgLnw/H+HbDOwt4iwDH6Vp6gvemwTG6prICO+sNxcHgzBgVUGoRWAzCWmemHVESgQu/IPK70vACUGvQOeyjuo1qeXJP64rEoJJxkikmXe0EKOD1Ni6GpMSwGXw8isBgggoLNWKGkmpL6SmRgFqc0qCIBZeineLazHWyeRv6KRVcKsakJfE0lLJweYmM9+KoymkUceoMWz3sew/P9Txet2cUe2gknp9VArVHj3sN+HG+shf1EszwLJCOwn6Q4uY7paQ8Ghidx+XwjVKkoXGFTL+Db0EHg9wqtKQyxdR+6b/ch4V2BdXsR9LTbVdrZbDAEhZnDteun5XVuNcZkMqGz0jfANxwUxI62zLAkl7gV8sKRJh2n4uQx0sZT0siHwfse0zGfz/dPiV2UdNJNLEdam1FdR+8nLZWYDEES7nEXRvuHsOCZW8hKXb6B2WyWgwtWb7F/DVdJtmfyWezJfTQkhdlAFC8NRbjz4ItZlrLX690kyBolLXQYydVb0rR4LFHvQk4v/gIj/RRmaCXZ1wAAAABJRU5ErkJggg=="/>';
+			break;
+
+		case "json":
+			innerHTML = '<img width="16" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/gif;base64,R0lGODlhEAAQAMQAAA8PD729vYWFhVpaWu/v7zo6OqWlpd7e3mZmZikpKZmZmUpKSv///66urszMzCEhIXx8fGZmZubm5rW1tTMzM42NjUJCQhkZGZmZmVNTU3JycsTExNPT0wAAAAAAAAAAACH5BAEHAAwALAAAAAAQABAAAAW0ICMSTjUUlhYckuhKFQUAT0INDXe80Hxdj1oB0Qi0CJXfozAYWJ4DgcLooFwSuI2jMVgMIAIBJ/kYTCYOCaGBQEAgRESioGgYdoyDQCOAfBc3BnUtDBIGEAoaXhkpCgIGhIYVBggFGRALGhWaeAcGghYJGgZfAm0TBAQbDWwJCQocb34ZCGgBrRcWaQ0VAk4WXgihQAoEeQ2Joa4PSgKEeRuUBQnMF3TPIhIHAZgLCAoOxiIhADs="/>';
 			break;
 
 		case "eh":
@@ -1007,7 +1176,7 @@ function resetOption(part)
 function visitChildNodes(dom, callback)
 {
 	callback(dom);
-	for (var ci = 0,len= dom.childNodes.length; ci <len; ci++)
+	for (var ci=0, cilen=dom.childNodes.length; ci<cilen; ci++)
 	{
 		visitChildNodes(dom.childNodes[ci], callback);
 	}
@@ -1074,18 +1243,18 @@ else if (GM_getValue("ETB_option-version", "number") < optionVersion)
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
 			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。",buildSVG("css"),function(){
-					startProgram(ds);
+					startProgram(ds,0);
 				}
 			,0),
-			/*buildMenuItem("生成JSON","生成用户脚本版EhTagTranslator数据库，功能暂未开发。",buildSVG("js"),function(){
-					alert("设想中功能，暂未开发，仅占位");
+			buildMenuItem("生成JSON","生成用户脚本版"+buildSVG("js").outerHTML+"EhTagTranslator数据库，不过该脚本暂未开发。",buildSVG("json"),function(){
+					startProgram(ds,1);
 				}
-			,0)*/
+			,0)
 		]),
 		buildMenuList([
-			buildMenuItem("设置选项",null,buildSVG("Settings"),function(){startOption();reloadOption();},1),
-			buildMenuItem("查看使用帮助",null,buildSVG("question"),"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",1),
-			buildMenuItem("贡献翻译",null,buildSVG("book"),"https://github.com/Mapaler/EhTagTranslator/wiki",1),
+			buildMenuItem("选项",null,buildSVG("Settings"),function(){startOption();reloadOption();},1),
+			//buildMenuItem("查看使用帮助",null,buildSVG("question"),"https://github.com/Mapaler/EhTagTranslator/blob/master/README.md",1),
+			buildMenuItem("参与补全翻译",null,buildSVG("book"),"https://github.com/Mapaler/EhTagTranslator/wiki",1),
 		])
 	]);
 	
