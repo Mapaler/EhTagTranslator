@@ -47,7 +47,7 @@
   ![粘贴代码](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3sn1uyx5tj20io0dtq6z.jpg)
 
 ###使用效果
-由于CSS选择器技术限制，CSS版将无法更换tag左方的类别名。
+由于CSS选择器技术限制，CSS版默认情况下将无法更换tag左方的类别名。（有网友研究出可更换的办法，详见[网友分享的样式](https://github.com/Mapaler/EhTagTranslator/issues/10)）
 
 ![CSS使用效果](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3smnu3k49j20jo0c4422.jpg)
 
