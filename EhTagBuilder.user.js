@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.2.0
+// @version     2.2.1
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -83,7 +83,7 @@ if(typeof(GM_listValues) == "undefined")
 {
 	var GM_listValues = function(){
 		var keys = [];
-		for (var ki = 0; ki < localStorage.length; ki++)
+		for (var ki = 0,len= localStorage.length; ki <len; ki++)
 		{
 			keys.push(localStorage.key(ki));
 		}
@@ -150,7 +150,7 @@ function dealRows(response, dataset)
 				
 	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
 	var linksn = wiki_body.getElementsByTagName("a");
-	for (var ai=0;ai<linksn.length;ai++)
+	for (var ai=0, len=linksn.length; ai<len; ai++)
 	{
 		if (linksn[ai].getAttribute("href") == "ETB_wiki-version")
 		{
@@ -165,7 +165,7 @@ function dealRows(response, dataset)
 	
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	rowsCount = table.rows.length;
-	for(var ri=0;ri<table.rows.length;ri++)
+	for(var ri=0, len=table.rows.length; ri<table.rows.length; ri++)
 	{
 		var trow = table.rows[ri];
 		var row = new rowObj;
@@ -204,7 +204,7 @@ function getInfoString(dom, creatImage)
 	var info = [];
 	if (dom.childNodes != undefined)
 	{
-		for (var ci = 0; ci < dom.childNodes.length; ci++)
+		for (var ci=0, len=dom.childNodes.length; ci<len; ci++)
 		{
 			var node = dom.childNodes[ci];
 			info = info.concat(getDomInfoString(node, creatImage))
@@ -293,7 +293,7 @@ function dealTags(response, dataset)
 	var wiki_body = PageDOM.getElementById("wiki-body").getElementsByTagName("div")[0];
 	var table = wiki_body.getElementsByTagName("table")[0].tBodies[0];
 	
-	for(var ri=0;ri<table.rows.length;ri++)
+	for(var ri=0, len=table.rows.length; ri<len; ri++)
 	{
 		var trow = table.rows[ri];
 		var tag = new tagObj;
@@ -507,7 +507,7 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"{"
 //▲CSS内容部分
 	);
-	for (var ri = 0; ri < dataset.length; ri++)
+	for (var ri=0, len=dataset.length; ri<len; ri++)
 	{
 		var row = dataset[ri];
 //添加行名的注释
@@ -516,7 +516,7 @@ function buildCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ," * " + row.cname
 ," */"
 		);
-		for (var ti = 0; ti < row.tags.length; ti++)
+		for (var ti = 0,len= row.tags.length; ti <len; ti++)
 		{
 			var tag = row.tags[ti];
 			if (tag.type == 0)
@@ -639,7 +639,7 @@ function buildMenuModal(mode, id, stitle, filters, lists, sstyle)
 
 	if (lists != undefined)
 	{
-		for(var li = 0; li < lists.length; li++)
+		for(var li = 0,len= lists.length; li <len; li++)
 		{
 			var list = lists[li];
 			if (list)
@@ -656,7 +656,7 @@ function buildMenuList(items)
 	list.className = "select-menu-list js-navigation-container";
 	if (items != undefined)
 	{
-		for(var ii = 0; ii < items.length; ii++)
+		for(var ii = 0,len= items.length; ii <len; ii++)
 		{
 			var item = items[ii];
 			if (item)
@@ -1007,7 +1007,7 @@ function resetOption(part)
 function visitChildNodes(dom, callback)
 {
 	callback(dom);
-	for (var ci = 0; ci < dom.childNodes.length; ci++)
+	for (var ci = 0,len= dom.childNodes.length; ci <len; ci++)
 	{
 		visitChildNodes(dom.childNodes[ci], callback);
 	}
@@ -1073,7 +1073,7 @@ else if (GM_getValue("ETB_option-version", "number") < optionVersion)
 
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
-			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylish扩展安装。手机火狐也可使用。",buildSVG("css"),function(){
+			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。",buildSVG("css"),function(){
 					startProgram(ds);
 				}
 			,0),

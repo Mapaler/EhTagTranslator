@@ -10,7 +10,7 @@
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
 // @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/s/\w+/\d+-\d+.*$/
-// @version     1.8.0
+// @version     1.9.0
 // @grant       GM_setClipboard
 // ==/UserScript==
 				
@@ -18,7 +18,7 @@
 if(typeof(GM_setClipboard) == "undefined")
 {
 	var GM_setClipboard = function(str){
-		alert(str);
+		prompt(str,str);
 		console.debug("使用GM_setClipboard，值为",str);
 	}
 }
@@ -147,7 +147,6 @@ var gdtlObj = function(){
 					var pressAlt = false;
 					var pressShift = false;
 					var e = event || window.event || arguments.callee.caller.arguments[0];
-					console.log(e);
 					//ctrlKey
 					if(e && e.ctrlKey){ // 有按下 Ctrl 
 						pressCtrl = true;
@@ -196,43 +195,73 @@ var gdtlObj = function(){
 	return obj;
 }
 
+var style = document.createElement("style");
+style.type = "text/css";
+var styleTxt = [
+	//画廊缩略图
+	["#gdt .gdtl","{"
+	,[
+		,"position:relative"
+	].join(';\r\n '),"}"].join('\r\n'),
+	["#gdt .EWHT-ul","{"
+	,[
+		,"top:0px"
+		,"right:0px"
+	].join(';\r\n '),"}"].join('\r\n'),
+	//画廊封面
+	["#gleft .EWHT-ul","{"
+	,[
+		,"top:15px"
+		,"left:-5px"
+	].join(';\r\n '),"}"].join('\r\n'),
+	//搜索列表
+	[".itg .id1","{"
+	,[
+		,"position:relative"
+	].join(';\r\n '),"}"].join('\r\n'),
+	[".itg .EWHT-ul","{"
+	,[
+		,"top:33px"
+		,"right:-5px"
+	].join(';\r\n '),"}"].join('\r\n'),
+	//图片浏览页
+	["#i3","{"
+	,[
+		,"position:relative"
+	].join(';\r\n '),"}"].join('\r\n'),
+	["#i3 .EWHT-ul","{"
+	,[
+		,"top:-30px"
+		,"right:0px"
+	].join(';\r\n '),"}"].join('\r\n'),
+	//通用
+	[".EWHT-ul","{"
+	,[
+		,"position:absolute"
+		,"list-style:none"
+		,"padding:0px"
+		,"margin:0px"
+	].join(';\r\n '),"}"].join('\r\n'),
+	[".EWHT-ul .EWHT-btn","{"
+	,[
+		,"padding:0px"
+		,"font-size:12px"
+		,"width:18px"
+	].join(';\r\n '),"}"].join('\r\n'),
+].join('\r\n');
+style.innerHTML = styleTxt;
+var head = document.head || document.getElementsByTagName('head')[0];
+head.appendChild(style);
 
 var gdt = document.getElementById("gdt");
 var itg = document.getElementsByClassName("itg")[0];
 var i3 = document.getElementById("i3");
 if (gdt) //画廊
 {
-	var style = document.createElement("style");
-	style.type = "text/css";
-	var styleTxt = [
-		[".gdtl","{"
-		,[
-			,"position:relative"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul","{"
-		,[
-			,"position:absolute"
-			,"top:0px"
-			,"right:0px"
-			,"list-style:none"
-			,"padding:0px"
-			,"margin:0px"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul .EWHT-btn","{"
-		,[
-			,"padding:0px"
-			,"font-size:12px"
-			,"width:18px"
-		].join(';\r\n '),"}"].join('\r\n'),
-	].join('\r\n');
-	style.innerHTML = styleTxt;
-
-	gdt.insertBefore(style,gdt.firstChild);
-
 	var gdtls = gdt.getElementsByClassName("gdtl");
 	if (gdtls.length>0)
 	{
-		for (var gdi = 0; gdi < gdtls.length ; gdi++)
+		for (var gdi = 0,len= gdtls.length ; gdi <len; gdi++)
 		{
 			var gdtl_this = new gdtlObj;
 			var addRes = gdtl_this.addImgFrom_gdtlDom(gdtls[gdi]);
@@ -240,47 +269,29 @@ if (gdt) //画廊
 				gdtl_this.addBtnList(gdtls[gdi],0);
 				gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"里"); //替换默认的缩略图
 			}
-			else console.debug("添加网址失败");
+			else console.debug("缩略图添加网址失败");
 		}
 	}
 	else
 	{
 		console.debug("小图模式，本脚本不起作用。");
 	}
+
+	var gleft = document.getElementById("gleft");
+
+	var gleft_this = new gdtlObj;
+	var addRes = gleft_this.addImgFrom_gdtlDom(gleft);
+	if (addRes) {
+		gleft_this.addBtnList(gleft,0);
+	}
+	else console.debug("封面添加网址失败");
 }
 else if (itg) //搜索列表
 {
-	var style = document.createElement("style");
-	style.type = "text/css";
-	var styleTxt = [
-		[".id1","{"
-		,[
-			,"position:relative"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul","{"
-		,[
-			,"position:absolute"
-			,"top:30px"
-			,"right:0px"
-			,"list-style:none"
-			,"padding:0px"
-			,"margin:0px"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul .EWHT-btn","{"
-		,[
-			,"padding:0px"
-			,"font-size:12px"
-			,"width:18px"
-		].join(';\r\n '),"}"].join('\r\n'),
-	].join('\r\n');
-	style.innerHTML = styleTxt;
-
-	itg.insertBefore(style,itg.firstChild);
-
 	var id1s = itg.getElementsByClassName("id1");
 	if (id1s.length>0)
 	{
-		for (var id1i = 0; id1i < id1s.length ; id1i++)
+		for (var id1i = 0,len= id1s.length ; id1i <len; id1i++)
 		{
 			var id3s = id1s[id1i].getElementsByClassName("id3")[0];
 			var id3_this = new gdtlObj;
@@ -294,34 +305,8 @@ else if (itg) //搜索列表
 		console.debug("找不到图象列表。");
 	}
 }
-else if (i3) //搜索列表
+else if (i3) //图片浏览页
 {
-	var style = document.createElement("style");
-	style.type = "text/css";
-	var styleTxt = [
-		["#i3","{"
-		,[
-			,"position:relative"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul","{"
-		,[
-			,"position:absolute"
-			,"top:-30px"
-			,"right:0px"
-			,"list-style:none"
-			,"padding:0px"
-			,"margin:0px"
-		].join(';\r\n '),"}"].join('\r\n'),
-		[".EWHT-ul .EWHT-btn","{"
-		,[
-			,"padding:0px"
-			,"font-size:12px"
-			,"width:18px"
-		].join(';\r\n '),"}"].join('\r\n'),
-	].join('\r\n');
-	style.innerHTML = styleTxt;
-
-	i3.insertBefore(style,i3.firstChild);
 	var i3_this = new gdtlObj;
 	var addRes = i3_this.addImgFrom_gdtlDom(i3);
 	if (addRes) i3_this.addBtnList(i3,1);
