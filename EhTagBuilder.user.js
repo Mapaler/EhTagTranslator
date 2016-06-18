@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.5.1
+// @version     2.5.2
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -942,7 +942,7 @@ function buildSVG(mode,check)
 			break;
 
 		case "json":
-			innerHTML = '<svg class="octicon octicon-code select-menu-item-icon" version="1.1" width="16" height="15" viewBox="0 0 16 16"><defs><style>.cls-1{fill:url(#linearGradient_1);}.cls-2{fill:url(#linearGradient_2);}</style><linearGradient id="linearGradient_1" x1="-687.04" y1="-374.22" x2="-675.75" y2="-385.5" gradientTransform="matrix(1, 0, 0, -1, 688.46, -371.22)" gradientUnits="userSpaceOnUse"><stop offset="0"/><stop offset="1" stop-color="#fff"/></linearGradient><linearGradient id="linearGradient_2" x1="-675.24" y1="-384.99" x2="-686.52" y2="-373.71" xlink:href="#linearGradient_1"/></defs><title>JSON logo</title><path id="path7508" class="cls-1" d="M8,11.91c3.54,4.83,7-1.35,7-5.06C15,2.46,10.53,0,8,0A8.07,8.07,0,0,0,0,8a8.06,8.06,0,0,0,8,8c-0.8-.11-3.45-0.68-3.49-6.8C4.47,5.07,5.85,3.42,8,4.14A4.06,4.06,0,0,1,10.33,8,4.08,4.08,0,0,1,8,11.91Z"/><path id="path7510" class="cls-2" d="M8,4.14c-2.34-.81-5.2,1.12-5.2,5C2.78,15.43,7.45,16,8,16a8.07,8.07,0,0,0,8-8A8.06,8.06,0,0,0,8,0c1-.13,5.25,1.05,5.25,6.9,0,3.81-3.2,5.89-5.27,5A4.06,4.06,0,0,1,5.65,8,4.1,4.1,0,0,1,8,4.14Z"/></svg>';
+			innerHTML = '<svg viewBox="0 0 16 16" height="15" width="16" version="1.1" class="octicon octicon-code select-menu-item-icon"><defs><style>.cls-1{fill:url(#linearGradient_1);}.cls-2{fill:url(#linearGradient_2);}</style><linearGradient gradientUnits="userSpaceOnUse" gradientTransform="matrix(1, 0, 0, -1, 688.46, -371.22)" y2="-385.5" x2="-675.75" y1="-374.22" x1="-687.04" id="linearGradient_1"><stop offset="0"/><stop stop-color="#fff" offset="1"/></linearGradient><linearGradient xlink:href="#linearGradient_1" y2="-373.71" x2="-686.52" y1="-384.99" x1="-675.24" id="linearGradient_2"/></defs><path style="fill:url(#linearGradient_1)" d="M8,11.91c3.54,4.83,7-1.35,7-5.06C15,2.46,10.53,0,8,0A8.07,8.07,0,0,0,0,8a8.06,8.06,0,0,0,8,8c-0.8-.11-3.45-0.68-3.49-6.8C4.47,5.07,5.85,3.42,8,4.14A4.06,4.06,0,0,1,10.33,8,4.08,4.08,0,0,1,8,11.91Z" class="cls-1"/><path style="fill:url(#linearGradient_2)" d="M8,4.14c-2.34-.81-5.2,1.12-5.2,5C2.78,15.43,7.45,16,8,16a8.07,8.07,0,0,0,8-8A8.06,8.06,0,0,0,8,0c1-.13,5.25,1.05,5.25,6.9,0,3.81-3.2,5.89-5.27,5A4.06,4.06,0,0,1,5.65,8,4.1,4.1,0,0,1,8,4.14Z" class="cls-2"/></svg>';
 			break;
 
 		case "eh":
@@ -960,6 +960,26 @@ function buildSVG(mode,check)
 	else
 		CloseSvg.classList.remove("octicon-check");
 	
+	//更改SVG的渐变ID名
+	function changeSvgIdName(svg)
+	{
+		var linearGradient = svg.getElementsByTagName("linearGradient");
+		for (var lGi=0, lGilen=linearGradient.length;lGi<lGilen;lGi++)
+		{
+			var idName = linearGradient[lGi].id;
+			var idIndex = 0;
+			while(document.getElementById(idName + "_" + idIndex.toString()))
+			{
+				idIndex++;
+			}
+			linearGradient[lGi].id = idName + "_" + idIndex.toString();
+			var idReg = new RegExp("#" + idName + "", "igm"); //P站图片地址正则匹配式
+			svg.innerHTML = svg.innerHTML.replace(idReg,"#" + idName + "_" + idIndex.toString());
+		}
+		return svg;
+	}
+	CloseSvg = changeSvgIdName(CloseSvg);
+
 	return CloseSvg;
 }
 //打开设置窗口
