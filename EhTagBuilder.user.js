@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.5.2
+// @version     2.6.0
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -114,7 +114,7 @@ var rowObj = function(){
 						statetxt.innerHTML = "获取成功";
 					}
 					console.debug("正在处理 %s %s 页面",rowObj.name,rowObj.cname);
-					dealTags(response.responseText,rowObj.tags);
+					dealTags(response.responseText,rowObj);
 				}
 			});
 		},
@@ -283,8 +283,9 @@ function specialCharToCss(str)
 }
 
 //处理Tag页面
-function dealTags(response, dataset)
+function dealTags(response, rowdataset)
 {
+	var rowTags = rowdataset.tags;
 	var parser = new DOMParser();
 	PageDOM = parser.parseFromString(response, "text/html");
 	
@@ -301,11 +302,15 @@ function dealTags(response, dataset)
 			tag.cname = trow.cells[1];
 			tag.info = trow.cells[2];
 			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0;
-			if (tag.type == 1 && getInfoString(tag.cname,true).replace(/\s/ig,"").length < 1)
+			if (tag.type != 1 && getInfoString(tag.cname,true).replace(/\s/ig,"").length < 1) //不是注释，中文名又没有文字
 			{
-				console.error("发现无中文名的错误行%d %s",ri,tag.name);
+				console.error("发现无中文翻译行%d - %s:%s",ri,rowdataset.name,tag.name);
 			}
-			dataset.push(tag);
+			if (tag.type != 1 && rowTags.some(function(ttag){return ttag.name == tag.name;})) //从数组中搜索任一符合条件的，返回true
+			{
+				console.error("发现重复定义行%d - %s:%s",ri,rowdataset.name,tag.name);
+			}
+			rowTags.push(tag);
 		}
 		else
 		{
