@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.6.1
+// @version     2.6.2
 // @grant       none
 // @copyright	2016+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -490,7 +490,7 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"/* 表里通用样式 */"
 ,"@-moz-document"
 ,"    domain('exhentai.org'),"
-,"    domain('g.e-hentai.org')"
+,"    domain('e-hentai.org')"
 ,"{"
 ,GM_getValue("ETB_global-style")
 ,"}"
@@ -502,7 +502,7 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 //▼CSS内容部分
 ,"/* 表站样式 */"
 ,"@-moz-document"
-,"    domain('g.e-hentai.org')"
+,"    domain('e-hentai.org')"
 ,"{"
 ,GM_getValue("ETB_global-style-eh")
 ,"}"
@@ -527,7 +527,7 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"/* 翻译内容 */"
 ,"@-moz-document"
 ,"    domain('exhentai.org'),"
-,"    domain('g.e-hentai.org')"
+,"    domain('e-hentai.org')"
 ,"{"
 //▲CSS内容部分
 	);

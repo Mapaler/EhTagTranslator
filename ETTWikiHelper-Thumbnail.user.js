@@ -4,13 +4,13 @@
 // @namespace   http://www.mapaler.com/
 // @description Help to get thumbnail for write EhTagTranslator's wiki info.
 // @description:zh-CN	自动将E绅士大缩略图域名改为手机站域名，并可以一键复制各站点格式的缩略图。
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/$/
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/g/\d+/\w+/.*$/
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(index\.php)?\?.*$/
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(tag|uploader)/.*$/
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
-// @include     /^https?://(exhentai\.org|g\.e-hentai\.org)/s/\w+/\d+-\d+.*$/
-// @version     1.9.0
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/$/
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/(index\.php)?\?.*$/
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/(tag|uploader)/.*$/
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
+// @include     /^https?://(exhentai\.org|e-hentai\.org)/s/\w+/\d+-\d+.*$/
+// @version     1.9.1
 // @grant       GM_setClipboard
 // ==/UserScript==
 				
