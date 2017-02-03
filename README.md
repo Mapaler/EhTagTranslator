@@ -30,7 +30,7 @@
 ![输出窗口](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3slcidjl1j20a20aijsn.jpg)
 
 ###CSS安装方法
-有三种安装方式。
+火狐有如下三种安装方式。Chrome需要新建一个样式，然后选择导入 Mozilla 格式。
 
 1. 点击“直接下载CSS文件”，然后在Stylish菜单中选择“安装文件”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
@@ -45,6 +45,7 @@
   然后复制生成的CSS文本，粘贴到编辑框中。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
   ![粘贴代码](http://ww3.sinaimg.cn/large/6c84b2d6gw1f3sn1uyx5tj20io0dtq6z.jpg)
+
 
 ###使用效果
 由于CSS选择器技术限制，CSS版默认情况下将无法更换tag左方的类别名。（有网友研究出可更换的办法，详见[网友分享的样式](https://github.com/Mapaler/EhTagTranslator/issues/10)）
