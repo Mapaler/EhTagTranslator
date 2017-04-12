@@ -307,10 +307,18 @@ function dealTags(response, rowdataset)
 				console.error("发现无中文翻译行%d - %s:%s",ri,rowdataset.name,tag.name);
 			}
 			if (tag.type != 1 && rowTags.some(function(ttag){return ttag.name == tag.name;})) //从数组中搜索任一符合条件的，返回true
-			{
+            {
+                var merge = rowTags.find(function (ttag) { return ttag.name == tag.name; });
+                if (merge.cname.innerHTML != tag.cname.innerHTML)
+                    merge.cname.innerHTML = merge.cname.innerHTML + " | " + tag.cname.innerHTML;
+                if (merge.info.innerHTML != tag.info.innerHTML)
+                    merge.info.innerHTML = merge.info.innerHTML + "<hr>" + tag.info.innerHTML;
 				console.error("发现重复定义行%d - %s:%s",ri,rowdataset.name,tag.name);
-			}
-			rowTags.push(tag);
+            }
+            else
+            {
+                rowTags.push(tag);
+            }
 		}
 		else
 		{
