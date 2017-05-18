@@ -10,18 +10,18 @@
 
 ## 软件需求
 1. 用户脚本扩展，用于安装EhTagBuilder从翻译数据库生成用户样式版EhTagTranslator。
- * [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。
- * ![](http://www.chromium.org/_/rsrc/1438879449147/config/customLogo.gif)Chromium系安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/683/683490-64.png?modified=1463757971)Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=zh-CN)扩展。
+   * [![](https://www.mozilla.org/media/img/firefox/favicon.dc6635050bf5.ico)FireFox](http://www.firefox.com)安装[![](https://github.com/greasemonkey/greasemonkey/raw/master/skin/icon32.png)GreaseMonkey](http://www.greasespot.net/)扩展。
+   * ![](http://www.chromium.org/_/rsrc/1438879449147/config/customLogo.gif)Chromium系安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/683/683490-64.png?modified=1463757971)Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=zh-CN)扩展。
 2. 用户样式扩展，用于安装用户样式版EhTagTranslator（就是上面生成的CSS）。
- * 安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两浏览器都有）。
+   * 安装[![](https://addons.cdn.mozilla.net/user-media/addon_icons/2/2108-64.png?modified=1453837884)Stylish](https://userstyles.org/)扩展（两浏览器都有）。
 
 无法访问GitHub的网友，可以在别人能访问的电脑上使用EhTagBuilder生成用户样式版EhTagTranslator安装到自己电脑。
 
 ## 用户样式版EhTagTranslator使用方法
 ### CSS生成方法
-先[安装“EhTagBuilder”脚本](https://greasyfork.org/scripts/19619)（←到Greasy Fork安装，油猴可以自动更新脚本的哦）
+先到Sleazy Fork[安装“EhTagBuilder”脚本](https://sleazyfork.org/scripts/19619)，油猴可以自动更新脚本。<br>当然也可以直接在本项目直接访问源码安装。
 
-之后本项目页面下即会显示操作菜单。
+之后本项目页面下即会显示操作菜单（没有就刷新）。
 
 ![操作菜单](http://ww1.sinaimg.cn/large/6c84b2d6gw1f48kh9gm0aj20mn0aaacv.jpg)
 
@@ -30,7 +30,7 @@
 ![输出窗口](http://ww4.sinaimg.cn/large/6c84b2d6gw1f3slcidjl1j20a20aijsn.jpg)
 
 ### CSS安装方法
-火狐有如下三种安装方式。Chrome需要新建一个样式，然后选择导入 Mozilla 格式。
+火狐有如下三种安装方式。 ***Chrome需要新建一个样式，然后选择导入 Mozilla 格式。***
 
 1. 点击“直接下载CSS文件”，然后在Stylish菜单中选择“安装文件”。之后将样式命名为“EhTagTranslator”（或者你自己喜爱的其他名字）即可。
   
