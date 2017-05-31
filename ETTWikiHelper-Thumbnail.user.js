@@ -10,7 +10,7 @@
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/s/\w+/\d+-\d+.*$/
-// @version     1.9.1
+// @version     1.9.2
 // @grant       GM_setClipboard
 // ==/UserScript==
 				
@@ -51,7 +51,7 @@ function spawnNotification(theBody, theIcon, theTitle)
 	}
 }
 
-var thumbnailPattern = "https?://(\\d+\\.\\d+\\.\\d+\\.\\d+|ul\\.ehgt\\.org|ehgt\\.org/t|exhentai\\.org/t)/(\\w+)/(\\w+)/(\\w+)\-(\\d+)\-(\\d+)\-(\\d+)\-(\\w+)_(l|250).jpg"; //缩略图地址正则匹配式
+var thumbnailPattern = "https?://(\\d+\\.\\d+\\.\\d+\\.\\d+|ul\\.ehgt\\.org|ehgt\\.org|exhentai\\.org)(?:/t)?/(\\w+)/(\\w+)/(\\w+)\-(\\d+)\-(\\d+)\-(\\d+)\-(\\w+)_(l|250).jpg"; //缩略图地址正则匹配式
 var gdtlObj = function(){
 	var obj = {
 		dom:"",
@@ -69,7 +69,8 @@ var gdtlObj = function(){
 		{
 			if (dom == undefined) dom = this.dom;
 			else this.dom = dom;
-			var img = dom.getElementsByTagName("img")[0];
+			var img = dom.querySelector("img");
+			if (img == null) console.log(dom)
 			var addsrc = this.addImgFromSrc(img.src);
 
 			if (addsrc)
@@ -120,7 +121,7 @@ var gdtlObj = function(){
 						srcA.push("ul.ehgt.org");
 						break;
 					case 2:case "b":case "表": 
-						srcA.push("ehgt.org/t");
+						srcA.push("ehgt.org");
 						break;
 					case 3:case "l":case "里":
 					default:
@@ -250,12 +251,12 @@ var styleTxt = [
 	].join(';\r\n '),"}"].join('\r\n'),
 ].join('\r\n');
 style.innerHTML = styleTxt;
-var head = document.head || document.getElementsByTagName('head')[0];
+var head = document.head || document.querySelector('head');
 head.appendChild(style);
 
-var gdt = document.getElementById("gdt");
-var itg = document.getElementsByClassName("itg")[0];
-var i3 = document.getElementById("i3");
+var gdt = document.querySelector("#gdt");
+var itg = document.querySelector(".itg");
+var i3 = document.querySelector("#i3");
 if (gdt) //画廊
 {
 	var gdtls = gdt.getElementsByClassName("gdtl");
@@ -267,7 +268,7 @@ if (gdt) //画廊
 			var addRes = gdtl_this.addImgFrom_gdtlDom(gdtls[gdi]);
 			if (addRes) {
 				gdtl_this.addBtnList(gdtls[gdi],0);
-				gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"里"); //替换默认的缩略图
+				//gdtl_this.replaceImgSrcFrom_gdtlDom(gdtls[gdi],"里"); //替换默认的缩略图
 			}
 			else console.debug("缩略图添加网址失败");
 		}
@@ -277,14 +278,6 @@ if (gdt) //画廊
 		console.debug("小图模式，本脚本不起作用。");
 	}
 
-	var gleft = document.getElementById("gleft");
-
-	var gleft_this = new gdtlObj;
-	var addRes = gleft_this.addImgFrom_gdtlDom(gleft);
-	if (addRes) {
-		gleft_this.addBtnList(gleft,0);
-	}
-	else console.debug("封面添加网址失败");
 }
 else if (itg) //搜索列表
 {
@@ -293,7 +286,7 @@ else if (itg) //搜索列表
 	{
 		for (var id1i = 0,len= id1s.length ; id1i <len; id1i++)
 		{
-			var id3s = id1s[id1i].getElementsByClassName("id3")[0];
+			var id3s = id1s[id1i].querySelector(".id3");
 			var id3_this = new gdtlObj;
 			var addRes = id3_this.addImgFrom_gdtlDom(id3s);
 			if (addRes) id3_this.addBtnList(id1s[id1i],0);
