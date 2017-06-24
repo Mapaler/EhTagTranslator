@@ -48,7 +48,7 @@
 
             //应为ui基于github的样式 所以在eh站点需要加载样式
             var ETB_menu_style = GM_getResourceText('ETB_menu_style');
-            console.log(ETB_menu_style);
+            //console.log(ETB_menu_style);
             GM_addStyle(ETB_menu_style);
         }
 
@@ -1329,14 +1329,11 @@
         console.timeEnd('EhTagSyringe');
     });
 
-    
+    if( GM_getValue('ETB_create-syringe') && (/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+        EhTagSyringe();
+    }
     var bootstrap = function(evt){
-        if (evt.target.readyState === "interactive") {
-            if( GM_getValue('ETB_create-syringe') && (/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-                EhTagSyringe();
-            }
-        }
-        else if (evt.target.readyState === "complete") {
+        if (evt.target.readyState === "complete") {
             EhTagBuilder();
         }
     };
