@@ -1,4 +1,4 @@
-/* eh页面构建css菜单界面样式  *／
+/** eh页面构建css菜单界面样式  **/
 #nb li{
     list-style: none;
     display: inline-block;
@@ -62,16 +62,7 @@ p#nb .select-menu .select-menu-item-icon {
 p#nb {
     position: relative;
 }
-/*.select-menu-modal-holder.js-navigation-container{*/
-    /*padding: 16px;*/
-    /*position: absolute;*/
-    /*left: 0;*/
-    /*top: 0;*/
-    /*background: #4f535b;*/
-    /*width: 300px;*/
-    /*z-index: 99999999;*/
-    /*border: 1px solid #000;*/
-/*}*/
+
 .select-menu-item-text{
     display: inline-block;
 }
