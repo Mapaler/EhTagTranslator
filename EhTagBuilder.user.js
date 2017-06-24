@@ -1329,6 +1329,7 @@
         console.timeEnd('EhTagSyringe');
     });
 
+    
     var bootstrap = function(evt){
         if (evt.target.readyState === "interactive") {
             if( GM_getValue('ETB_create-syringe') && (/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
