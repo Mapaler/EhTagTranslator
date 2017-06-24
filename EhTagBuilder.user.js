@@ -8,7 +8,7 @@
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
 // @icon        http://exhentai.org/favicon.ico
-// @resource    ETB_menu_style     https://raw.githubusercontent.com/xioxin/EhTagTranslator/master/ETB_menu_style.css?v=2
+// @resource    ETB_menu_style     https://raw.githubusercontent.com/xioxin/EhTagTranslator/master/ETB_menu_style.css?v=3
 // @version     2.7.1
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -45,6 +45,13 @@
         if((/(exhentai\.org|e-hentai\.org)/).test(window.location.href)) {
             buttonInserPlace = document.querySelector("#nb"); //按钮插入位置
             windowInserPlace = document.querySelector(".ido,.gm,.stuffbox,#m"); //窗口插入位置
+
+            //区分表里站
+            if( (/(exhentai\.org)/).test(window.location.href) ){
+                document.body.className = document.body.className + ' ex';
+            }else{
+                document.body.className = document.body.className + ' eh';
+            }
 
             //应为ui基于github的样式 所以在eh站点需要加载样式
             var ETB_menu_style = GM_getResourceText('ETB_menu_style');
