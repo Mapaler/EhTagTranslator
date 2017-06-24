@@ -2,7 +2,7 @@
 #nb li{
     list-style: none;
     display: inline-block;
-    margin-left: 20px;
+    margin-left: 15px;
 }
 #nb .select-menu{
     position: relative;
@@ -18,6 +18,18 @@
 #nb .select-menu button:hover {
     color: #FFFBDB;
 }
+
+.eh #nb .select-menu button{
+    color: #5C0D11;
+}
+.eh #nb .select-menu button:hover {
+    color: #9B4E03;
+}
+.eh #nb .select-menu button img{
+    filter:invert(0) grayscale(1) opacity(.8);
+}
+
+
 #nb .select-menu .select-menu-modal-holder{
     display: none;
     position: absolute;
