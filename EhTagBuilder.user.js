@@ -43,25 +43,25 @@
         }
 
         updateStyle("ETB_global-style",GM_getValue("ETB_global-style"));
-            GM_addValueChangeListener("ETB_global-style",function (name,old_value,new_value,remote) {
-                updateStyle("ETB_global-style",new_value);
+        GM_addValueChangeListener("ETB_global-style",function (name,old_value,new_value,remote) {
+            updateStyle("ETB_global-style",new_value);
+        });
+        if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
+            updateStyle("ETB_global-style-ex",GM_getValue("ETB_global-style-ex"));
+            GM_addValueChangeListener("ETB_global-style-ex",function (name,old_value,new_value,remote) {
+                updateStyle("ETB_global-style-ex",new_value);
             });
-            if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
-                updateStyle("ETB_global-style-ex",GM_getValue("ETB_global-style-ex"));
-                GM_addValueChangeListener("ETB_global-style-ex",function (name,old_value,new_value,remote) {
-                    updateStyle("ETB_global-style-ex",new_value);
-                });
-            }
-            if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
-                updateStyle("ETB_global-style-eh",GM_getValue("ETB_global-style-eh"));
-                GM_addValueChangeListener("ETB_global-style-eh",function (name,old_value,new_value,remote) {
-                    updateStyle("ETB_global-style-eh",new_value);
-                });
-            }
-            updateStyle('EhTagTranslatorCss',GM_getValue('EhTagTranslatorCss'));
-            GM_addValueChangeListener("EhTagTranslatorCss",function (name,old_value,new_value,remote) {
-                updateStyle('EhTagTranslatorCss',new_value);
+        }
+        if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
+            updateStyle("ETB_global-style-eh",GM_getValue("ETB_global-style-eh"));
+            GM_addValueChangeListener("ETB_global-style-eh",function (name,old_value,new_value,remote) {
+                updateStyle("ETB_global-style-eh",new_value);
             });
+        }
+        updateStyle('EhTagTranslatorCss',GM_getValue('EhTagTranslatorCss'));
+        GM_addValueChangeListener("EhTagTranslatorCss",function (name,old_value,new_value,remote) {
+            updateStyle('EhTagTranslatorCss',new_value);
+        });
 
         console.timeEnd('EhTagSyringe');
     });
@@ -595,7 +595,7 @@
 
                 })//row.tags.forEach
             });//dataset.forEach
-            GM_setValue('EhTagTranslatorCss',cssAry.splice(startFlag,cssAry.length-1).join("\r\n"));
+            GM_setValue('EhTagTranslatorCss',cssAry.slice(startFlag,cssAry.length-1).join("\r\n"));
             cssAry.push(
 //▼CSS内容部分
                 "}"
@@ -1314,8 +1314,8 @@
     }
 
     unsafeWindow.addEventListener('load',function() {
-       console.log('builder load')
-       EhTagBuilder();
+        console.log('builder load')
+        EhTagBuilder();
     });
 
 })()
