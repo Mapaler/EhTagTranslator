@@ -11,6 +11,7 @@
 // @resource    ETB_menu_style     https://raw.githubusercontent.com/xioxin/EhTagTranslator/master/ETB_menu_style.css
 // @version     2.7.1
 // @run-at      document-start
+// @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -26,33 +27,32 @@
 
 (function(){
 
-
     var EhTagSyringe = (function () {
         console.time('EhTagSyringe');
         function updateStyle(id,css) {
-            var styleElement = window.document.getElementById(id);
+            var styleElement = unsafeWindow.document.getElementById(id);
             if(styleElement){
                 styleElement.innerHTML = css;
             }else{
-                var style = document.createElement("style");
+                var style = unsafeWindow.document.createElement("style");
                 style.id = id;
                 style.type = "text/css";
                 style.innerHTML = css;
-                window.document.getElementsByTagName("head")[0].appendChild(style);
+                unsafeWindow.document.getElementsByTagName("head")[0].appendChild(style);
             }
         }
-        if((/(exhentai\.org|e-hentai\.org)/).test(window.location.href)){
-            updateStyle("ETB_global-style",GM_getValue("ETB_global-style"));
+
+        updateStyle("ETB_global-style",GM_getValue("ETB_global-style"));
             GM_addValueChangeListener("ETB_global-style",function (name,old_value,new_value,remote) {
                 updateStyle("ETB_global-style",new_value);
             });
-            if((/(exhentai\.org)/).test(window.location.href)){
+            if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
                 updateStyle("ETB_global-style-ex",GM_getValue("ETB_global-style-ex"));
                 GM_addValueChangeListener("ETB_global-style-ex",function (name,old_value,new_value,remote) {
                     updateStyle("ETB_global-style-ex",new_value);
                 });
             }
-            if((/(e-hentai\.org)/).test(window.location.href)){
+            if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
                 updateStyle("ETB_global-style-eh",GM_getValue("ETB_global-style-eh"));
                 GM_addValueChangeListener("ETB_global-style-eh",function (name,old_value,new_value,remote) {
                     updateStyle("ETB_global-style-eh",new_value);
@@ -62,13 +62,11 @@
             GM_addValueChangeListener("EhTagTranslatorCss",function (name,old_value,new_value,remote) {
                 updateStyle('EhTagTranslatorCss',new_value);
             });
-        }
+
         console.timeEnd('EhTagSyringe');
     });
 
     var EhTagBuilder = (function() {
-        console.info('run');
-
         var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
         var rows_title="rows"; //行名的地址
         var buttonInserPlace = document.querySelector(".pagehead-actions")||document.querySelector("#nb"); //按钮插入位置
@@ -89,9 +87,8 @@
             var ETB_menu_style = GM_getResourceText('ETB_menu_style');
             //console.log(ETB_menu_style);
             GM_addStyle(ETB_menu_style);
-            GM_addStyle(".id3,img{display:none !important;}.id1{height:auto !important;}");
-            
-            
+
+
         };
 
 
@@ -1312,23 +1309,13 @@
         buttonInserPlace.insertBefore(buildButton(" " + scriptName + " ", buildSVG("eh"), menu_modal),buttonInserPlace.querySelector("li"));
     });
 
+    if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+        EhTagSyringe();
+    }
 
-
-    EhTagSyringe();
-
-    setTimeout(function () {
-        EhTagBuilder();
-    },100);
-
+    unsafeWindow.addEventListener('load',function() {
+       console.log('builder load')
+       EhTagBuilder();
+    });
 
 })()
-
-
-
-
-
-
-
-
-
-
