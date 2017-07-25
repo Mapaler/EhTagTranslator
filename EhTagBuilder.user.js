@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.7.1
+// @version     2.7.2
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -163,7 +163,7 @@ function dealRows(response, dataset)
 			var new_wiki_version = Number(linksn[ai].textContent.replace(/\D/ig,""));
 			if (new_wiki_version > wikiVersion)
 			{
-				alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
+				alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本已经不适用新的数据库，请更新你的脚本。");
 			}
 			break;
 		}
@@ -1284,7 +1284,7 @@ if (!GM_getValue("ETB_option-version"))
 }
 else if (GM_getValue("ETB_option-version", "number") < optionVersion)
 { //老用户提醒更改设置
-	alert(scriptName + " 本次程序版本更新改变了设置结构，建议先重置设置否则可能会导致无法正常使用。");
+	alert(scriptName + " 本次程序版本更新改变了设置结构，建议先重置设置，否则可能会导致无法正常使用。");
 	resetOption(true);
 }
 
@@ -1294,7 +1294,7 @@ var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersio
 					startProgram(ds,0);
 				}
 			,0),
-			buildMenuItem("生成JSON","生成用户脚本版"+buildSVG("js").outerHTML+"EhTagTranslator数据库，不过该脚本暂未开发。",buildSVG("json"),function(){
+			buildMenuItem("生成JSON","为第三方程序生成EhTagTranslator数据库。",buildSVG("json"),function(){
 					startProgram(ds,1);
 				}
 			,0)
