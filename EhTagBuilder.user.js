@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name        EhTagBuilder-test
-// @name:zh-CN	E绅士标签构建者NEW
+// @name        EhTagBuilder
+// @name:zh-CN	E绅士标签构建者
 // @namespace   http://www.mapaler.com/
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
