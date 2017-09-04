@@ -1,17 +1,17 @@
 // ==UserScript==
-// @name        EhTagBuilder-test
-// @name:zh-CN	E绅士标签构建者NEW
+// @name        EhTagSyringe
+// @name:zh-CN	E绅士翻译注射器💉
 // @namespace   http://www.mapaler.com/
 // @description Build EhTagTranslater from Wiki.
-// @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
+// @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文，并注射到E站
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
 // @connect     raw.githubusercontent.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/xioxin/EhTagTranslator/new/template/etb-menu.html?6
-// @version     2.7.1
+// @resource    template     https://github.com/Mapaler/EhTagTranslator/blob/master/template/ets-builder-menu.html?v=0
+// @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -24,7 +24,7 @@
 // @grant       GM_getResourceText
 // @grant       GM_addValueChangeListener
 // @grant       GM_setClipboard
-// @copyright	2017+, Mapaler <mapaler@163.com>
+// @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
 
 
