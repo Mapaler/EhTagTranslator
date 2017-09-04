@@ -412,6 +412,8 @@ ${css}
                     h = h.slice(0,-1);
                 }
                 return `"url("${h}")"`;
+            }else{
+                return "";
             }
         });
     }
