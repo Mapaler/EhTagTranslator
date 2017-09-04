@@ -213,13 +213,18 @@ div.gtl{
                     data:$scope.css,
                     version:$scope.wikiVersion
                 });
+                alert("保存完毕");
             };
 
             $scope.copyStylishCss = function () {
                 GM_setClipboard($scope.cssStylish)
+                alert("复制完毕");
+
             };
             $scope.copyCss = function () {
                 GM_setClipboard($scope.css)
+                alert("复制完毕");
+
             };
 
             //打开设置界面
@@ -247,6 +252,19 @@ div.gtl{
 
     //样式写入方法
     function EhTagSyringe(){
+        var css = GM_getValue('css');
+        GM_addStyle(css.data);
+        GM_addStyle(etbConfig.style.public);
+
+
+        if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
+            GM_addStyle(etbConfig.style.ex);
+        }
+        if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
+            GM_addStyle(etbConfig.style.eh);
+        }
+
+
 
     }
 
@@ -303,11 +321,13 @@ div.gtl{
 
         dataset.forEach(function (row) {
             css+= `\n/* ${row.name} ${row.cname} */\n`;
+            // console.log(row.tags);
             row.tags.forEach(function (tag) {
                 if(tag.name){
                     var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
                     var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit);
-                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.cname)),etbConfig.imageLimit);
+                    if(!tag.info)tag.info="";
+                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit);
                     css += `
 a[id="ta_${tagid}"]{
 font-size:0px;
@@ -315,10 +335,11 @@ font-size:0px;
 a[id="ta_${tagid}"]::before{
 content:"${cname}";
 }
-a[id="ta_${tagid}"]::after{
-content:"${content}";
-}
 `;
+                    if(content)css+=`a[id="ta_${tagid}"]::after{
+content:"${content}";
+}`;
+
                 }else{
                     css += `\n/* ${row.cname} */\n`;
                 }
@@ -403,7 +424,8 @@ ${css}
     //获取版本
     function getWikiVersion(){
         return new Promise(function (resolve, reject) {
-            PromiseRequest.get(wiki_URL+'/_history').then(function (response) {
+
+            PromiseRequest.get(wiki_URL+'/_history?t='+new Date().getTime()).then(function (response) {
                 var parser = new DOMParser();
                 var PageDOM = parser.parseFromString(response, "text/html");
                 var lastDOM = PageDOM.querySelector('#version-form  table  tr:nth-child(1)');
@@ -448,7 +470,7 @@ ${css}
     //获取行 并解析
     function getRows() {
         return new Promise(async function (resolve, reject) {
-            var url = `${wiki_raw_URL}/${rows_title}.md`;
+            var url = `${wiki_raw_URL}/${rows_title}.md`+"?t="+new Date().getTime();
             console.log(url);
             var data = await PromiseRequest.get(url);
             /*剔除表格以外的内容*/
@@ -462,7 +484,7 @@ ${css}
     function getTags(row) {
         return new Promise(async function (resolve, reject) {
 
-            var url = `${wiki_raw_URL}/tags/${row}.md`;
+            var url = `${wiki_raw_URL}/tags/${row}.md`+"?t="+new Date().getTime();
             console.log(url);
             console.time(`加载 ${row}`);
             var data = await PromiseRequest.get(url);
@@ -555,7 +577,7 @@ ${css}
             }
             //在EH站点下添加版本提示功能
             if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-                //EhTagVersion();
+                //EhTagSyringe();
             }
         }
     };
@@ -563,6 +585,11 @@ ${css}
         bootstrap();
     }else{
         document.addEventListener('readystatechange', bootstrap, false);
+    }
+
+    //注入css 不需要等待页面
+    if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+        EhTagSyringe();
     }
 
 })();
