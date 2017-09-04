@@ -10,7 +10,7 @@
 // @connect     raw.githubusercontent.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=0
+// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=2
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -132,6 +132,8 @@ div.gtl{
         GM_setValue('etbConfig',JSON.stringify(etbConfig));
     }
 
+    console.log(etbConfig);
+
 
     //UI控制方法等等
     function EhTagBuilder(){
@@ -234,11 +236,14 @@ div.gtl{
             //保存设置
             $scope.optionSave = function () {
                 GM_setValue('etbConfig',JSON.stringify(etbConfig));
+                alert("已经保存")
             };
             //重置设置
             $scope.optionReset = function () {
                 $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
                 GM_setValue('etbConfig',JSON.stringify(etbConfig));
+                alert("已重置")
+
             };
 
             unsafeWindow.r = function () {
