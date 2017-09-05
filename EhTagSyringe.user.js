@@ -692,26 +692,23 @@ ${css}
     };
 
     var bootstrap = function(){
-        if (window.document.readyState === "complete") {
-            //在github页面下添加生成工具
-            if((/github\.com/).test(unsafeWindow.location.href)){
-                EhTagBuilder();
-            }
-            //在EH站点下添加版本提示功能
-            if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-                EhTagVersion();
-            }
+        //在github页面下添加生成工具
+        if((/github\.com/).test(unsafeWindow.location.href)){
+            EhTagBuilder();
+        }
+        //在EH站点下添加版本提示功能
+        if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+            EhTagVersion();
         }
     };
-    if(window.document.readyState === "complete"){
+    if (/loaded|complete/.test(document.readyState)){
         bootstrap();
     }else{
-        document.addEventListener('readystatechange', bootstrap, false);
+        document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
 
     //注入css 不需要等待页面
     if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
         EhTagSyringe();
     }
-
 })();
