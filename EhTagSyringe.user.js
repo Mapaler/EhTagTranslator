@@ -28,19 +28,53 @@
 // ==/UserScript==
 
 
-var template = GM_getResourceText('template');
 
-window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
 
 (function() {
     'use strict';
+
+    window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
     var rows_title="rows"; //行名的地址
     var pluginVersion =  '2.7.1';
     var rootScope = null;
-    
+
+    var template = GM_getResourceText('template');
+
+    const headLoaded = new Promise(function (resolve, reject) {
+        if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
+            resolve(unsafeWindow.document.head);
+        }else{
+            //监听DOM变化
+            MutationObserver = window.MutationObserver;
+            var observer = new MutationObserver(function(mutations) {
+                for(let i in mutations){
+                    let mutation = mutations[i];
+                    //监听到HEAD 结束
+                    if(mutation.target.nodeName == "HEAD"){
+                        observer.disconnect();
+                        resolve(mutation.target);
+                        break;
+                    }
+                }
+            });
+            observer.observe(document, {childList: true, subtree: true, attributes: true});
+        }
+    });
+
+    function AddGlobalStyle(css) {
+        //等待head加载完毕
+        headLoaded.then(function (head) {
+            GM_addStyle(css);
+        })
+    }
+
+
+
+
+
     var defaultConfig = {
         'showDescription':true,
         'imageLimit':3,
@@ -258,14 +292,14 @@ div.gtl{
     //样式写入方法
     function EhTagSyringe(){
         var css = GM_getValue('css');
-        GM_addStyle(css.data);
-        GM_addStyle(etbConfig.style.public);
+        AddGlobalStyle(css.data);
+        AddGlobalStyle(etbConfig.style.public);
 
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
-            GM_addStyle(etbConfig.style.ex);
+            AddGlobalStyle(etbConfig.style.ex);
         }
         if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
-            GM_addStyle(etbConfig.style.eh);
+            AddGlobalStyle(etbConfig.style.eh);
         }
 
 
