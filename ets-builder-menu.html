@@ -138,7 +138,7 @@
             <!--<input type="checkbox" class="octicon octicon-question select-menu-item-icon ETB_create-info-image">-->
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">简介图片数量限制</span>
-                <span class="description"><input type="number" ng-model="config.imageLimit"></span>
+                <span class="description"><input type="number" ng-model="config.imageLimit" min="-1" step="1"><br>（0为不显示，-1为不限制）</span>
             </div>
         </label>
         <label class="select-menu-item">
@@ -246,18 +246,10 @@
             <!--<textarea ng-model="cssStylish" wrap="off"></textarea>-->
         <!--</div>-->
         <button class="select-menu-item select-menu-action" ng-click="saveCss()">
-            <svg width="16" viewBox="0 0 16 16" version="1.1" height="16"
-                 class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
-                <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
-            </svg>
-            <div class="select-menu-item-text" >保存</div>
-
+            <span class="octicon octicon-book select-menu-item-icon">💉</span><div class="select-menu-item-text" >注入到E站页面</div>
         </button>
         <button class="select-menu-item select-menu-action" ng-click="copyStylishCss()">
-            <svg width="16" viewBox="0 0 16 16" version="1.1" height="16"
-                 class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
-                <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
-            </svg>
+            <img width="14" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAIAAACp9tltAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAsSAAALEgHS3X78AAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAApZJREFUKJFNwX1MzHEcB/D35/v9/s7lXKqj0p0T1vXg2lIeh+thjZE/1Iw/8mwyjBn+sdmwGWZmy6LokllGm5mHYVYbmzIydTJlMtGTqJau7n6p3+/79a/XiywWEe2wEgAQEWcQRDwc1tnfyamcgTHFCMR+j4aEOzGm7N5GIjASds0pjPi+Tr36Rq3R9GlfkitxtpM7ZrKYGRuu1wjOeWx0PAgktUe1ra1vGzxJ3syFeWNJS662tOBd+/7l1oy4WYxIMGjTLE5j0rx07vHmokMnjuQxxgAAUEr19/efOXwwQwGAYCTsFnfNnSerc4vz8/ODwWBlZWVHR0dUVFRhYWFKSgrnHFAABJFms7hf1H28euUwgMbXDc/qb7oS4t/cbWt7/nTKfI9dH4OSgBLBkdHqaw96un6GQiEAuTl5PT2HAi3Nka6xNDLS+fhMp0OCQYFbBIuQoxzGUHA8JydX07SszKyCgvWbtu+c7s2oqns53251x8XdbmpG6jznt/rSz88upnvcfr/fMAz1n97e3i25q7rLLnjdLqakmgyFf/0cXOhxl5cd8fm8B/aXVFSUDwwMAEhISHAlp2qaRgSmlDRC+vHS+2Fr/Bw3bpd/Obq7+n3jsW1bt0opAfSOjO4or+obHhFKKjk+YUr4/f5AIFBadWt48OP4ROSekhIi0nW9a/BPVvHBD5fPCgBSmoAyTdPn82VnZ5umSUSMMV3XT5467Vm5ZlHe2vv+UgEo4nzv+qWF6/Izl61MW+CNjY2TUra1t79qal5StCsnPT1SSCgIEOM224rF3tbuITkR8CZPdnUFHz78GuSpRcfOR0RY7EJZmVJQFDFFm+uMBTAcDDGNHA4bQQ0OhSdMiy3KwUgxIgb143vnP5/yHx0OlzuwAAAAAElFTkSuQmCC"/>
             <div class="select-menu-item-text" >复制Mozilla格式（用于stylish）</div>
         </button>
         <button class="select-menu-item select-menu-action" ng-click="copyCss()">
@@ -265,7 +257,7 @@
                  class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
                 <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
             </svg>
-            <div class="select-menu-item-text">复制翻译样式</div>
+            <div class="select-menu-item-text">仅复制翻译样式</div>
         </button>
 
 

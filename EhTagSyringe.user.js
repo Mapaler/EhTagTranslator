@@ -44,7 +44,7 @@ window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     
     var defaultConfig = {
         'showDescription':true,
-        'imageLimit':3,
+        'imageLimit':-1,
         'showIcon':true,
         'syringe':true,
         'style':{
@@ -332,9 +332,9 @@ div.gtl{
             row.tags.forEach(function (tag) {
                 if(tag.name){
                     var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
-                    var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit);
+                    var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     if(!tag.info)tag.info="";
-                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit);
+                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     css += `
 a[id="ta_${tagid}"]{
 font-size:0px;
