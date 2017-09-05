@@ -8,6 +8,7 @@
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
 // @connect     raw.githubusercontent.com
+// @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
 // @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=3
@@ -245,8 +246,9 @@ div.gtl{
             };
             //存储css样式
             $scope.saveCss = function () {
-                GM_setValue('css',{
-                    data:$scope.css,
+                GM_setValue('tags',{
+                    css:$scope.css,
+                    data:$scope.dataset,
                     version:$scope.wikiVersion
                 });
                 alert("保存完毕");
@@ -291,8 +293,9 @@ div.gtl{
 
     //样式写入方法
     function EhTagSyringe(){
-        var css = GM_getValue('css');
-        AddGlobalStyle(css.data);
+        let tags = GM_getValue('tags');
+        unsafeWindow.tags = tags;
+        AddGlobalStyle(tags.css);
         AddGlobalStyle(etbConfig.style.public);
 
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
@@ -340,10 +343,31 @@ div.gtl{
         }
 </style>
 <span class="ets-menu" tabindex="0" ng-controller="etb">
-    <img src="${iconImg}" alt="">
-    <a href="#" ng-click="openMenu()">EhTagSyringe</a>
+    <img ng-src="{{iconImg}}" alt="">
+    <a href="#" ng-click="openMenu()">
+    EhTagSyringe
+    <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
+    </a>
     <div class="etc-munu-box" ng-show="menuShow">
+    
     <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
+    
+    <div ng-if="newVersion&&wikiVersion">
+    
+        <div ng-if="wikiVersion.code==newVersion.code">TAG数据库 已是最新版本</div>
+        <div ng-if="wikiVersion.code!=newVersion.code">
+            <div>TAG数据库 有更新!</div>
+            <div>最新数据库发布于{{timetime(newVersion.update_time)}}</div>
+        </div>
+        <div>
+        {{wikiVersion.code}}...{{newVersion.code}}
+</div>
+        <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
+        <button ng-click="VersionCheck()">立即检查</button>
+        
+    </div>
+    <div ng-if="!newVersion">未获取到版本信息</div>
+    
     </div>
 </span>
         `;
@@ -352,14 +376,15 @@ div.gtl{
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
-
+            $scope.iconImg = iconImg;
             $scope.config = etbConfig;
+            let tags = GM_getValue('tags');
 
             $scope.nowPage ="";
             $scope.menuShow = false;
             rootScope = $rootScope;
             $scope.dataset = false;
-            $scope.wikiVersion = false;
+            $scope.wikiVersion = tags.version;
             $scope.hide = false;
             //xx时间前转换方法
             $scope.timetime = function (time) {
@@ -406,6 +431,38 @@ div.gtl{
                     window.document.body.className = "";
                 }
             };
+
+
+            $scope.VersionCheck = function () {
+                getWikiVersion().then(function (Version) {
+                    GM_setValue('lastVersionCheck',{
+                        time:new Date().getTime(),
+                        version:Version,
+                    });
+                    $scope.newVersion = Version;
+                    $scope.$apply();
+                    console.log(Version);
+                });
+            };
+
+            let lastVersionCheck = GM_getValue('lastVersionCheck');
+            $scope.lastVersionCheck = lastVersionCheck;
+            if(!lastVersionCheck){
+                console.log('auto VersionCheck1');
+
+                $scope.VersionCheck();
+            }else{
+                $scope.newVersion = lastVersionCheck.version;
+                //限制20分钟检查一次版本
+                if(new Date().getTime() - lastVersionCheck.time > 20*60*1000 ){
+                    console.log('auto VersionCheck');
+                    $scope.VersionCheck();
+                }
+            }
+
+
+
+
 
             unsafeWindow.r = function () {
                 $scope.$apply();
