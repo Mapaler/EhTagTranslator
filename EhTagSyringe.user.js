@@ -10,7 +10,7 @@
 // @connect     raw.githubusercontent.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=3
+// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/dev-EhTagSyringe/ets-builder-menu.html?v=0
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -38,7 +38,8 @@ window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
     var rows_title="rows"; //行名的地址
-    var pluginVersion =  '2.7.1';
+    var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
+    var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
     
     var defaultConfig = {
@@ -146,6 +147,7 @@ div.gtl{
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
+            $scope.pluginName = pluginName;
 
             $scope.config = etbConfig;
 

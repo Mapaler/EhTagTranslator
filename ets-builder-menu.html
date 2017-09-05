@@ -10,11 +10,12 @@
     .etb-text{
         display: block;
         width: 100%;
+        resize: vertical;
     }
 </style>
 
 <div ng-csp id="etb" class="select-menu js-menu-container js-select-menu " ng-class="{active:menuShow}" ng-controller="etb">
-    <a href="#" ng-click="openMenu()" class="btn btn-sm btn-with-count js-toggler-target">
+    <a href="#" ng-click="openMenu()" class="btn btn-sm btn-with-count js-toggler-target select-menu-button">
         <span class="js-select-button">
             <svg class="octicon" style="margin:2px 2px;" width="12" height="12" viewBox="0 0 180 180" version="1.1"
                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -26,7 +27,7 @@
                     <rect id="Rectangle" x="63.6206897" y="64.9220339" width="26.3793103" height="26.2779661"></rect>
                 </g>
             </svg>
-            EhTagBuilder
+            {{pluginName}}
         </span>
     </a>
     <a class="social-count js-social-count" href="#">
@@ -60,6 +61,7 @@
                 <span class="description">生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。</span>
             </div>
         </div>
+        <!--
         <div class="select-menu-item js-navigation-item ">
             <svg width="16" height="16" class="octicon octicon-question select-menu-item-icon"
                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -94,6 +96,7 @@
                 <span class="description">生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。</span>
             </div>
         </div>
+        -->
     </div>
     <div class="select-menu-list js-navigation-container">
         <div ng-click="openOption()" class="select-menu-item select-menu-action">
@@ -121,7 +124,7 @@
             <path fill-rule="evenodd"
                   d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"/>
         </svg>
-        <span class="select-menu-title">EhTagBuilder 设置</span>
+        <span class="select-menu-title">{{pluginName}} 设置</span>
     </div>
     <div class="select-menu-list js-navigation-container">
         <label class="select-menu-item">
