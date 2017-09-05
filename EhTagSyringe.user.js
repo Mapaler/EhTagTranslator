@@ -470,9 +470,64 @@ div.gtl{
         });
         angular.bootstrap(span,['etb']);
         unsafeWindow.etbApp = app;
+        
+        
+        
+        
 
         buttonInserPlace.appendChild(span);
     }
+    
+    //搜索输入框助手
+    function EhTagInputHelper() {
+        let tags = GM_getValue('tags');
+        console.log(tags);
+
+        console.time('add datalist');
+        let stdinput = document.querySelector('.stdinput');
+        if(!stdinput){return}
+        stdinput.setAttribute("list", "tbs-tags");
+
+        var datalist = document.createElement("datalist");
+        datalist.setAttribute("id", "tbs-tags");
+        stdinput.parentNode.insertBefore(datalist,stdinput.nextSibling);
+
+
+        //调整加载顺序 作家在前面影响搜索
+        let loadOrder = [
+            'female',
+            'male',
+            'parody',
+            'language',
+            'character',
+            'reclass',
+            'misc',
+            'artist'
+        ];
+        var tagsk = {};
+        tags.data.forEach(function (row) {
+            tagsk[row.name] = row;
+        });
+        loadOrder.forEach(function (key) {
+            let row = tagsk[key];
+            let type = row.name;
+            let typeName = row.cname;
+            row.tags.forEach(function (tag) {
+                if(tag.name){
+                    let z = document.createElement("OPTION");
+                    z.setAttribute("value", `${type}:"${tag.name}$"`);
+                    z.setAttribute("label", `${typeName}:${mdImg2cssImg(tag.cname,0)}`);
+                    datalist.appendChild(z);
+                }
+            });
+        })
+
+
+        console.timeEnd('add datalist');
+
+
+    }
+    
 
     //获取数据
     async function startProgram($scope) {
@@ -781,6 +836,7 @@ ${css}
             //在EH站点下添加版本提示功能
             if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
                 EhTagVersion();
+                EhTagInputHelper();
             }
         }
     };
