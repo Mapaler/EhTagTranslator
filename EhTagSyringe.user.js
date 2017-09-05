@@ -261,7 +261,6 @@ div.gtl{
         GM_addStyle(css.data);
         GM_addStyle(etbConfig.style.public);
 
-
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
             GM_addStyle(etbConfig.style.ex);
         }
@@ -274,8 +273,90 @@ div.gtl{
     }
 
     //EH站更新提示
-    function EhTagUpdate() {
+    function EhTagVersion() {
+        console.log('EhTagVersion');
+        var buttonInserPlace = document.querySelector("#nb"); //按钮插入位置
 
+        var span = document.createElement("span");
+        var iconImg  = "https://exhentai.org/img/mr.gif";
+
+        if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
+            iconImg="https://ehgt.org/g/mr.gif";
+        }
+        span.innerHTML = `
+<style>
+        .ets-menu{
+            position: relative;
+        }
+</style>
+<span class="ets-menu" tabindex="0" ng-controller="etb">
+    <img src="${iconImg}" alt="">
+    <a href="#" ng-click="openMenu()">EhTagSyringe</a>
+    <div class="etc-munu-box" ng-show="menuShow">
+    12
+    </div>
+</span>
+        `;
+
+
+        var app = angular.module("etb",[]);
+        app.controller("etb",function($rootScope,$scope){
+            $scope.pluginVersion = pluginVersion;
+
+            $scope.config = etbConfig;
+
+            $scope.nowPage ="";
+            $scope.menuShow = false;
+            rootScope = $rootScope;
+            $scope.dataset = false;
+            $scope.wikiVersion = false;
+            //xx时间前转换方法
+            $scope.timetime = function (time) {
+                if(!time){
+                    return '';
+                }
+                var now = (new Date).valueOf();
+                now = Math.floor(now/1000);
+                time = Math.floor(time/1000);
+                var t =  now-time;
+
+                if(!t){
+                    return '刚刚';
+                }
+                var f = [
+                    [31536000,'年'],
+                    [2592000,'个月'],
+                    [604800,'星期'],
+                    [86400,'天'],
+                    [3600,'小时'],
+                    [60,'分钟'],
+                    [1,'秒']
+                ];
+                var c = 0;
+                for(var i in f){
+                    var k = f[i][0];
+                    var v = f[i][1];
+                    c = Math.floor(t/k);
+                    if (0 != c) {
+                        return c+v+'前';
+                    }
+                }
+            };
+            //打开菜单按钮
+            $scope.openMenu = function () {
+                console.log('openMenu');
+                $scope.nowPage = "menu";
+                $scope.menuShow = true;
+            };
+
+            unsafeWindow.r = function () {
+                $scope.$apply();
+            };
+        });
+        angular.bootstrap(span,['etb']);
+        unsafeWindow.etbApp = app;
+
+        buttonInserPlace.appendChild(span);
     }
 
     //获取数据
@@ -584,7 +665,7 @@ ${css}
             }
             //在EH站点下添加版本提示功能
             if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-                //EhTagSyringe();
+                EhTagVersion();
             }
         }
     };
