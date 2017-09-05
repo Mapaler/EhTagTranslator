@@ -302,7 +302,12 @@ div.gtl{
             AddGlobalStyle(etbConfig.style.eh);
         }
 
-
+        //临时隐藏翻译用的样式
+        AddGlobalStyle(`
+        .hideTranslate #taglist a{font-size:12px !important;}
+        .hideTranslate #taglist a::before{display:none !important;}
+        .hideTranslate #taglist a::after{display:none !important;}
+        `);
 
     }
 
@@ -322,12 +327,23 @@ div.gtl{
         .ets-menu{
             position: relative;
         }
+        .etc-munu-box{
+        position: absolute;
+        left: 50%;
+        margin-left: -100px;
+        top: 20px;
+        width: 200px;
+        height: 200px;
+        background: #fff;
+        z-index: 999999;
+        
+        }
 </style>
 <span class="ets-menu" tabindex="0" ng-controller="etb">
     <img src="${iconImg}" alt="">
     <a href="#" ng-click="openMenu()">EhTagSyringe</a>
     <div class="etc-munu-box" ng-show="menuShow">
-    12
+    <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
     </div>
 </span>
         `;
@@ -344,6 +360,7 @@ div.gtl{
             rootScope = $rootScope;
             $scope.dataset = false;
             $scope.wikiVersion = false;
+            $scope.hide = false;
             //xx时间前转换方法
             $scope.timetime = function (time) {
                 if(!time){
@@ -380,7 +397,14 @@ div.gtl{
             $scope.openMenu = function () {
                 console.log('openMenu');
                 $scope.nowPage = "menu";
-                $scope.menuShow = true;
+                $scope.menuShow = !$scope.menuShow;
+            };
+            $scope.hideChange = function () {
+                if($scope.hide){
+                    window.document.body.className = "hideTranslate"
+                }else{
+                    window.document.body.className = "";
+                }
             };
 
             unsafeWindow.r = function () {
@@ -696,9 +720,11 @@ ${css}
         if((/github\.com/).test(unsafeWindow.location.href)){
             EhTagBuilder();
         }
-        //在EH站点下添加版本提示功能
-        if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-            EhTagVersion();
+        if(etbConfig.syringe) {
+            //在EH站点下添加版本提示功能
+            if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
+                EhTagVersion();
+            }
         }
     };
     if (/loaded|complete/.test(document.readyState)){
@@ -707,8 +733,12 @@ ${css}
         document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
 
-    //注入css 不需要等待页面
-    if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-        EhTagSyringe();
+    //注射器总开关
+    if(etbConfig.syringe){
+        //注入css 不需要等待页面
+        if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+            EhTagSyringe();
+        }
     }
+
 })();
