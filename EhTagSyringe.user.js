@@ -12,7 +12,7 @@
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
 // @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/dev-EhTagSyringe/ets-builder-menu.html?v=0
 // @version     1.0.0
-// @run-at      document-start
+// @run-at      document-idle
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
 // @grant       GM_getValue
