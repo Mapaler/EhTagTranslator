@@ -354,12 +354,31 @@ div.gtl{
         z-index: 999999;
         
         }
+        @keyframes spring
+        {
+          from {transform:translate(-5px,-5px) scaleY(0.9) skewX(-6deg);}
+          50% {transform:translate(-5px,-5px) scaleY(1) skewX(0);}
+          to {transform:translate(-5px,-5px) scaleY(0.9) skewX(6deg);}
+        } 
+        .newWiki
+        {
+          font-size: 0.7em;
+          color: red;
+          display: inline-block;
+          text-shadow:
+            white 1px 1px 1px,
+            white 1px -1px 1px,
+            white -1px 1px 1px,
+            white -1px -1px 1px;
+          transform-origin: center bottom;
+          animation: spring 0.5s ease-in-out infinite alternate;
+        }
 </style>
 <span class="ets-menu" tabindex="0" ng-controller="etb">
     <img ng-src="{{iconImg}}" alt="">
     <a href="#" ng-click="openMenu()">
     {{pluginName}}
-    <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
+    <span class="newWiki" ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
     </a>
     <div class="etc-munu-box" ng-if="menuShow">
     
@@ -378,14 +397,16 @@ div.gtl{
         <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
         <button ng-click="VersionCheck()">立即检查</button>
         
+        <div>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
+        </div>
     </div>
     <div ng-if="!newVersion">未获取到版本信息</div>
     
     </div>
 
-    <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
-    <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
-    <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
 </span>
         `;
 
