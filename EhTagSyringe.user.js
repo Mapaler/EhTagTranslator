@@ -154,13 +154,23 @@ div.gtl{
         }
     };
 
-    var etbConfig = GM_getValue('etbConfig');
-    if(etbConfig){
-        etbConfig = JSON.parse(etbConfig);
-    }else{
+    var etbConfig = GM_getValue('config');
+
+    //配置文件升级
+    if(!etbConfig){
+        var oldConfig = GM_getValue('etbConfig');
+        console.log(oldConfig);
+        if(oldConfig){
+            etbConfig = JSON.parse(oldConfig);
+            GM_setValue('config',etbConfig);
+            GM_deleteValue('etbConfig');
+        }
+    }
+
+    if(!etbConfig){
         /*默认配置*/
         etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-        GM_setValue('etbConfig',JSON.stringify(etbConfig));
+        GM_setValue('config',etbConfig);
     }
 
     console.log(etbConfig);
@@ -267,14 +277,14 @@ div.gtl{
             };
             //保存设置
             $scope.optionSave = function () {
-                GM_setValue('etbConfig',JSON.stringify(etbConfig));
+                GM_setValue('config',etbConfig);
                 myNotification('保存成功');
 
             };
             //重置设置
             $scope.optionReset = function () {
                 $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-                GM_setValue('etbConfig',JSON.stringify(etbConfig));
+                GM_setValue('config',etbConfig);
                 myNotification('已重置');
 
 
@@ -296,6 +306,23 @@ div.gtl{
                         $scope.saveCss();
                     })
                 }
+                if( $location.path() == "/ets-set-config" ){
+                    let s = $location.search();
+                    for(var i in s){
+                        var v = s[i];
+                        if(v === 'true'){
+                            v = true;
+                        }
+                        if(v === 'false'){
+                            v = true;
+                        }
+                        etbConfig[i] = v;
+                    }
+                    GM_setValue('config',etbConfig);
+                    myNotification('配置已修改',{body:JSON.stringify(s)});
+                }
+                //修改配置文件
+                console.log($location)
             },0);
 
         });
