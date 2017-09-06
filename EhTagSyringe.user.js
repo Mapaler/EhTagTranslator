@@ -8,6 +8,7 @@
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
 // @connect     raw.githubusercontent.com
+// @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
 // @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/dev-EhTagSyringe/ets-builder-menu.html?v=0
@@ -28,12 +29,12 @@
 // ==/UserScript==
 
 
-var template = GM_getResourceText('template');
 
-window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
 
 (function() {
     'use strict';
+
+    window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
@@ -41,7 +42,41 @@ window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
-    
+
+    var template = GM_getResourceText('template');
+
+    const headLoaded = new Promise(function (resolve, reject) {
+        if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
+            resolve(unsafeWindow.document.head);
+        }else{
+            //监听DOM变化
+            MutationObserver = window.MutationObserver;
+            var observer = new MutationObserver(function(mutations) {
+                for(let i in mutations){
+                    let mutation = mutations[i];
+                    //监听到HEAD 结束
+                    if(mutation.target.nodeName == "HEAD"){
+                        observer.disconnect();
+                        resolve(mutation.target);
+                        break;
+                    }
+                }
+            });
+            observer.observe(document, {childList: true, subtree: true, attributes: true});
+        }
+    });
+
+    function AddGlobalStyle(css) {
+        //等待head加载完毕
+        headLoaded.then(function (head) {
+            GM_addStyle(css);
+        })
+    }
+
+
+
+
+
     var defaultConfig = {
         'showDescription':true,
         'imageLimit':-1,
@@ -213,8 +248,9 @@ div.gtl{
             };
             //存储css样式
             $scope.saveCss = function () {
-                GM_setValue('css',{
-                    data:$scope.css,
+                GM_setValue('tags',{
+                    css:$scope.css,
+                    data:$scope.dataset,
                     version:$scope.wikiVersion
                 });
                 alert("保存完毕");
@@ -259,26 +295,241 @@ div.gtl{
 
     //样式写入方法
     function EhTagSyringe(){
-        var css = GM_getValue('css');
-        GM_addStyle(css.data);
-        GM_addStyle(etbConfig.style.public);
-
+        let tags = GM_getValue('tags');
+        unsafeWindow.tags = tags;
+        AddGlobalStyle(tags.css);
+        AddGlobalStyle(etbConfig.style.public);
 
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
-            GM_addStyle(etbConfig.style.ex);
+            AddGlobalStyle(etbConfig.style.ex);
         }
         if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
-            GM_addStyle(etbConfig.style.eh);
+            AddGlobalStyle(etbConfig.style.eh);
         }
 
-
+        //临时隐藏翻译用的样式
+        AddGlobalStyle(`
+        .hideTranslate #taglist a{font-size:12px !important;}
+        .hideTranslate #taglist a::before{display:none !important;}
+        .hideTranslate #taglist a::after{display:none !important;}
+        `);
 
     }
 
     //EH站更新提示
-    function EhTagUpdate() {
+    function EhTagVersion() {
+        console.log('EhTagVersion');
+        var buttonInserPlace = document.querySelector("#nb"); //按钮插入位置
+
+        var span = document.createElement("span");
+        var iconImg  = "https://exhentai.org/img/mr.gif";
+
+        if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
+            iconImg="https://ehgt.org/g/mr.gif";
+        }
+        span.innerHTML = `
+<style>
+        .ets-menu{
+            position: relative;
+        }
+        .etc-munu-box{
+        position: absolute;
+        left: 50%;
+        margin-left: -100px;
+        top: 20px;
+        width: 200px;
+        height: 200px;
+        background: #fff;
+        z-index: 999999;
+        
+        }
+</style>
+<span class="ets-menu" tabindex="0" ng-controller="etb">
+    <img ng-src="{{iconImg}}" alt="">
+    <a href="#" ng-click="openMenu()">
+    EhTagSyringe
+    <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
+    </a>
+    <div class="etc-munu-box" ng-show="menuShow">
+    
+    <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
+    
+    <div ng-if="newVersion&&wikiVersion">
+    
+        <div ng-if="wikiVersion.code==newVersion.code">TAG数据库 已是最新版本</div>
+        <div ng-if="wikiVersion.code!=newVersion.code">
+            <div>TAG数据库 有更新!</div>
+            <div>最新数据库发布于{{timetime(newVersion.update_time)}}</div>
+        </div>
+        <div>
+        {{wikiVersion.code}}...{{newVersion.code}}
+</div>
+        <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
+        <button ng-click="VersionCheck()">立即检查</button>
+        
+    </div>
+    <div ng-if="!newVersion">未获取到版本信息</div>
+    
+    </div>
+</span>
+        `;
+
+
+        var app = angular.module("etb",[]);
+        app.controller("etb",function($rootScope,$scope){
+            $scope.pluginVersion = pluginVersion;
+            $scope.iconImg = iconImg;
+            $scope.config = etbConfig;
+            let tags = GM_getValue('tags');
+
+            $scope.nowPage ="";
+            $scope.menuShow = false;
+            rootScope = $rootScope;
+            $scope.dataset = false;
+            $scope.wikiVersion = tags.version;
+            $scope.hide = false;
+            //xx时间前转换方法
+            $scope.timetime = function (time) {
+                if(!time){
+                    return '';
+                }
+                var now = (new Date).valueOf();
+                now = Math.floor(now/1000);
+                time = Math.floor(time/1000);
+                var t =  now-time;
+
+                if(!t){
+                    return '刚刚';
+                }
+                var f = [
+                    [31536000,'年'],
+                    [2592000,'个月'],
+                    [604800,'星期'],
+                    [86400,'天'],
+                    [3600,'小时'],
+                    [60,'分钟'],
+                    [1,'秒']
+                ];
+                var c = 0;
+                for(var i in f){
+                    var k = f[i][0];
+                    var v = f[i][1];
+                    c = Math.floor(t/k);
+                    if (0 != c) {
+                        return c+v+'前';
+                    }
+                }
+            };
+            //打开菜单按钮
+            $scope.openMenu = function () {
+                console.log('openMenu');
+                $scope.nowPage = "menu";
+                $scope.menuShow = !$scope.menuShow;
+            };
+            $scope.hideChange = function () {
+                if($scope.hide){
+                    window.document.body.className = "hideTranslate"
+                }else{
+                    window.document.body.className = "";
+                }
+            };
+
+
+            $scope.VersionCheck = function () {
+                getWikiVersion().then(function (Version) {
+                    GM_setValue('lastVersionCheck',{
+                        time:new Date().getTime(),
+                        version:Version,
+                    });
+                    $scope.newVersion = Version;
+                    $scope.$apply();
+                    console.log(Version);
+                });
+            };
+
+            let lastVersionCheck = GM_getValue('lastVersionCheck');
+            $scope.lastVersionCheck = lastVersionCheck;
+            if(!lastVersionCheck){
+                console.log('auto VersionCheck1');
+
+                $scope.VersionCheck();
+            }else{
+                $scope.newVersion = lastVersionCheck.version;
+                //限制20分钟检查一次版本
+                if(new Date().getTime() - lastVersionCheck.time > 20*60*1000 ){
+                    console.log('auto VersionCheck');
+                    $scope.VersionCheck();
+                }
+            }
+
+
+
+
+
+            unsafeWindow.r = function () {
+                $scope.$apply();
+            };
+        });
+        angular.bootstrap(span,['etb']);
+        unsafeWindow.etbApp = app;
+        
+        
+        
+        
+
+        buttonInserPlace.appendChild(span);
+    }
+    
+    //搜索输入框助手
+    function EhTagInputHelper() {
+        let tags = GM_getValue('tags');
+        console.log(tags);
+
+        console.time('add datalist');
+        let stdinput = document.querySelector('.stdinput');
+        if(!stdinput){return}
+        stdinput.setAttribute("list", "tbs-tags");
+
+        var datalist = document.createElement("datalist");
+        datalist.setAttribute("id", "tbs-tags");
+        stdinput.parentNode.insertBefore(datalist,stdinput.nextSibling);
+
+
+        //调整加载顺序 作家在前面影响搜索
+        let loadOrder = [
+            'female',
+            'male',
+            'parody',
+            'language',
+            'character',
+            'reclass',
+            'misc',
+            'artist'
+        ];
+        var tagsk = {};
+        tags.data.forEach(function (row) {
+            tagsk[row.name] = row;
+        });
+        loadOrder.forEach(function (key) {
+            let row = tagsk[key];
+            let type = row.name;
+            let typeName = row.cname;
+            row.tags.forEach(function (tag) {
+                if(tag.name){
+                    let z = document.createElement("OPTION");
+                    z.setAttribute("value", `${type}:"${tag.name}$"`);
+                    z.setAttribute("label", `${typeName}:${mdImg2cssImg(tag.cname,0)}`);
+                    datalist.appendChild(z);
+                }
+            });
+        })
+
+
+        console.timeEnd('add datalist');
+
 
     }
+    
 
     //获取数据
     async function startProgram($scope) {
@@ -579,26 +830,30 @@ ${css}
     };
 
     var bootstrap = function(){
-        if (window.document.readyState === "complete") {
-            //在github页面下添加生成工具
-            if((/github\.com/).test(unsafeWindow.location.href)){
-                EhTagBuilder();
-            }
+        //在github页面下添加生成工具
+        if((/github\.com/).test(unsafeWindow.location.href)){
+            EhTagBuilder();
+        }
+        if(etbConfig.syringe) {
             //在EH站点下添加版本提示功能
-            if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-                //EhTagSyringe();
+            if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
+                EhTagVersion();
+                EhTagInputHelper();
             }
         }
     };
-    if(window.document.readyState === "complete"){
+    if (/loaded|complete/.test(document.readyState)){
         bootstrap();
     }else{
-        document.addEventListener('readystatechange', bootstrap, false);
+        document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
 
-    //注入css 不需要等待页面
-    if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
-        EhTagSyringe();
+    //注射器总开关
+    if(etbConfig.syringe){
+        //注入css 不需要等待页面
+        if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+            EhTagSyringe();
+        }
     }
 
 })();
