@@ -207,20 +207,20 @@
 
     <div class="select-menu-list js-navigation-container">
         <div class="select-menu-item select-menu-action">
-            <svg ng-show="wikiVersion" aria-hidden="true" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
+            <svg ng-if="wikiVersion" aria-hidden="true" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">获取wiki版本信息</span>
-                <span class="description" ng-show="wikiVersion">{{wikiVersion.code}} {{timetime(wikiVersion.update_time)}}</span>
+                <span class="description" ng-if="wikiVersion">{{wikiVersion.code}} {{timetime(wikiVersion.update_time)}}</span>
             </div>
         </div>
         <div class="select-menu-item select-menu-action">
-            <svg ng-show="dataset" aria-hidden="true" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
+            <svg ng-if="dataset" aria-hidden="true" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">获取列表页面</span>
             </div>
         </div>
         <div ng-repeat="row in dataset" class="select-menu-item select-menu-action">
-            <svg ng-show="row.tags" aria-hidden="true" style="" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
+            <svg ng-if="row.tags" aria-hidden="true" style="" class="octicon select-menu-item-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5z"/></svg>
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">获取{{row.cname}}</span>
             </div>

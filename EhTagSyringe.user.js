@@ -11,7 +11,7 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=3
+// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -348,7 +348,7 @@ div.gtl{
     EhTagSyringe
     <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
     </a>
-    <div class="etc-munu-box" ng-show="menuShow">
+    <div class="etc-munu-box" ng-if="menuShow">
     
     <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
     
