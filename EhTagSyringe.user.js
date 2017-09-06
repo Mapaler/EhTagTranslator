@@ -184,7 +184,8 @@ div.gtl{
         li.setAttribute('ng-csp','ng-csp');
         li.innerHTML = template;
         var app = angular.module("etb",[]);
-        app.controller("etb",function($rootScope,$scope,$location){
+        app.controller("etb",function($rootScope,$scope,$location,$anchorScroll){
+            // console.log();
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
 
@@ -195,6 +196,14 @@ div.gtl{
             rootScope = $rootScope;
             $scope.dataset = false;
             $scope.wikiVersion = false;
+
+            var backdrop = document.querySelector(".modal-backdrop");
+            if(backdrop)backdrop.addEventListener('click',function(){
+                $scope.closeMenu();
+                $scope.$apply();
+            });
+
+
             //xx时间前转换方法
             $scope.timetime = function (time) {
                 if(!time){
@@ -283,27 +292,35 @@ div.gtl{
             };
             //重置设置
             $scope.optionReset = function () {
-                $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-                GM_setValue('config',etbConfig);
-                myNotification('已重置');
-
-
+                if(confirm('确定要重置配置吗？')){
+                    $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
+                    GM_setValue('config',etbConfig);
+                    myNotification('已重置');
+                }
             };
 
             $rootScope.$on('$locationChangeSuccess', function(event){
                 if( $location.path() == "/ets-open-option" ){
                     $scope.openMenu();
                     $scope.openOption();
+                    $anchorScroll('etb')
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-open-menu" ){
                     $scope.openMenu();
+                    $anchorScroll('etb')
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-auto-update" ){
-
                     $scope.openMenu();
                     $scope.startProgram().then(function () {
                         $scope.saveCss();
                     })
+                    $anchorScroll('etb');
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-set-config" ){
                     let s = $location.search();
@@ -313,12 +330,18 @@ div.gtl{
                             v = true;
                         }
                         if(v === 'false'){
-                            v = true;
+                            v = false;
                         }
                         etbConfig[i] = v;
                     }
                     GM_setValue('config',etbConfig);
                     myNotification('配置已修改',{body:JSON.stringify(s)});
+                    $location.path("/").search({});
+                }
+
+                if( $location.path() == "/ets-reset-config" ){
+                    $scope.optionReset();
+                    $location.path("/");
                 }
             });
 
@@ -331,6 +354,7 @@ div.gtl{
     //样式写入方法
     function EhTagSyringe(){
         let tags = GM_getValue('tags');
+        if(!tags)return;
         unsafeWindow.tags = tags;
         AddGlobalStyle(tags.css);
         AddGlobalStyle(etbConfig.style.public);
@@ -442,12 +466,20 @@ div.gtl{
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
             let tags = GM_getValue('tags');
+            if(!tags){
+                $scope.noData =true;
+            }
 
             $scope.nowPage ="";
             $scope.menuShow = false;
             rootScope = $rootScope;
             $scope.dataset = false;
-            $scope.wikiVersion = tags.version;
+            $scope.wikiVersion = {};
+            if(tags){
+                $scope.wikiVersion = tags.version;
+            }
+
+
             $scope.hide = false;
             //xx时间前转换方法
             $scope.timetime = function (time) {
@@ -544,6 +576,7 @@ div.gtl{
     function EhTagInputHelper() {
         let tags = GM_getValue('tags');
         console.log(tags);
+        if(!tags)return;
 
         console.time('add datalist');
         let stdinput = document.querySelector('.stdinput');
