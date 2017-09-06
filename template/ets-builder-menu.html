@@ -10,11 +10,12 @@
     .etb-text{
         display: block;
         width: 100%;
+        resize: vertical;
     }
 </style>
 
 <div ng-csp id="etb" class="select-menu js-menu-container js-select-menu " ng-class="{active:menuShow}" ng-controller="etb">
-    <a href="#" ng-click="openMenu()" class="btn btn-sm btn-with-count js-toggler-target">
+    <a href="#" ng-click="openMenu()" class="btn btn-sm btn-with-count js-toggler-target select-menu-button">
         <span class="js-select-button">
             <svg class="octicon" style="margin:2px 2px;" width="12" height="12" viewBox="0 0 180 180" version="1.1"
                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -26,7 +27,7 @@
                     <rect id="Rectangle" x="63.6206897" y="64.9220339" width="26.3793103" height="26.2779661"></rect>
                 </g>
             </svg>
-            EhTagBuilder
+            {{pluginName}}
         </span>
     </a>
     <a class="social-count js-social-count" href="#">
@@ -45,7 +46,7 @@
             <path fill-rule="evenodd"
                   d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"/>
         </svg>
-        <span class="select-menu-title">请选择任务 v{{pluginVersion}}</span>
+        <span class="select-menu-title">请选择任务</span>
     </div>
     <div class="select-menu-list js-navigation-container">
         <div ng-click="startProgram()" class="select-menu-item js-navigation-item ">
@@ -60,6 +61,7 @@
                 <span class="description">生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。</span>
             </div>
         </div>
+        <!--
         <div class="select-menu-item js-navigation-item ">
             <svg width="16" height="16" class="octicon octicon-question select-menu-item-icon"
                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -94,6 +96,7 @@
                 <span class="description">生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。</span>
             </div>
         </div>
+        -->
     </div>
     <div class="select-menu-list js-navigation-container">
         <div ng-click="openOption()" class="select-menu-item select-menu-action">
@@ -121,7 +124,7 @@
             <path fill-rule="evenodd"
                   d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"/>
         </svg>
-        <span class="select-menu-title">EhTagBuilder 设置</span>
+        <span class="select-menu-title">{{pluginName}} 设置</span>
     </div>
     <div class="select-menu-list js-navigation-container">
         <label class="select-menu-item">
@@ -135,7 +138,7 @@
             <!--<input type="checkbox" class="octicon octicon-question select-menu-item-icon ETB_create-info-image">-->
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">简介图片数量限制</span>
-                <span class="description"><input type="number" ng-model="config.imageLimit"></span>
+                <span class="description"><input type="number" ng-model="config.imageLimit" min="-1" step="1"><br>（0为不显示，-1为不限制）</span>
             </div>
         </label>
         <label class="select-menu-item">
@@ -149,13 +152,26 @@
             <input type="checkbox" ng-model="config.syringe" class="octicon octicon-question select-menu-item-icon ETB_create-syringe">
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">使用内置样式注入器</span>
-                <span class="description">将自动写入汉化样式，无需第三方扩展。</span>
+                <span class="description">本脚本自动注入汉化样式，无需Stylish扩展。</span>
             </div>
         </label>
-        <div class="select-menu-item"><img width="14" height="16"
-                                           class="octicon octicon-question select-menu-item-icon"
-                                           aria-hidden="true"
-                                           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAIAAACp9tltAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAsSAAALEgHS3X78AAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAApZJREFUKJFNwX1MzHEcB/D35/v9/s7lXKqj0p0T1vXg2lIeh+thjZE/1Iw/8mwyjBn+sdmwGWZmy6LokllGm5mHYVYbmzIydTJlMtGTqJau7n6p3+/79a/XiywWEe2wEgAQEWcQRDwc1tnfyamcgTHFCMR+j4aEOzGm7N5GIjASds0pjPi+Tr36Rq3R9GlfkitxtpM7ZrKYGRuu1wjOeWx0PAgktUe1ra1vGzxJ3syFeWNJS662tOBd+/7l1oy4WYxIMGjTLE5j0rx07vHmokMnjuQxxgAAUEr19/efOXwwQwGAYCTsFnfNnSerc4vz8/ODwWBlZWVHR0dUVFRhYWFKSgrnHFAABJFms7hf1H28euUwgMbXDc/qb7oS4t/cbWt7/nTKfI9dH4OSgBLBkdHqaw96un6GQiEAuTl5PT2HAi3Nka6xNDLS+fhMp0OCQYFbBIuQoxzGUHA8JydX07SszKyCgvWbtu+c7s2oqns53251x8XdbmpG6jznt/rSz88upnvcfr/fMAz1n97e3i25q7rLLnjdLqakmgyFf/0cXOhxl5cd8fm8B/aXVFSUDwwMAEhISHAlp2qaRgSmlDRC+vHS+2Fr/Bw3bpd/Obq7+n3jsW1bt0opAfSOjO4or+obHhFKKjk+YUr4/f5AIFBadWt48OP4ROSekhIi0nW9a/BPVvHBD5fPCgBSmoAyTdPn82VnZ5umSUSMMV3XT5467Vm5ZlHe2vv+UgEo4nzv+qWF6/Izl61MW+CNjY2TUra1t79qal5StCsnPT1SSCgIEOM224rF3tbuITkR8CZPdnUFHz78GuSpRcfOR0RY7EJZmVJQFDFFm+uMBTAcDDGNHA4bQQ0OhSdMiy3KwUgxIgb143vnP5/yHx0OlzuwAAAAAElFTkSuQmCC">
+        <div class="select-menu-item">
+            <svg width="16" height="16" viewBox="0 0 64 64" version="1.1" 
+                 class="octicon octicon-question select-menu-item-icon">
+                <defs>
+                    <path d="M0 14.995C0 6.714 6.713 0 14.995 0h34.01C57.286 0 64 6.713 64 14.995v34.01C64 57.287 57.287 64 49.005 64h-34.01C6.714 64 0 57.287 0 49.005v-34.01z" id="a"/>
+                </defs>
+                <g fill="none" fill-rule="evenodd">
+                    <mask id="b" fill="#fff">
+                        <use xlink:href="#a"/>
+                    </mask>
+                    <use fill-opacity="0" fill="#FFF" xlink:href="#a"/>
+                    <path fill="#2ECC71" mask="url(#b)" d="M30 0v39H0V0z"/>
+                    <path fill="#E74C3C" mask="url(#b)" d="M64 0v21H34V0z"/>
+                    <path fill="#F39C12" mask="url(#b)" d="M30 43v21H0V43z"/>
+                    <path fill="#3498DB" mask="url(#b)" d="M64 25.5v39H34v-39z"/>
+                </g>
+            </svg>
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">Tag通用样式</span>
                 <span class="description">
@@ -230,12 +246,12 @@
 
 <script type="text/ng-template" id="css">
     <div class="select-menu-header" ng-click="closeMenu()">
-        <svg aria-label="Close" class="octicon octicon-x js-menu-close" height="16" role="img" version="1.1"
-             viewBox="0 0 12 16" width="12">
+        <svg width="12" height="16" viewBox="0 0 12 16" version="1.1"
+             class="octicon octicon-x js-menu-close">
             <path fill-rule="evenodd"
                   d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"/>
         </svg>
-        <span class="select-menu-title">请选择任务 v{{pluginVersion}}</span>
+        <span class="select-menu-title">最新翻译获取完成</span>
     </div>
 
     <div class="select-menu-list js-navigation-container">
@@ -243,26 +259,34 @@
             <!--<textarea ng-model="cssStylish" wrap="off"></textarea>-->
         <!--</div>-->
         <button class="select-menu-item select-menu-action" ng-click="saveCss()">
-            <svg width="16" viewBox="0 0 16 16" version="1.1" height="16"
-                 class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
-                <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
-            </svg>
-            <div class="select-menu-item-text" >保存</div>
-
+            <span class="octicon octicon-book select-menu-item-icon">💉</span>
+            <div class="select-menu-item-text" >注入到E站页面</div>
         </button>
         <button class="select-menu-item select-menu-action" ng-click="copyStylishCss()">
-            <svg width="16" viewBox="0 0 16 16" version="1.1" height="16"
-                 class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
-                <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
+            <svg width="16" height="16" viewBox="0 0 64 64" version="1.1" 
+                 class="octicon octicon-book select-menu-item-icon">
+                <defs>
+                    <path d="M0 14.995C0 6.714 6.713 0 14.995 0h34.01C57.286 0 64 6.713 64 14.995v34.01C64 57.287 57.287 64 49.005 64h-34.01C6.714 64 0 57.287 0 49.005v-34.01z" id="a"/>
+                </defs>
+                <g fill="none" fill-rule="evenodd">
+                    <mask id="b" fill="#fff">
+                        <use xlink:href="#a"/>
+                    </mask>
+                    <use fill-opacity="0" fill="#FFF" xlink:href="#a"/>
+                    <path fill="#2ECC71" mask="url(#b)" d="M30 0v39H0V0z"/>
+                    <path fill="#E74C3C" mask="url(#b)" d="M64 0v21H34V0z"/>
+                    <path fill="#F39C12" mask="url(#b)" d="M30 43v21H0V43z"/>
+                    <path fill="#3498DB" mask="url(#b)" d="M64 25.5v39H34v-39z"/>
+                </g>
             </svg>
             <div class="select-menu-item-text" >复制Mozilla格式（用于stylish）</div>
         </button>
         <button class="select-menu-item select-menu-action" ng-click="copyCss()">
-            <svg width="16" viewBox="0 0 16 16" version="1.1" height="16"
-                 class="octicon octicon-book select-menu-item-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" version="1.1" 
+                 class="octicon octicon-book select-menu-item-icon">
                 <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
             </svg>
-            <div class="select-menu-item-text">复制翻译样式</div>
+            <div class="select-menu-item-text">仅复制翻译样式</div>
         </button>
 
 

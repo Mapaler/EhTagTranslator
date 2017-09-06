@@ -28,9 +28,6 @@
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
 
-
-
-
 (function() {
     'use strict';
 
@@ -39,7 +36,8 @@
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
     var rows_title="rows"; //行名的地址
-    var pluginVersion =  '2.7.1';
+    var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
+    var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
 
     var template = GM_getResourceText('template');
@@ -181,6 +179,7 @@ div.gtl{
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
+            $scope.pluginName = pluginName;
 
             $scope.config = etbConfig;
 
@@ -345,7 +344,7 @@ div.gtl{
 <span class="ets-menu" tabindex="0" ng-controller="etb">
     <img ng-src="{{iconImg}}" alt="">
     <a href="#" ng-click="openMenu()">
-    EhTagSyringe
+    {{pluginName}}
     <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
     </a>
     <div class="etc-munu-box" ng-if="menuShow">
@@ -376,6 +375,7 @@ div.gtl{
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
+            $scope.pluginName = pluginName;
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
             let tags = GM_getValue('tags');
@@ -581,9 +581,9 @@ div.gtl{
             row.tags.forEach(function (tag) {
                 if(tag.name){
                     var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
-                    var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit);
+                    var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     if(!tag.info)tag.info="";
-                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit);
+                    var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     css += `
 a[id="ta_${tagid}"]{
 font-size:0px;
@@ -840,6 +840,7 @@ ${css}
             }
         }
     };
+
     if (/loaded|complete/.test(document.readyState)){
         bootstrap();
     }else{
