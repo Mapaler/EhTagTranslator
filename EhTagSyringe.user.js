@@ -347,7 +347,7 @@ div.gtl{
 <span class="ets-menu" tabindex="0" ng-controller="etb">
     <img ng-src="{{iconImg}}" alt="">
     <a href="#" ng-click="openMenu()">
-    EhTagSyringe
+    {{pluginName}}
     <span ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
     </a>
     <div class="etc-munu-box" ng-show="menuShow">
