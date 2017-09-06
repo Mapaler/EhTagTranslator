@@ -290,7 +290,7 @@ div.gtl{
 
             };
 
-            setTimeout(function () {
+            $rootScope.$on('$locationChangeSuccess', function(event){
                 if( $location.path() == "/ets-open-option" ){
                     $scope.openMenu();
                     $scope.openOption();
@@ -298,7 +298,6 @@ div.gtl{
                 if( $location.path() == "/ets-open-menu" ){
                     $scope.openMenu();
                 }
-                //隐藏功能自动更新！！！
                 if( $location.path() == "/ets-auto-update" ){
 
                     $scope.openMenu();
@@ -321,9 +320,7 @@ div.gtl{
                     GM_setValue('config',etbConfig);
                     myNotification('配置已修改',{body:JSON.stringify(s)});
                 }
-                //修改配置文件
-                console.log($location)
-            },0);
+            });
 
         });
         angular.bootstrap(li,['etb']);
