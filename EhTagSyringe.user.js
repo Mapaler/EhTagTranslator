@@ -862,7 +862,6 @@ ${css}
                 (t)=>t.replace("{~Line~}","|")
             )
         );
-        console.log({test:data,table:tableArr});
         let tags = [];
         tableArr.forEach(function (tr,index) {
             if(index>1){
