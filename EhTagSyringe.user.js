@@ -11,7 +11,7 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/dev-EhTagSyringe/ets-builder-menu.html?v=0
+// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=4
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
