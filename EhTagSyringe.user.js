@@ -849,12 +849,12 @@ ${css}
 
     function parseTable(data) {
         /*剔除表格以外的内容*/
-        var re = (/^\|.*\|$/gm);
+        var re = (/^\s*(\|.*\|)\s*$/gm);
         var table = "";
         var temp = "";
         while( temp = re.exec(data) ){
             if(table)table+="\n";
-            table+=temp[0];
+            table+=temp[1];
         }
         table = table.replace(/\\\|/igm,"{~Line~}");
         let tableArr = table.split("\n").map(
@@ -862,7 +862,7 @@ ${css}
                 (t)=>t.replace("{~Line~}","|")
             )
         );
-
+        console.log({test:data,table:tableArr});
         let tags = [];
         tableArr.forEach(function (tr,index) {
             if(index>1){
