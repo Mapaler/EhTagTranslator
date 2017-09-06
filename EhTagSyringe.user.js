@@ -292,11 +292,11 @@ div.gtl{
             };
             //重置设置
             $scope.optionReset = function () {
-                $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-                GM_setValue('config',etbConfig);
-                myNotification('已重置');
-
-
+                if(confirm('确定要重置配置吗？')){
+                    $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
+                    GM_setValue('config',etbConfig);
+                    myNotification('已重置');
+                }
             };
 
             $rootScope.$on('$locationChangeSuccess', function(event){
@@ -304,18 +304,23 @@ div.gtl{
                     $scope.openMenu();
                     $scope.openOption();
                     $anchorScroll('etb')
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-open-menu" ){
                     $scope.openMenu();
                     $anchorScroll('etb')
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-auto-update" ){
-
                     $scope.openMenu();
                     $scope.startProgram().then(function () {
                         $scope.saveCss();
                     })
                     $anchorScroll('etb');
+                    $location.path("/");
+
                 }
                 if( $location.path() == "/ets-set-config" ){
                     let s = $location.search();
@@ -331,6 +336,12 @@ div.gtl{
                     }
                     GM_setValue('config',etbConfig);
                     myNotification('配置已修改',{body:JSON.stringify(s)});
+                    $location.path("/").search({});
+                }
+
+                if( $location.path() == "/ets-reset-config" ){
+                    $scope.optionReset();
+                    $location.path("/");
                 }
             });
 
