@@ -184,7 +184,8 @@ div.gtl{
         li.setAttribute('ng-csp','ng-csp');
         li.innerHTML = template;
         var app = angular.module("etb",[]);
-        app.controller("etb",function($rootScope,$scope,$location){
+        app.controller("etb",function($rootScope,$scope,$location,$anchorScroll){
+            // console.log();
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
 
@@ -195,6 +196,14 @@ div.gtl{
             rootScope = $rootScope;
             $scope.dataset = false;
             $scope.wikiVersion = false;
+
+            var backdrop = document.querySelector(".modal-backdrop");
+            if(backdrop)backdrop.addEventListener('click',function(){
+                $scope.closeMenu();
+                $scope.$apply();
+            });
+
+
             //xx时间前转换方法
             $scope.timetime = function (time) {
                 if(!time){
@@ -294,9 +303,11 @@ div.gtl{
                 if( $location.path() == "/ets-open-option" ){
                     $scope.openMenu();
                     $scope.openOption();
+                    $anchorScroll('etb')
                 }
                 if( $location.path() == "/ets-open-menu" ){
                     $scope.openMenu();
+                    $anchorScroll('etb')
                 }
                 if( $location.path() == "/ets-auto-update" ){
 
@@ -304,6 +315,7 @@ div.gtl{
                     $scope.startProgram().then(function () {
                         $scope.saveCss();
                     })
+                    $anchorScroll('etb');
                 }
                 if( $location.path() == "/ets-set-config" ){
                     let s = $location.search();
@@ -313,7 +325,7 @@ div.gtl{
                             v = true;
                         }
                         if(v === 'false'){
-                            v = true;
+                            v = false;
                         }
                         etbConfig[i] = v;
                     }
