@@ -354,6 +354,7 @@ div.gtl{
     //样式写入方法
     function EhTagSyringe(){
         let tags = GM_getValue('tags');
+        if(!tags)return;
         unsafeWindow.tags = tags;
         AddGlobalStyle(tags.css);
         AddGlobalStyle(etbConfig.style.public);
@@ -465,12 +466,20 @@ div.gtl{
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
             let tags = GM_getValue('tags');
+            if(!tags){
+                $scope.noData =true;
+            }
 
             $scope.nowPage ="";
             $scope.menuShow = false;
             rootScope = $rootScope;
             $scope.dataset = false;
-            $scope.wikiVersion = tags.version;
+            $scope.wikiVersion = {};
+            if(tags){
+                $scope.wikiVersion = tags.version;
+            }
+
+
             $scope.hide = false;
             //xx时间前转换方法
             $scope.timetime = function (time) {
@@ -567,6 +576,7 @@ div.gtl{
     function EhTagInputHelper() {
         let tags = GM_getValue('tags');
         console.log(tags);
+        if(!tags)return;
 
         console.time('add datalist');
         let stdinput = document.querySelector('.stdinput');
