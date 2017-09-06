@@ -592,11 +592,11 @@ div.gtl{
         let loadOrder = [
             'female',
             'male',
-            'parody',
             'language',
             'character',
             'reclass',
             'misc',
+            'parody',
             'artist'
         ];
         var tagsk = {};
@@ -648,7 +648,7 @@ div.gtl{
         rows.forEach(function (row) {
             var temp = getTags(row.name);
             temp.then(function (mdText) {
-                row.tags = parseTable(mdText);
+                row.tags = parseTable(mdText,row.name);
                 $scope.$apply();
             });
             pp.tags.push(temp);
@@ -847,7 +847,7 @@ ${css}
         });
     }
 
-    function parseTable(data) {
+    function parseTable(data,name) {
         /*剔除表格以外的内容*/
         var re = (/^\s*(\|.*\|)\s*$/gm);
         var table = "";
@@ -863,15 +863,19 @@ ${css}
             )
         );
         let tags = [];
+        var count = [];
         tableArr.forEach(function (tr,index) {
             if(index>1){
-                tags.push({
+                let t = {
                     name  : trim(tr[1]||""),
                     cname : trim(tr[2]||""),
                     info  : trim(tr[3]||"")
-                });
+                };
+                tags.push(t);
+                if(t.name){count++};
             }
         });
+        console.log(name,count);
         return tags;
     }
 
@@ -888,6 +892,8 @@ ${css}
         });
         return true;
     }
+
+
 
     async function myNotification(title,options)
     {
