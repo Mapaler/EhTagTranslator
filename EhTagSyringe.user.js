@@ -13,7 +13,7 @@
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
 // @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/dev-EhTagSyringe/ets-builder-menu.html?v=0
 // @version     1.0.0
-// @run-at      document-idle
+// @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
 // @grant       GM_getValue
@@ -27,9 +27,6 @@
 // @grant       GM_setClipboard
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
-
-
-
 
 (function() {
     'use strict';
@@ -378,6 +375,7 @@ div.gtl{
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
+            $scope.pluginName = pluginName;
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
             let tags = GM_getValue('tags');
@@ -842,6 +840,7 @@ ${css}
             }
         }
     };
+    
     if (/loaded|complete/.test(document.readyState)){
         bootstrap();
     }else{
