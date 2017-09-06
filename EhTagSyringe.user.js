@@ -32,6 +32,7 @@
     'use strict';
 
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
+    unsafeWindow.wikiUpdate = autoUpdate;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
@@ -69,9 +70,6 @@
             GM_addStyle(css);
         })
     }
-
-
-
 
 
     var defaultConfig = {
@@ -167,7 +165,6 @@ div.gtl{
 
     console.log(etbConfig);
 
-
     //UI控制方法等等
     function EhTagBuilder(){
         console.log('EhTagBuilder');
@@ -177,7 +174,7 @@ div.gtl{
         li.setAttribute('ng-csp','ng-csp');
         li.innerHTML = template;
         var app = angular.module("etb",[]);
-        app.controller("etb",function($rootScope,$scope){
+        app.controller("etb",function($rootScope,$scope,$location){
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
 
@@ -248,20 +245,20 @@ div.gtl{
                 GM_setValue('tags',{
                     css:$scope.css,
                     data:$scope.dataset,
-                    version:$scope.wikiVersion
+                    version:$scope.wikiVersion,
+                    update_time:new Date().getTime()
                 });
-                alert("保存完毕");
+                myNotification('保存完毕');
             };
 
             $scope.copyStylishCss = function () {
                 GM_setClipboard($scope.cssStylish)
-                alert("复制完毕");
+                myNotification('复制完毕');
 
             };
             $scope.copyCss = function () {
                 GM_setClipboard($scope.css)
-                alert("复制完毕");
-
+                myNotification('复制完毕');
             };
 
             //打开设置界面
@@ -271,19 +268,36 @@ div.gtl{
             //保存设置
             $scope.optionSave = function () {
                 GM_setValue('etbConfig',JSON.stringify(etbConfig));
-                alert("已经保存")
+                myNotification('保存成功');
+
             };
             //重置设置
             $scope.optionReset = function () {
                 $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
                 GM_setValue('etbConfig',JSON.stringify(etbConfig));
-                alert("已重置")
+                myNotification('已重置');
+
 
             };
 
-            unsafeWindow.r = function () {
-                $scope.$apply();
-            };
+            setTimeout(function () {
+                if( $location.path() == "/ets-open-option" ){
+                    $scope.openMenu();
+                    $scope.openOption();
+                }
+                if( $location.path() == "/ets-open-menu" ){
+                    $scope.openMenu();
+                }
+                //隐藏功能自动更新！！！
+                if( $location.path() == "/ets-auto-update" ){
+
+                    $scope.openMenu();
+                    $scope.startProgram().then(function () {
+                        $scope.saveCss();
+                    })
+                }
+            },0);
+
         });
         angular.bootstrap(li,['etb']);
         unsafeWindow.etbApp = app;
@@ -368,6 +382,10 @@ div.gtl{
     <div ng-if="!newVersion">未获取到版本信息</div>
     
     </div>
+
+    <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
+    <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
+    <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
 </span>
         `;
 
@@ -441,6 +459,15 @@ div.gtl{
                     });
                     $scope.newVersion = Version;
                     $scope.$apply();
+
+                    //这是个秘密
+                    if(etbConfig.autoUpdate){
+                        if($scope.newVersion.code != $scope.wikiVersion.code){
+                            autoUpdate().then(function () {
+                                myNotification('更新完毕，刷新页面生效');
+                            });
+                        }
+                    }
                     console.log(Version);
                 });
             };
@@ -449,7 +476,6 @@ div.gtl{
             $scope.lastVersionCheck = lastVersionCheck;
             if(!lastVersionCheck){
                 console.log('auto VersionCheck1');
-
                 $scope.VersionCheck();
             }else{
                 $scope.newVersion = lastVersionCheck.version;
@@ -459,21 +485,12 @@ div.gtl{
                     $scope.VersionCheck();
                 }
             }
-
-
-
-
-
             unsafeWindow.r = function () {
                 $scope.$apply();
             };
         });
         angular.bootstrap(span,['etb']);
-        unsafeWindow.etbApp = app;
-        
-        
-        
-        
+        unsafeWindow.etsApp = app;
 
         buttonInserPlace.appendChild(span);
     }
@@ -527,7 +544,8 @@ div.gtl{
 
 
     }
-    
+
+
 
     //获取数据
     async function startProgram($scope) {
@@ -780,8 +798,29 @@ ${css}
         return tags;
     }
 
+    async function autoUpdate() {
+        var $scope = {};
+        $scope.$apply = function(){};
+        await startProgram($scope);
+        var css = buildCSS($scope.dataset,$scope.wikiVersion);
+        GM_setValue('tags',{
+            css:css,
+            data:$scope.dataset,
+            version:$scope.wikiVersion,
+            update_time:new Date().getTime()
+        });
+        return true;
+    }
 
-
+    async function myNotification(title,options)
+    {
+        let permission = await Notification.requestPermission();
+        if(permission == 'granted'){
+            return new Notification(title, options);
+        }else{
+            return false;
+        }
+    }
 
     //承诺封装的异步请求
     function PromiseRequest(option) {
