@@ -12,7 +12,7 @@
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js?v=10
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=10
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=11
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=12
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -403,7 +403,7 @@ div.gtl{
             if(!tags){
                 $scope.noData =true;
             }
-
+            $scope.update_time = tags.update_time;
             $scope.nowPage ="";
             $scope.menuShow = false;
             rootScope = $rootScope;
@@ -464,10 +464,11 @@ div.gtl{
 
             $scope.VersionCheck = function () {
                 getWikiVersion().then(function (Version) {
-                    GM_setValue('lastVersionCheck',{
+                    $scope.lastVersionCheck = {
                         time:new Date().getTime(),
                         version:Version,
-                    });
+                    };
+                    GM_setValue('lastVersionCheck',$scope.lastVersionCheck);
                     $scope.newVersion = Version;
                     $scope.$apply();
 
