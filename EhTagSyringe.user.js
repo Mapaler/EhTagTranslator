@@ -17,10 +17,6 @@
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
 // @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=5
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=5
-
-
-
-
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -167,8 +163,12 @@ div.gtl{
 
     var etbConfig = GM_getValue('config');
 
-
-    var etbConfig = GM_getValue('config');
+    if(!etbConfig){
+        /*默认配置 json转换是用来深拷贝 切断关联 */
+        etbConfig = JSON.parse(JSON.stringify(defaultConfig));
+        // 不用存储 反正是默认的
+        // GM_setValue('config',etbConfig);
+    }
 
     // 配置自动升级
     for(var i in defaultConfig){
@@ -177,13 +177,6 @@ div.gtl{
         }
     }
 
-
-    if(!etbConfig){
-        /*默认配置 json转换是用来深拷贝 切断关联 */
-        etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-        // 不用存储 反正是默认的
-        // GM_setValue('config',etbConfig);
-    }
 
     console.log('ets config:',etbConfig);
 
