@@ -11,11 +11,7 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
-// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=5
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=5
 // @version     1.0.0
 // @run-at      document-start
