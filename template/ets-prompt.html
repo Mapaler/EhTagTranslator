@@ -1,0 +1,106 @@
+<style scoped>
+    .ets-menu{
+        position: relative;
+    }
+    .etc-munu-box{
+        position: absolute;
+        left: 50%;
+        margin-left: -100px;
+        top: 20px;
+        width: 200px;
+        height: 200px;
+        background: #fff;
+        z-index: 999999;
+
+    }
+    @keyframes spring
+    {
+        from {transform:translate(-5px,-5px) scaleY(0.9) skewX(-6deg);}
+        50% {transform:translate(-5px,-5px) scaleY(1) skewX(0);}
+        to {transform:translate(-5px,-5px) scaleY(0.9) skewX(6deg);}
+    }
+    .newWiki
+    {
+        font-size: 0.7em;
+        color: red;
+        display: inline-block;
+        text-shadow:
+                white 1px 1px 1px,
+                white 1px -1px 1px,
+                white -1px 1px 1px,
+                white -1px -1px 1px;
+        transform-origin: center bottom;
+        animation: spring 0.5s ease-in-out infinite alternate;
+    }
+</style>
+<span class="ets-menu" tabindex="0" ng-controller="etb">
+    <img ng-src="{{iconImg}}" alt="">
+    <a href="#" ng-click="openMenu()">
+    {{pluginName}}
+    <span class="newWiki" ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
+    </a>
+    <div class="etc-munu-box" ng-if="menuShow">
+
+    <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
+
+    <div ng-if="newVersion&&wikiVersion">
+
+        <div ng-if="wikiVersion.code==newVersion.code">TAG数据库 已是最新版本</div>
+        <div ng-if="wikiVersion.code!=newVersion.code">
+            <div>TAG数据库 有更新!</div>
+            <div>最新数据库发布于{{timetime(newVersion.update_time)}}</div>
+        </div>
+        <div>
+        {{wikiVersion.code}}...{{newVersion.code}}
+</div>
+        <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
+        <button ng-click="VersionCheck()">立即检查</button>
+
+        <div>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
+        </div>
+    </div>
+    <div ng-if="!newVersion">未获取到版本信息</div>
+
+        <md-button>测试</md-button>
+
+
+    </div>
+
+    <md-menu>
+      <md-button aria-label="Open demo menu" ng-click="$mdMenu.open($event)">
+        测试
+      </md-button>
+      <md-menu-content width="3">
+
+      <div>
+          <div ng-if="wikiVersion.code==newVersion.code">TAG数据库 已是最新版本</div>
+        <div ng-if="wikiVersion.code!=newVersion.code">
+            <div>TAG数据库 有更新!</div>
+            <div>最新数据库发布于{{timetime(newVersion.update_time)}}</div>
+        </div>
+        <div>
+        {{wikiVersion.code}}...{{newVersion.code}}
+</div>
+        <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
+        <button ng-click="VersionCheck()">立即检查</button>
+
+        <div>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
+            <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
+        </div>
+</div>
+
+
+        <md-menu-item ng-repeat="item in [1, 2, 3]">
+          <md-button ng-click="ctrl.announceClick($index)">
+            Option {{item}}
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+
+</span>

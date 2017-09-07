@@ -10,8 +10,17 @@
 // @connect     raw.githubusercontent.com
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
-// @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js
-// @resource    template     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
+// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=5
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=5
+
+
+
+
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -27,6 +36,8 @@
 // @grant       GM_setClipboard
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
+
+
 
 (function() {
     'use strict';
@@ -156,24 +167,25 @@ div.gtl{
 
     var etbConfig = GM_getValue('config');
 
-    //配置文件升级
-    if(!etbConfig){
-        var oldConfig = GM_getValue('etbConfig');
-        console.log(oldConfig);
-        if(oldConfig){
-            etbConfig = JSON.parse(oldConfig);
-            GM_setValue('config',etbConfig);
-            GM_deleteValue('etbConfig');
+
+    var etbConfig = GM_getValue('config');
+
+    // 配置自动升级
+    for(var i in defaultConfig){
+        if(typeof etbConfig[i] === "undefined"){
+            etbConfig[i] = JSON.parse(JSON.stringify(defaultConfig[i]));
         }
     }
 
+
     if(!etbConfig){
-        /*默认配置*/
+        /*默认配置 json转换是用来深拷贝 切断关联 */
         etbConfig = JSON.parse(JSON.stringify(defaultConfig));
-        GM_setValue('config',etbConfig);
+        // 不用存储 反正是默认的
+        // GM_setValue('config',etbConfig);
     }
 
-    console.log(etbConfig);
+    console.log('ets config:',etbConfig);
 
     //UI控制方法等等
     function EhTagBuilder(){
@@ -273,7 +285,6 @@ div.gtl{
             $scope.copyStylishCss = function () {
                 GM_setClipboard($scope.cssStylish)
                 myNotification('复制完毕');
-
             };
             $scope.copyCss = function () {
                 GM_setClipboard($scope.css)
@@ -305,13 +316,11 @@ div.gtl{
                     $scope.openOption();
                     $anchorScroll('etb')
                     $location.path("/");
-
                 }
                 if( $location.path() == "/ets-open-menu" ){
                     $scope.openMenu();
                     $anchorScroll('etb')
                     $location.path("/");
-
                 }
                 if( $location.path() == "/ets-auto-update" ){
                     $scope.openMenu();
@@ -320,7 +329,6 @@ div.gtl{
                     })
                     $anchorScroll('etb');
                     $location.path("/");
-
                 }
                 if( $location.path() == "/ets-set-config" ){
                     let s = $location.search();
@@ -386,80 +394,13 @@ div.gtl{
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
             iconImg="https://ehgt.org/g/mr.gif";
         }
-        span.innerHTML = `
-<style>
-        .ets-menu{
-            position: relative;
-        }
-        .etc-munu-box{
-        position: absolute;
-        left: 50%;
-        margin-left: -100px;
-        top: 20px;
-        width: 200px;
-        height: 200px;
-        background: #fff;
-        z-index: 999999;
-        
-        }
-        @keyframes spring
-        {
-          from {transform:translate(-5px,-5px) scaleY(0.9) skewX(-6deg);}
-          50% {transform:translate(-5px,-5px) scaleY(1) skewX(0);}
-          to {transform:translate(-5px,-5px) scaleY(0.9) skewX(6deg);}
-        } 
-        .newWiki
-        {
-          font-size: 0.7em;
-          color: red;
-          display: inline-block;
-          text-shadow:
-            white 1px 1px 1px,
-            white 1px -1px 1px,
-            white -1px 1px 1px,
-            white -1px -1px 1px;
-          transform-origin: center bottom;
-          animation: spring 0.5s ease-in-out infinite alternate;
-        }
-</style>
-<span class="ets-menu" tabindex="0" ng-controller="etb">
-    <img ng-src="{{iconImg}}" alt="">
-    <a href="#" ng-click="openMenu()">
-    {{pluginName}}
-    <span class="newWiki" ng-if="newVersion&&newVersion.code != wikiVersion.code">NEW</span>
-    </a>
-    <div class="etc-munu-box" ng-if="menuShow">
-    
-    <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
-    
-    <div ng-if="newVersion&&wikiVersion">
-    
-        <div ng-if="wikiVersion.code==newVersion.code">TAG数据库 已是最新版本</div>
-        <div ng-if="wikiVersion.code!=newVersion.code">
-            <div>TAG数据库 有更新!</div>
-            <div>最新数据库发布于{{timetime(newVersion.update_time)}}</div>
-        </div>
-        <div>
-        {{wikiVersion.code}}...{{newVersion.code}}
-</div>
-        <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
-        <button ng-click="VersionCheck()">立即检查</button>
-        
-        <div>
-            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新</a>
-            <a href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">设置</a>
-            <a href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
-        </div>
-    </div>
-    <div ng-if="!newVersion">未获取到版本信息</div>
-    
-    </div>
+        var materialCss = GM_getResourceText('material-css');
+        var etsPrompt = GM_getResourceText('ets-prompt');
 
-</span>
-        `;
+        span.innerHTML = `<style>${materialCss}</style>${etsPrompt}`;
 
 
-        var app = angular.module("etb",[]);
+        var app = angular.module("etb",['ngMaterial']);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
