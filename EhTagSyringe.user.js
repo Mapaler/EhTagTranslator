@@ -10,13 +10,13 @@
 // @connect     raw.githubusercontent.com
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js?v=6
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js?v=6
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js?v=6
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js?v=6
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=6
-// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=6
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=6
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js?v=7
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js?v=7
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js?v=7
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js?v=7
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=7
+// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=7
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=7
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -39,7 +39,9 @@
     'use strict';
 
 
-    window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
+    window.requestAnimationFrame = unsafeWindow.requestAnimationFrame = undefined;
+    window.angular = unsafeWindow.angular;
+
     unsafeWindow.wikiUpdate = autoUpdate;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
@@ -79,6 +81,7 @@
         })
     }
 
+    AddGlobalStyle('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>')
 
     var defaultConfig = {
         'showDescription':true,
