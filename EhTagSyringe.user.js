@@ -38,6 +38,10 @@
 (function() {
     'use strict';
 
+
+    for(var i in unsafeWindow){
+        window[i] = unsafeWindow[i];
+    }
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     unsafeWindow.wikiUpdate = autoUpdate;
 
