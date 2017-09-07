@@ -399,6 +399,7 @@ div.gtl{
             $scope.pluginName = pluginName;
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
+            $scope.noData = false;
             let tags = GM_getValue('tags');
             if(!tags){
                 $scope.noData =true;
