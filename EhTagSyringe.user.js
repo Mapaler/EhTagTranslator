@@ -10,13 +10,13 @@
 // @connect     raw.githubusercontent.com
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
-// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=5
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=5
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js?v=6
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-animate.min.js?v=6
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-aria.min.js?v=6
+// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.js?v=6
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=6
+// @resource    material-css     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular-material.min.css?v=6
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=6
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -39,9 +39,6 @@
     'use strict';
 
 
-    for(var i in unsafeWindow){
-        window[i] = unsafeWindow[i];
-    }
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     unsafeWindow.wikiUpdate = autoUpdate;
 
