@@ -12,7 +12,7 @@
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js?v=10
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=10
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=10
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=11
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -73,7 +73,7 @@
         })
     }
 
-    //AddGlobalStyle(`<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>`);
+    AddGlobalStyle(`<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>`);
 
 
 
@@ -388,13 +388,12 @@ div.gtl{
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
             iconImg="https://ehgt.org/g/mr.gif";
         }
-        var materialCss = GM_getResourceText('material-css');
         var etsPrompt = GM_getResourceText('ets-prompt');
 
-        span.innerHTML = `<style>${materialCss}</style>${etsPrompt}`;
+        span.innerHTML = `${etsPrompt}`;
 
 
-        var app = angular.module("etb",['ngMaterial']);
+        var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
