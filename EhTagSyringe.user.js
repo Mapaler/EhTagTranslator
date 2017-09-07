@@ -10,9 +10,9 @@
 // @connect     raw.githubusercontent.com
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
-// @require     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=5
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=5
+// @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js?v=10
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=10
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=10
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -44,7 +44,6 @@
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
 
-    var template = GM_getResourceText('template');
 
     const headLoaded = new Promise(function (resolve, reject) {
         if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
@@ -74,7 +73,7 @@
         })
     }
 
-    AddGlobalStyle('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>')
+    //AddGlobalStyle(`<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>`);
 
 
 
@@ -182,11 +181,13 @@ div.gtl{
     //UI控制方法等等
     function EhTagBuilder(){
         console.log('EhTagBuilder');
-        var buttonInserPlace = document.querySelector(".pagehead-actions")||document.querySelector("#nb"); //按钮插入位置
+        console.log('angular',window.angular,unsafeWindow.angular);
+
+        var buttonInserPlace = document.querySelector(".pagehead-actions");//按钮插入位置
         var li = document.createElement("li");
         li.id = 'etb';
         li.setAttribute('ng-csp','ng-csp');
-        li.innerHTML = template;
+        li.innerHTML = GM_getResourceText('template');
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope,$location,$anchorScroll){
             // console.log();
@@ -347,8 +348,9 @@ div.gtl{
 
         });
         angular.bootstrap(li,['etb']);
-        unsafeWindow.etbApp = app;
+        // unsafeWindow.etbApp = app;
         buttonInserPlace.insertBefore(li,buttonInserPlace.querySelector("li"));
+        console.log('EhTagBuilder loaded')
     }
 
     //样式写入方法
