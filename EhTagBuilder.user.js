@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.7.2
+// @version     2.7.3
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -455,7 +455,7 @@ function buildCSSOutput(dataset)
 							return textarea;
 						})()
 						,buildSVG("css")),
-					buildMenuItem("直接下载CSS文件",null,buildSVG("download"),downurl,1)
+					buildMenuItem("直接下载CSS文件",null,buildSVG("download"),downurl,1),
 				])
 			],
 			[
@@ -615,7 +615,8 @@ function buildJSOutput(dataset)
 		,GM_getValue("ETB_create-info-image","boolean")
 		,GM_getValue("ETB_create-cname-image","boolean")
 		);
-	var downBlob = new Blob([json], {'type': 'text\/json'});
+	var jsonStr = JSON.stringify(json);
+	var downBlob = new Blob([jsonStr], {'type': 'text\/json'});
 	var downurl = window.URL.createObjectURL(downBlob);
 	
 	var js_output_w = document.querySelector("#ETB_js-output");
@@ -631,11 +632,35 @@ function buildJSOutput(dataset)
 							textarea.id = "ETB_js-textarea";
 							textarea.name = textarea.id;
 							textarea.className = "txta " + textarea.id;
-							textarea.value = json;
+							textarea.value = jsonStr;
 							textarea.setAttribute("readonly",true);
 							return textarea;
 						})()
 						,buildSVG("json")),
+					buildMenuItem("数据库数量",
+						(function()    
+						{
+							var tb = document.createElement("table");
+							tb.id = "ETB_database-count";
+							tb.name = tb.id;
+							tb.className = tb.id;
+							//正式开始构建内容
+							//tHead
+							tb.createTHead();
+							var th = tb.tHead.insertRow();
+							th.insertCell().appendChild(document.createTextNode("行名"));
+							th.insertCell().appendChild(document.createTextNode("数据行数"));
+							th.insertCell().appendChild(document.createTextNode("注释行数"));
+							//tBody
+							json.dataset.forEach(function(item){
+								var tr = tb.insertRow();
+								tr.insertCell().appendChild(document.createTextNode(item.cname));
+								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==0}).length));
+								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==1}).length));
+							})
+							return tb;
+						})()
+						,buildSVG("book")),
 					buildMenuItem("直接下载JSON文件",null,buildSVG("download"),downurl,1)
 				])
 			],
@@ -643,7 +668,13 @@ function buildJSOutput(dataset)
 				".ETB_js-output .txta" + "{\r\n" + [
 					'resize: vertical',
 					'width:100%',
-					'height:300px',
+					'height:200px',
+				].join(';\r\n') + "\r\n}",
+				"#ETB_js-output .select-menu-list" + "{\r\n" + [
+					'max-height: 700px',
+				].join(';\r\n') + "\r\n}",
+				"#ETB_database-count,#ETB_database-count td" + "{\r\n" + [
+					'border: solid 1px lightgrey;',
 				].join(';\r\n') + "\r\n}",
 			].join('\r\n')
 		));
@@ -651,7 +682,7 @@ function buildJSOutput(dataset)
 	else
 	{
 		js_output_w.style.display = "block";
-		js_output_w.querySelector(".ETB_js-textarea").value = json;
+		js_output_w.querySelector(".ETB_js-textarea").value = jsonStr;
 		js_output_w.querySelector("a").href = downurl;
 	}
 }
@@ -754,7 +785,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 		"date":date.getTime(),
 		"dataset":outArray
 	}
-	return JSON.stringify(outJson);
+	return outJson;
 }
 
 //去除文本中的Emoji字符
