@@ -36,7 +36,27 @@
         padding: 8px;
         background: #4f535b;
         border: 1px solid #000000;
+        display:flex;
+        flex-direction:column;
     }
+
+    .etc-munu-info{
+        flex: auto;
+    }
+    .etc-munu-links{
+        flex: none;
+        display: flex;
+    }
+    .etc-munu-links a{
+        flex: 1;
+    }
+    .etc-munu-info{
+        color:#fff;
+    }
+    .etb-checkbox{
+
+    }
+
 </style>
 <span class="ets-menu" ng-controller="etb">
     <img ng-src="{{iconImg}}" alt="">
@@ -47,33 +67,33 @@
 
     <div class="etc-munu-box" ng-if="menuShow">
 
-        <label><input  type="checkbox" ng-change="hideChange()" ng-model="hide">显示原文</label>
-
-        <div ng-if="newVersion&&wikiVersion">
-
-            <div ng-if="wikiVersion.code==newVersion.code">已是最新版本</div>
-            <div ng-if="wikiVersion.code!=newVersion.code">
-                有更新! 发布于{{timetime(newVersion.update_time)}}
+        <div class="etc-munu-info">
+            <label><input type="checkbox" ng-change="showRow.change(showRow.value)" ng-model="showRow.value" />显示原文</label>
+            <div ng-if="newVersion&&wikiVersion">
+                <div ng-if="wikiVersion.code==newVersion.code">已是最新版本</div>
+                <div ng-if="wikiVersion.code!=newVersion.code">
+                    有更新! 发布于{{timetime(newVersion.update_time)}}
+                </div>
+                <div>
+                    {{wikiVersion.code}}...{{newVersion.code}}
+                </div>
+                <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
+                <div ng-if="update_time">上次更新:{{timetime(update_time)}}</div>
+                <button ng-click="VersionCheck()">立即检查</button>
             </div>
-            <div>
-                {{wikiVersion.code}}...{{newVersion.code}}
+            <div ng-if="!newVersion">未获取到版本信息</div>
+            <div ng-if="noData">
+                没有翻译数据，请先获取数据
+                <a target="_blank" href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新数据</a>
             </div>
-            <div ng-if="lastVersionCheck">上次检查:{{timetime(lastVersionCheck.time)}}</div>
-            <div ng-if="update_time">上次更新:{{timetime(update_time)}}</div>
-
-            <button ng-click="VersionCheck()">立即检查</button>
 
         </div>
-        <div ng-if="!newVersion">未获取到版本信息</div>
-        <div ng-if="noData">
-            没有翻译数据，请先获取数据
-            <a target="_blank" href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新数据</a>
-        </div>
 
-        <div>
+        <div class="etc-munu-links">
             <a target="_blank" href="https://github.com/Mapaler/EhTagTranslator#/ets-open-menu">更新数据</a>
             <a target="_blank" href="https://github.com/Mapaler/EhTagTranslator#/ets-open-option">修改设置</a>
             <a target="_blank" href="https://github.com/Mapaler/EhTagTranslator/wiki">参与翻译</a>
         </div>
+
     </div>
 </span>

@@ -12,7 +12,7 @@
 // @icon        http://exhentai.org/favicon.ico
 // @require     http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js?v=10
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=10
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=13
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=15
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -74,8 +74,6 @@
     }
 
     AddGlobalStyle(`<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>`);
-
-
 
     var defaultConfig = {
         'showDescription':true,
@@ -353,10 +351,14 @@ div.gtl{
         console.log('EhTagBuilder loaded')
     }
 
-    //样式写入方法
+    //样式写入方法 enema syringe
     function EhTagSyringe(){
+        console.time('EhTagSyringe Load Enema');
         let tags = GM_getValue('tags');
+        console.timeEnd('EhTagSyringe Load Enema');
         if(!tags)return;
+
+        console.time('EhTagSyringe Infusion');
         unsafeWindow.tags = tags;
         AddGlobalStyle(tags.css);
         AddGlobalStyle(etbConfig.style.public);
@@ -374,7 +376,7 @@ div.gtl{
         .hideTranslate #taglist a::before{display:none !important;}
         .hideTranslate #taglist a::after{display:none !important;}
         `);
-
+        console.timeEnd('EhTagSyringe Infusion');
     }
 
     //EH站更新提示
@@ -385,13 +387,15 @@ div.gtl{
         var span = document.createElement("span");
         var iconImg  = "https://exhentai.org/img/mr.gif";
 
+
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
             iconImg="https://ehgt.org/g/mr.gif";
+            span.className=span.className+" isEX";
         }
         var etsPrompt = GM_getResourceText('ets-prompt');
+        // etsPrompt = ``;
 
         span.innerHTML = `${etsPrompt}`;
-
 
         var app = angular.module("etb",[]);
         app.controller("etb",function($rootScope,$scope){
@@ -405,7 +409,7 @@ div.gtl{
                 $scope.noData =true;
             }
             $scope.update_time = tags.update_time;
-            $scope.nowPage ="";
+            $scope.nowPage = "";
             $scope.menuShow = false;
             rootScope = $rootScope;
             $scope.dataset = false;
@@ -413,7 +417,6 @@ div.gtl{
             if(tags){
                 $scope.wikiVersion = tags.version;
             }
-
 
             $scope.hide = false;
             //xx时间前转换方法
@@ -454,14 +457,15 @@ div.gtl{
                 $scope.nowPage = "menu";
                 $scope.menuShow = !$scope.menuShow;
             };
-            $scope.hideChange = function () {
-                if($scope.hide){
-                    window.document.body.className = "hideTranslate"
+            $scope.showRow = {};
+            $scope.showRow.value = false;
+            $scope.showRow.change = function(value){
+                if(value){
+                    document.body.className = "hideTranslate"
                 }else{
-                    window.document.body.className = "";
+                    document.body.className = "";
                 }
             };
-
 
             $scope.VersionCheck = function () {
                 getWikiVersion().then(function (Version) {
