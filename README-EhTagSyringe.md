@@ -23,8 +23,8 @@ EhTagSyringe 是 EhTagTranslator 主项目下 走功能全面、开箱即用路�
    * 点击"注入到E站页面"
 4. 打开E站
    * 享受
-5. 发现没有翻译的Tag 想贡献一下？
-   * [分享翻译](https://github.com/Mapaler/EhTagTranslator/wiki)
+5. 发现没有翻译的Tag 想贡献一下？ 
+   * [分享翻译](https://github.com/Mapaler/EhTagTranslator/wiki)
 
 
 
