@@ -11,8 +11,8 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=10
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=16
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=11
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=17
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -80,6 +80,7 @@
         'imageLimit':3,
         'showIcon':true,
         'syringe':true,
+        'searchHelper':true,
         'style':{
             'public':`div#taglist {
     overflow: visible;
@@ -452,8 +453,11 @@ div.gtl{
     
     //搜索输入框助手
     function EhTagInputHelper() {
+        if(!etbConfig.searchHelper){
+            return;
+        }
         let tags = GM_getValue('tags');
-        console.log(tags);
+        // console.log(tags);
         if(!tags)return;
 
         console.time('add datalist');
