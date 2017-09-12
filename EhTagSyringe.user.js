@@ -179,7 +179,6 @@ div.gtl{
     //UI控制方法等等
     function EhTagBuilder(){
         console.log('EhTagBuilder');
-        console.log('angular',window.angular,unsafeWindow.angular);
 
         var buttonInserPlace = document.querySelector(".pagehead-actions");//按钮插入位置
         var li = document.createElement("li");
@@ -208,37 +207,7 @@ div.gtl{
 
 
             //xx时间前转换方法
-            $scope.timetime = function (time) {
-                if(!time){
-                    return '';
-                }
-                var now = (new Date).valueOf();
-                now = Math.floor(now/1000);
-                time = Math.floor(time/1000);
-                var t =  now-time;
-
-                if(!t){
-                    return '刚刚';
-                }
-                var f = [
-                    [31536000,'年'],
-                    [2592000,'个月'],
-                    [604800,'星期'],
-                    [86400,'天'],
-                    [3600,'小时'],
-                    [60,'分钟'],
-                    [1,'秒']
-                ];
-                var c = 0;
-                for(var i in f){
-                    var k = f[i][0];
-                    var v = f[i][1];
-                    c = Math.floor(t/k);
-                    if (0 != c) {
-                        return c+v+'前';
-                    }
-                }
-            };
+            $scope.timetime = timeInterval;
             //打开菜单按钮
             $scope.openMenu = function () {
                 $scope.nowPage = "menu";
@@ -408,7 +377,6 @@ div.gtl{
             if(!tags){
                 $scope.noData =true;
             }
-            $scope.update_time = tags.update_time;
             $scope.nowPage = "";
             $scope.menuShow = false;
             rootScope = $rootScope;
@@ -416,41 +384,11 @@ div.gtl{
             $scope.wikiVersion = {};
             if(tags){
                 $scope.wikiVersion = tags.version;
+                $scope.update_time = tags.update_time;
             }
-
             $scope.hide = false;
             //xx时间前转换方法
-            $scope.timetime = function (time) {
-                if(!time){
-                    return '';
-                }
-                var now = (new Date).valueOf();
-                now = Math.floor(now/1000);
-                time = Math.floor(time/1000);
-                var t =  now-time;
-
-                if(!t){
-                    return '刚刚';
-                }
-                var f = [
-                    [31536000,'年'],
-                    [2592000,'个月'],
-                    [604800,'星期'],
-                    [86400,'天'],
-                    [3600,'小时'],
-                    [60,'分钟'],
-                    [1,'秒']
-                ];
-                var c = 0;
-                for(var i in f){
-                    var k = f[i][0];
-                    var v = f[i][1];
-                    c = Math.floor(t/k);
-                    if (0 != c) {
-                        return c+v+'前';
-                    }
-                }
-            };
+            $scope.timetime = timeInterval;
             //打开菜单按钮
             $scope.openMenu = function () {
                 console.log('openMenu');
@@ -758,6 +696,38 @@ ${css}
             return s.replace(/(^\s*)|(\s*$)/g, "");
         }else{
             return s;
+        }
+    }
+
+    function timeInterval (time) {
+        if(!time){
+            return '';
+        }
+        var now = (new Date).valueOf();
+        now = Math.floor(now/1000);
+        time = Math.floor(time/1000);
+        var t =  now-time;
+
+        if(!t){
+            return '刚刚';
+        }
+        var f = [
+            [31536000,'年'],
+            [2592000,'个月'],
+            [604800,'星期'],
+            [86400,'天'],
+            [3600,'小时'],
+            [60,'分钟'],
+            [1,'秒']
+        ];
+        var c = 0;
+        for(var i in f){
+            var k = f[i][0];
+            var v = f[i][1];
+            c = Math.floor(t/k);
+            if (0 != c) {
+                return c+v+'前';
+            }
         }
     }
 
