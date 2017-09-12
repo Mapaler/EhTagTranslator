@@ -11,8 +11,8 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=11
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=17
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=12
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=18
 // @version     1.0.0
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -81,6 +81,7 @@
         'showIcon':true,
         'syringe':true,
         'searchHelper':true,
+        'magnetHelper':true,
         'style':{
             'public':`div#taglist {
     overflow: visible;
@@ -353,6 +354,7 @@ div.gtl{
     function EhTagVersion() {
         console.log('EhTagVersion');
         var buttonInserPlace = document.querySelector("#nb"); //按钮插入位置
+        if(!buttonInserPlace)return;
 
         var span = document.createElement("span");
         var iconImg  = "https://exhentai.org/img/mr.gif";
@@ -501,6 +503,53 @@ div.gtl{
 
 
         console.timeEnd('add datalist');
+
+
+    }
+
+    //磁力链复制助手
+    function EhTagMagnetHelper() {
+        if(!(/gallerytorrents\.php/).test(unsafeWindow.location.href)){
+            return;
+        }
+        console.log('EhTagMagnetHelper');
+
+        let tableList = document.querySelectorAll("#torrentinfo form table");
+
+        if(tableList&&tableList.length)tableList.forEach(function (table) {
+            console.log(table);
+
+            let href = '';
+            let a = table.querySelector('a');
+            if(a)href = a.href;
+            if(!href)return;
+
+            let magnet = href.replace(/.*?([0-9a-f]{40}).*$/i,"magnet:?xt=urn:btih:$1") ;
+            if(magnet.length != 60)return;
+
+            let insertionPoint = table.querySelector('input');
+            if(!insertionPoint)return;
+
+            var button = document.createElement("input");
+            button.type = "button";
+            button.value = "复制磁力链";
+            button.className = 'stdbtn';
+            button.onclick = function () {
+                GM_setClipboard(magnet);
+                myNotification('复制成功',{
+                    body:magnet
+                });
+            };
+            console.log(magnet);
+
+
+            // let parent = ;
+            insertionPoint.parentNode.insertBefore( button, insertionPoint );
+        })
+
+
+
+
 
 
     }
@@ -868,12 +917,12 @@ ${css}
         if((/github\.com/).test(unsafeWindow.location.href)){
             EhTagBuilder();
         }
-        if(etbConfig.syringe) {
-            //在EH站点下添加版本提示功能
-            if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
-                EhTagVersion();
-                EhTagInputHelper();
-            }
+
+        //在EH站点下添加版本提示功能
+        if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
+            if(etbConfig.syringe)EhTagVersion();
+            if(etbConfig.searchHelper)EhTagInputHelper();
+            if(etbConfig.magnetHelper)EhTagMagnetHelper();
         }
     };
 
@@ -886,7 +935,7 @@ ${css}
     //注射器总开关
     if(etbConfig.syringe){
         //注入css 不需要等待页面
-        if((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)){
+        if((/(exhentai\.org\/g\/|e-hentai\.org\/g\/)/).test(unsafeWindow.location.href)){
             EhTagSyringe();
         }
     }
