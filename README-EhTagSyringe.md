@@ -15,7 +15,7 @@ EhTagSyringe 是 EhTagTranslator 主项目下 走功能全面、开箱即用路�
    * FireFox安装[GreaseMonkey](http://www.greasespot.net/)扩展。
    * Chrome安装[Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=zh-CN)扩展。
 2. 安装EhTagSyringe
-   * [访问 SleazyFork 来安装"EhTagSyringe"脚本](https://greasyfork.org/zh-CN/scripts/33136-ehtagsyringe)
+   * [访问 SleazyFork 来安装"EhTagSyringe"脚本](https://sleazyfork.org/scripts/33136)
 3. 获取/更新翻译数据
    * 点击顶部操作菜单(没有找到请刷新页面) ![image](https://user-images.githubusercontent.com/5716100/30308161-1f7c0022-9749-11e7-9702-7f607254d158.png)
    * 选择"生成CSS"
