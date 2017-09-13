@@ -6,20 +6,21 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.7.3
+// @version     2.7.4
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
 (function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
+var wiki_version="wiki-version"; //版本的地址
 var rows_title="rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
 var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
 var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
 var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "LocalDebug"; //本程序的版本
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
-var wikiVersion = 2; //当前Wiki版本，用于提醒是否需要更新脚本
+var wikiVersion = 3; //当前Wiki版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -140,6 +141,29 @@ var tagObj = function(){
 }
 
 
+//处理版本的页面
+function dealVersion(response)
+{
+	var parser = new DOMParser();
+	PageDOM = parser.parseFromString(response, "text/html");
+	
+				
+	var wiki_version = PageDOM.querySelector("#wiki-body div [href=wiki-version-number]");
+	var new_wiki_version = Number(wiki_version.textContent.replace(/\D/ig,""));
+
+	var page_get_w = document.querySelector("#ETB_page-get");
+	if (page_get_w)
+	{
+		var statetxt = page_get_w.querySelector(".page-get-wiki-version");
+		statetxt.classList.add("page-load");
+		statetxt.innerHTML = "最新版本" + new_wiki_version + "，当前" + wikiVersion;
+	}
+	
+	if (new_wiki_version > wikiVersion)
+	{
+		alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
+	}
+}
 //处理行的页面
 function dealRows(response, dataset)
 {
@@ -154,22 +178,8 @@ function dealRows(response, dataset)
 		statetxt.innerHTML = "获取成功";
 	}
 				
-	var wiki_body = PageDOM.querySelector("#wiki-body").querySelector("div");
-	var linksn = wiki_body.getElementsByTagName("a");
-	for (var ai=0, ailen=linksn.length; ai<ailen; ai++)
-	{
-		if (linksn[ai].getAttribute("href") == "ETB_wiki-version")
-		{
-			var new_wiki_version = Number(linksn[ai].textContent.replace(/\D/ig,""));
-			if (new_wiki_version > wikiVersion)
-			{
-				alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本已经不适用新的数据库，请更新你的脚本。");
-			}
-			break;
-		}
-	}
+	var table = PageDOM.querySelector("#wiki-body div table").tBodies[0];
 	
-	var table = wiki_body.querySelector("table").tBodies[0];
 	rowsCount = table.rows.length;
 	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
 	{
@@ -303,8 +313,7 @@ function dealTags(response, rowdataset)
 	var parser = new DOMParser();
 	PageDOM = parser.parseFromString(response, "text/html");
 	
-	var wiki_body = PageDOM.querySelector("#wiki-body").querySelector("div");
-	var table = wiki_body.querySelector("table").tBodies[0];
+	var table = PageDOM.querySelector("#wiki-body div table").tBodies[0];
 	
 	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
 	{
@@ -341,9 +350,16 @@ function startProgram(dataset, mode){
 	{
 		GM_xmlhttpRequest({
 			method: "GET",
-			url: wiki_URL + (rows_title.length?"/"+rows_title:""),
+			url: wiki_URL + "/" + wiki_version,
 			onload: function(response) {
-				dealRows(response.responseText,dataset);
+				dealVersion(response.responseText,dataset);
+				GM_xmlhttpRequest({
+					method: "GET",
+					url: wiki_URL + "/" + rows_title,
+					onload: function(response) {
+						dealRows(response.responseText,dataset);
+					}
+				});
 			}
 		});
 		downOverCheckHook = setInterval(function () { startProgramCheck(dataset, mode) }, 200);
@@ -367,6 +383,20 @@ function buildDownloadProgress()
 						var div = document.createElement("div");
 						var span1 = document.createElement("span");
 						span1.className = "page-title"; 
+						span1.innerHTML = "Wiki结构版本"; 
+						div.appendChild(span1);
+						var span2 = document.createElement("span");
+						span2.className = "page-get-wiki-version";
+						span2.innerHTML = "等待"; 
+						div.appendChild(span2);
+						return div;
+					})()
+				),
+				buildMenuItem((function()    
+					{
+						var div = document.createElement("div");
+						var span1 = document.createElement("span");
+						span1.className = "page-title"; 
 						span1.innerHTML = "列表页面"; 
 						div.appendChild(span1);
 						var span2 = document.createElement("span");
@@ -375,7 +405,7 @@ function buildDownloadProgress()
 						div.appendChild(span2);
 						return div;
 					})()
-				)
+				),
 			])
 		],
 		[
