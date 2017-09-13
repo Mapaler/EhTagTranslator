@@ -7,7 +7,7 @@
 
 ## 使用方法
 
-请访问[使用文档](https://github.com/Mapaler/EhTagTranslator/wiki/使用文档)
+已经迫不及待要来一发了吗？请查看▶ [使用文档](https://github.com/Mapaler/EhTagTranslator/wiki/使用文档) ◀
 
 ## 参与翻译
 请访问[Wiki](https://github.com/Mapaler/EhTagTranslator/wiki)
@@ -22,7 +22,3 @@
 
 ### EhTagTranslator-Wiki数据库
 Wiki文本内容除另有声明外，均在[知识共享(Creative Commons) 署名-非商业性使用-相同方式共享 3.0 协议](https://zh.moegirl.org/%E8%90%8C%E5%A8%98%E7%99%BE%E7%A7%91:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF)下提供，附加条款亦可能应用。
-
-在Wiki里发布内容即表示您允许将您编辑的内容无偿且自由的使用到EhTagTranslator中。
-
-允许第三方程序使用本项目Wiki数据库，但请使用的项目提交一份Issues，附上项目的简介地址。
