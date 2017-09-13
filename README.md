@@ -14,11 +14,9 @@
 ## 参与翻译
 EhTagTranslator是一个免费开源项目，Tag翻译数据库由各位网友自行编辑。
 
-请访问[Wiki](https://github.com/Mapaler/EhTagTranslator/wiki)
+请访问页面上方的[Wiki](https://github.com/Mapaler/EhTagTranslator/wiki)
 
 ![Wiki地址](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/where%20is%20wiki.png)
-
-请先阅读主页的说明
 
 ## License|许可协议
 ### EhTagTranslator官方程序
