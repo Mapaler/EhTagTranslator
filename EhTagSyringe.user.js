@@ -13,7 +13,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=12
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=18
-// @version     1.0.0
+// @version     1.1.0
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
