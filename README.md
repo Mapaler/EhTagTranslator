@@ -9,10 +9,14 @@
 
 已经迫不及待要来一发了吗？请查看▶ [使用文档](https://github.com/Mapaler/EhTagTranslator/wiki/使用文档) ◀
 
+希望您在享受他人成果的同时，在本项目Wiki中添加翻译，贡献你的一份力量。
+
 ## 参与翻译
+EhTagTranslator是一个免费开源项目，Tag翻译数据库由各位网友自行编辑。
+
 请访问[Wiki](https://github.com/Mapaler/EhTagTranslator/wiki)
 
-![Wiki地址](http://ww1.sinaimg.cn/large/6c84b2d6gw1f3sontcz4ej20e005aq3g.jpg)
+![Wiki地址](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/where is wiki.png)
 
 请先阅读主页的说明
 
