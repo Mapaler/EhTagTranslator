@@ -1,6 +1,6 @@
 # EhTagTranslator
-将E绅士tag翻译成中文。
-
+将E绅士tag翻译成中文。  
+![FBI WARNING](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/FBI%20WARNING.png)  
 **This is a project for adult website, and the content of this item may include "sexual expression" and "restricted images" show.View at your own risk.**
 
 ![预览图](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/preview.png)
