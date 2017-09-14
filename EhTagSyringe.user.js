@@ -11,9 +11,10 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=12
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=18
-// @version     1.1.0
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=13
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=19
+// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.html?v=0
+// @version     1.1.2
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -45,7 +46,6 @@
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
 
-
     const headLoaded = new Promise(function (resolve, reject) {
         if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
             resolve(unsafeWindow.document.head);
@@ -74,7 +74,7 @@
         })
     }
 
-    AddGlobalStyle(`<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>`);
+    AddGlobalStyle(`@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}`);
 
     var defaultConfig = {
         'showDescription':true,
@@ -83,6 +83,7 @@
         'syringe':true,
         'searchHelper':true,
         'magnetHelper':true,
+        'UITranslate':true,
         'style':{
             'public':`div#taglist {
     overflow: visible;
@@ -241,71 +242,6 @@ div.gtl{
         }
 
 
-        function buildIcon(name,color,opacity=1.0) {
-
-
-            var sColor = color.toLowerCase();
-            var reg = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-            if(sColor && reg.test(sColor)){
-                if(sColor.length === 4){
-                    var sColorNew = "#";
-                    for(var i=1; i<4; i+=1){
-                        sColorNew += sColor.slice(i,i+1).concat(sColor.slice(i,i+1));
-                    }
-                    sColor = sColorNew;
-                }
-                var rgb = [];
-                for(var i=1; i<7; i+=2){
-                    rgb.push(parseInt("0x"+sColor.slice(i,i+2)));
-                }
-            }
-            let r = rgb[0]/255;
-            let g = rgb[1]/255;
-            let b = rgb[2]/255;
-
-
-
-            let svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="100px" height="20px" viewBox="0 0 100 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <defs>
-        <radialGradient cx="50%" cy="50%" fx="50%" fy="50%" r="78.7867333%" id="radialGradient-1">
-            <stop stop-color="rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)" offset="0%"></stop>
-            <stop stop-color="rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.85)" offset="100%"></stop>
-        </radialGradient>
-        <rect id="path-2" x="0" y="0" width="100" height="20" rx="10"></rect>
-        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-3">
-            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
-            <feOffset dx="0" dy="4" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
-            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.537307518 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
-            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner2"></feGaussianBlur>
-            <feOffset dx="0" dy="-2" in="shadowBlurInner2" result="shadowOffsetInner2"></feOffset>
-            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
-            <feColorMatrix values="0 0 0 0 ${r}   0 0 0 0 ${g}   0 0 0 0 ${b}  0 0 0 1 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
-            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner3"></feGaussianBlur>
-            <feOffset dx="0" dy="2" in="shadowBlurInner3" result="shadowOffsetInner3"></feOffset>
-            <feComposite in="shadowOffsetInner3" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner3"></feComposite>
-            <feColorMatrix values="0 0 0 0 ${r}   0 0 0 0 ${g}   0 0 0 0 ${b}  0 0 0 1 0" type="matrix" in="shadowInnerInner3" result="shadowMatrixInner3"></feColorMatrix>
-            <feMerge>
-                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
-                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
-                <feMergeNode in="shadowMatrixInner3"></feMergeNode>
-            </feMerge>
-        </filter>
-    </defs>
-    <rect fill="#fff" opacity="1" x="0" y="0" width="100" height="20" rx="10"></rect>
-    <use fill="url(#radialGradient-1)" opacity="${opacity}" fill-rule="evenodd" xlink:href="#path-2"></use>
-    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
-    <text x="50%" y="50%" dy=".3em" fill="#000" text-anchor="middle" font-family="PingFangSC-Semibold, PingFang SC" font-size="12" font-weight="500" >
-        ${name}
-    </text>
-</svg>`;
-            return "data:image/svg+xml;base64,"+Base64.toBase64(svg)
-
-        }
-        unsafeWindow.svg = buildIcon;
-
-
         var className = {
             "artistcg" :"画师集",
             "cosplay"  :"COSPLAY",
@@ -318,41 +254,6 @@ div.gtl{
             "western"  :"西方",
             "asianporn":"亚洲"
         };
-        var classColor = {
-            "artistcg" :"#E6D852",
-            "cosplay"  :"#5E328A",
-            "doujinshi":"#F85353",
-            "gamecg"   :"#4B923B",
-            "imageset" :"#2735F4",
-            "manga"    :"#F4B64C",
-            "misc"     :"#D4D4D4",
-            "non-h"    :"#5DAEF7",
-            "western"  :"#B2FA61",
-            "asianporn":"#E8AEEE"
-        };
-        var classIcon = {};
-
-        for(let key in className){
-            let name = className[key];
-            classIcon[key] = buildIcon(name,classColor[key]);
-            classIcon[key+"_d"] = buildIcon(name,classColor[key],0.5);
-        }
-
-
-
-        function classIconReplace(query) {
-            let elements = document.querySelectorAll(query);
-            if(elements && elements.length){
-                elements.forEach(function (element) {
-                    if(element){
-                        let key = element.alt;
-                        if(key && classIcon[key]){
-                            element.src = classIcon[key];
-                        }
-                    }
-                })
-            }
-        }
 
 
         var translator = {};
@@ -378,7 +279,7 @@ div.gtl{
                 "Contact Uploader":"联系上传者",
             });
 
-            classIconReplace(".ic");
+            //classIconReplace(".ic");
 
 
 
@@ -703,6 +604,25 @@ div.gtl{
                 "Published":"出版",
                 "Name":"名称",
                 "Uploader":"上传者"
+            });
+
+            let itc = document.querySelector('#searchbox .itc');
+            if(itc){
+                //监听评分显示DOM变化 触发替换内容
+                var observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function (mutation) {
+                        if(mutation.type == "attributes" && mutation.attributeName == "value"){
+                            let input = mutation.target;
+                            input.parentNode.className = input.value*1?"":"icon_disable";
+                        }
+                    });
+                });
+                observer.observe(itc, {childList: true, subtree: true, attributes: true});
+            }
+
+            let itc_inputs = document.querySelectorAll('#searchbox .itc td input');
+            if(itc_inputs)itc_inputs.forEach(function (input) {
+                input.parentNode.className = input.value*1?"":"icon_disable";
             });
 
 
@@ -1491,180 +1411,12 @@ ${css}
         }
     }
 
+    if(etbConfig.UITranslate){
+        if(hrefTest(/(exhentai\.org|e-hentai\.org)/)){
+            AddGlobalStyle(GM_getResourceText('ui-translate'))
+        }
+    }
+
 
 })();
-(function(global) {
-    'use strict';
-    // existing version for noConflict()
-    var _Base64 = global.Base64;
-    var version = "2.1.4";
-    // if node.js, we use Buffer
-    var buffer;
-    if (typeof module !== 'undefined' && module.exports) {
-        buffer = require('buffer').Buffer;
-    }
-    // constants
-    var b64chars
-                     = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    var b64tab = function(bin) {
-        var t = {};
-        for (var i = 0, l = bin.length; i < l; i++) t[bin.charAt(i)] = i;
-        return t;
-    }(b64chars);
-    var fromCharCode = String.fromCharCode;
-    // encoder stuff
-    var cb_utob = function(c) {
-        if (c.length < 2) {
-            var cc = c.charCodeAt(0);
-            return cc < 0x80 ? c
-                : cc < 0x800 ? (fromCharCode(0xc0 | (cc >>> 6))
-                    + fromCharCode(0x80 | (cc & 0x3f)))
-                    : (fromCharCode(0xe0 | ((cc >>> 12) & 0x0f))
-                        + fromCharCode(0x80 | ((cc >>>  6) & 0x3f))
-                        + fromCharCode(0x80 | ( cc         & 0x3f)));
-        } else {
-            var cc = 0x10000
-                + (c.charCodeAt(0) - 0xD800) * 0x400
-                + (c.charCodeAt(1) - 0xDC00);
-            return (fromCharCode(0xf0 | ((cc >>> 18) & 0x07))
-                + fromCharCode(0x80 | ((cc >>> 12) & 0x3f))
-                + fromCharCode(0x80 | ((cc >>>  6) & 0x3f))
-                + fromCharCode(0x80 | ( cc         & 0x3f)));
-        }
-    };
-    var re_utob = /[\uD800-\uDBFF][\uDC00-\uDFFFF]|[^\x00-\x7F]/g;
-    var utob = function(u) {
-        return u.replace(re_utob, cb_utob);
-    };
-    var cb_encode = function(ccc) {
-        var padlen = [0, 2, 1][ccc.length % 3],
-            ord = ccc.charCodeAt(0) << 16
-                | ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8)
-                | ((ccc.length > 2 ? ccc.charCodeAt(2) : 0)),
-            chars = [
-                b64chars.charAt( ord >>> 18),
-                b64chars.charAt((ord >>> 12) & 63),
-                padlen >= 2 ? '=' : b64chars.charAt((ord >>> 6) & 63),
-                padlen >= 1 ? '=' : b64chars.charAt(ord & 63)
-            ];
-        return chars.join('');
-    };
-    var btoa = global.btoa ? function(b) {
-        return global.btoa(b);
-    } : function(b) {
-        return b.replace(/[\s\S]{1,3}/g, cb_encode);
-    };
-    var _encode = buffer
-        ? function (u) { return (new buffer(u)).toString('base64') }
-        : function (u) { return btoa(utob(u)) }
-    ;
-    var encode = function(u, urisafe) {
-        return !urisafe
-            ? _encode(u)
-            : _encode(u).replace(/[+\/]/g, function(m0) {
-                return m0 == '+' ? '-' : '_';
-            }).replace(/=/g, '');
-    };
-    var encodeURI = function(u) { return encode(u, true) };
-    // decoder stuff
-    var re_btou = new RegExp([
-        '[\xC0-\xDF][\x80-\xBF]',
-        '[\xE0-\xEF][\x80-\xBF]{2}',
-        '[\xF0-\xF7][\x80-\xBF]{3}'
-    ].join('|'), 'g');
-    var cb_btou = function(cccc) {
-        switch(cccc.length) {
-            case 4:
-                var cp = ((0x07 & cccc.charCodeAt(0)) << 18)
-                    |    ((0x3f & cccc.charCodeAt(1)) << 12)
-                    |    ((0x3f & cccc.charCodeAt(2)) <<  6)
-                    |     (0x3f & cccc.charCodeAt(3)),
-                    offset = cp - 0x10000;
-                return (fromCharCode((offset  >>> 10) + 0xD800)
-                    + fromCharCode((offset & 0x3FF) + 0xDC00));
-            case 3:
-                return fromCharCode(
-                    ((0x0f & cccc.charCodeAt(0)) << 12)
-                    | ((0x3f & cccc.charCodeAt(1)) << 6)
-                    |  (0x3f & cccc.charCodeAt(2))
-                );
-            default:
-                return  fromCharCode(
-                    ((0x1f & cccc.charCodeAt(0)) << 6)
-                    |  (0x3f & cccc.charCodeAt(1))
-                );
-        }
-    };
-    var btou = function(b) {
-        return b.replace(re_btou, cb_btou);
-    };
-    var cb_decode = function(cccc) {
-        var len = cccc.length,
-            padlen = len % 4,
-            n = (len > 0 ? b64tab[cccc.charAt(0)] << 18 : 0)
-                | (len > 1 ? b64tab[cccc.charAt(1)] << 12 : 0)
-                | (len > 2 ? b64tab[cccc.charAt(2)] <<  6 : 0)
-                | (len > 3 ? b64tab[cccc.charAt(3)]       : 0),
-            chars = [
-                fromCharCode( n >>> 16),
-                fromCharCode((n >>>  8) & 0xff),
-                fromCharCode( n         & 0xff)
-            ];
-        chars.length -= [0, 0, 2, 1][padlen];
-        return chars.join('');
-    };
-    var atob = global.atob ? function(a) {
-        return global.atob(a);
-    } : function(a){
-        return a.replace(/[\s\S]{1,4}/g, cb_decode);
-    };
-    var _decode = buffer
-        ? function(a) { return (new buffer(a, 'base64')).toString() }
-        : function(a) { return btou(atob(a)) };
-    var decode = function(a){
-        return _decode(
-            a.replace(/[-_]/g, function(m0) { return m0 == '-' ? '+' : '/' })
-                .replace(/[^A-Za-z0-9\+\/]/g, '')
-        );
-    };
-    var noConflict = function() {
-        var Base64 = global.Base64;
-        global.Base64 = _Base64;
-        return Base64;
-    };
-    // export Base64
-    global.Base64 = {
-        VERSION: version,
-        atob: atob,
-        btoa: btoa,
-        fromBase64: decode,
-        toBase64: encode,
-        utob: utob,
-        encode: encode,
-        encodeURI: encodeURI,
-        btou: btou,
-        decode: decode,
-        noConflict: noConflict
-    };
-    // if ES5 is available, make Base64.extendString() available
-    if (typeof Object.defineProperty === 'function') {
-        var noEnum = function(v){
-            return {value:v,enumerable:false,writable:true,configurable:true};
-        };
-        global.Base64.extendString = function () {
-            Object.defineProperty(
-                String.prototype, 'fromBase64', noEnum(function () {
-                    return decode(this)
-                }));
-            Object.defineProperty(
-                String.prototype, 'toBase64', noEnum(function (urisafe) {
-                    return encode(this, urisafe)
-                }));
-            Object.defineProperty(
-                String.prototype, 'toBase64URI', noEnum(function () {
-                    return encode(this, true)
-                }));
-        };
-    }
-    // that's it!
-})(this);
+

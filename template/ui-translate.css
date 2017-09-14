@@ -1,0 +1,184 @@
+.itdc a,
+#gdc a,
+#searchbox .itc tr td{
+    position: relative;
+}
+.itdc a img,
+#gdc a img,
+#searchbox .itc tr td img{
+    opacity: 0;
+    position: absolute;
+    left: 50%;
+    margin-left: -50px;
+    top: 0;
+    z-index: 1;
+}
+.itdc a::after,
+#gdc a::after,
+#searchbox .itc tr td::after{
+    content: "";
+    text-transform : uppercase;
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    height: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: #fff;
+    color: #333;
+    line-height:20px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #4f535b;
+}
+#searchbox .itc tr td.icon_disable::after{
+    opacity: 0.5;
+}
+
+.icon_doujinshi,
+#gdc a[href="https://exhentai.org/doujinshi"]::after,
+.itdc a[href="https://exhentai.org/doujinshi"]::after,
+#searchbox .itc tr:nth-child(1) td:nth-child(1)::after{
+    content: "同人本";
+    border: 1px solid rgba(255, 054, 054,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(255, 054, 054,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(255, 054, 054,0.7) inset,
+            0px -3px 5px 0px rgba(255, 054, 054,1.0) inset;
+}
+
+.icon_manga,
+#gdc a[href="https://exhentai.org/manga"]::after,
+.itdc a[href="https://exhentai.org/manga"]::after,
+#searchbox .itc tr:nth-child(1) td:nth-child(2)::after{
+    content: "漫画";
+    border: 1px solid rgba(255, 183, 053,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(255, 183, 053,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(255, 183, 053,0.7) inset,
+            0px -3px 5px 0px rgba(255, 183, 053,1.0) inset;
+}
+
+.icon_artistcg,
+#gdc a[href="https://exhentai.org/artistcg"]::after,
+.itdc a[href="https://exhentai.org/artistcg"]::after,
+#searchbox .itc tr:nth-child(1) td:nth-child(3)::after{
+    content: "画师CG";
+    border: 1px solid rgba(234, 219, 053,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(234, 219, 053,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(234, 219, 053,0.7) inset,
+            0px -3px 5px 0px rgba(234, 219, 053,1.0) inset;
+}
+
+.icon_gamecg,
+#gdc a[href="https://exhentai.org/gamecg"]::after,
+.itdc a[href="https://exhentai.org/gamecg"]::after,
+#searchbox .itc tr:nth-child(1) td:nth-child(4)::after{
+    content: "游戏cg";
+    border: 1px solid rgba(055, 155, 054,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(055, 155, 054,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(055, 155, 054,0.7) inset,
+            0px -3px 5px 0px rgba(055, 155, 054,1.0) inset;
+}
+
+.icon_western,
+#gdc a[href="https://exhentai.org/western"]::after,
+.itdc a[href="https://exhentai.org/western"]::after,
+#searchbox .itc tr:nth-child(1) td:nth-child(5)::after{
+    content: "西方";
+    border: 1px solid rgba(163, 250, 071,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(163, 250, 071,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(163, 250, 071,0.7) inset,
+            0px -3px 5px 0px rgba(163, 250, 071,1.0) inset;
+}
+
+
+
+.icon_non-h,
+#gdc a[href="https://exhentai.org/non-h"]::after,
+.itdc a[href="https://exhentai.org/non-h"]::after,
+#searchbox .itc tr:nth-child(2) td:nth-child(1)::after{
+    content: "非H";
+    border: 1px solid rgba(073, 179, 255,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(073, 179, 255,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(073, 179, 255,0.7) inset,
+            0px -3px 5px 0px rgba(073, 179, 255,1.0) inset;
+}
+
+.icon_imageset,
+#gdc a[href="https://exhentai.org/imageset"]::after,
+.itdc a[href="https://exhentai.org/imageset"]::after,
+#searchbox .itc tr:nth-child(2) td:nth-child(2)::after{
+    content: "图集";
+    border: 1px solid rgba(052, 055, 255,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(052, 055, 255,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(052, 055, 255,0.7) inset,
+            0px -3px 5px 0px rgba(052, 055, 255,1.0) inset;
+}
+
+
+.icon_cosplay,
+#gdc a[href="https://exhentai.org/cosplay"]::after,
+.itdc a[href="https://exhentai.org/cosplay"]::after,
+#searchbox .itc tr:nth-child(2) td:nth-child(3)::after{
+    content: "cosplay";
+    border: 1px solid rgba(112, 054, 156,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(112, 054, 156,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(112, 054, 156,0.7) inset,
+            0px -3px 5px 0px rgba(112, 054, 156,1.0) inset;
+}
+
+.icon_asianporn,
+#gdc a[href="https://exhentai.org/asianporn"]::after,
+.itdc a[href="https://exhentai.org/asianporn"]::after,
+#searchbox .itc tr:nth-child(2) td:nth-child(4)::after{
+    content: "亚洲";
+    border: 1px solid rgba(243, 174, 243,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(243, 174, 243,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(243, 174, 243,0.7) inset,
+            0px -3px 5px 0px rgba(243, 174, 243,1.0) inset;
+}
+
+.icon_misc,
+#gdc a[href="https://exhentai.org/misc"]::after,
+.itdc a[href="https://exhentai.org/misc"]::after,
+#searchbox .itc tr:nth-child(2) td:nth-child(5)::after{
+    content: "杂项";
+    border: 1px solid rgba(214, 214, 214,1);
+    box-shadow:
+            0px  1px 1px 1px rgba(214, 214, 214,0.3) inset,
+            0px  3px 3px 1px rgba(255, 255, 255,1.0) inset,
+            0px  7px 8px 0px rgba(214, 214, 214,0.7) inset,
+            0px -3px 5px 0px rgba(214, 214, 214,1.0) inset;
+}
+
+
+/*
+#FF3636 rgba(255, 054, 054, 1)  doujinshi
+#FFB735 rgba(255, 183, 053, 1)  manga
+#EADB35 rgba(234, 219, 053, 1)  artist cg
+#379B36 rgba(055, 155, 054, 1)  game cg
+#A3FA47 rgba(163, 250, 071, 1)  western
+#49B3FF rgba(073, 179, 255, 1)  non-h
+#3437FF rgba(052, 055, 255, 1)  image set
+#70369C rgba(112, 054, 156, 1)  cosplay
+#F3AEF3 rgba(243, 174, 243, 1)  asian porn
+#D6D6D6 rgba(214, 214, 214, 1)  misc
+
+            */
