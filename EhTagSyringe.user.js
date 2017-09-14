@@ -11,10 +11,10 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=13
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=19
-// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=2
-// @version     1.1.2
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=14
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=20
+// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
+// @version     1.1.3
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -27,6 +27,7 @@
 // @grant       GM_getResourceText
 // @grant       GM_addValueChangeListener
 // @grant       GM_setClipboard
+// @grant       GM_openInTab
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
 
@@ -84,6 +85,7 @@
         'searchHelper':true,
         'magnetHelper':true,
         'UITranslate':true,
+        'download2miwifi':false,
         'style':{
             'public':`div#taglist {
     overflow: visible;
@@ -361,14 +363,20 @@ div.gtl{
                 "Vote-":"反对"
             });
 
-
-
             localRoutineReplace('.gpc',{
                 "Showing":"当前页面显示图片为",
                 "of":"共",
                 "images":"张"
             });
 
+            localRoutineReplace('#eventpane p',{
+                "It is the dawn of a new day!":"新的一天开始啦",
+                "Reflecting on your journey so far, you find that you are a little wiser."
+                    :"到目前为止，你的旅程展示出了你的聪慧",
+                "You gain":"你获得了",
+                "EXP":"经验",
+                "Credits":"积分(C)",
+            });
 
             localRoutineReplace('#rating_label',{
                 "Average:":"平均:"
@@ -578,6 +586,10 @@ div.gtl{
             routineReplace('#msg',{
                 "Settings were updated":"设置已更新",
             });
+
+
+
+
         };
 
         translator.home = function () {
@@ -604,6 +616,14 @@ div.gtl{
                 "Name":"名称",
                 "Uploader":"上传者"
             });
+
+            routineReplace("#pt",{"Popular Right Now":"当下流行"});
+
+            localRoutineReplace('.id42',{
+                "files":"张"
+            });
+
+
 
             let itc = document.querySelector('#searchbox .itc');
             if(itc){
@@ -1013,7 +1033,42 @@ div.gtl{
 
     }
 
+    //小米路由下载助手
+    function EhTagMiWifi() {
+        if(!(/gallerytorrents\.php/).test(unsafeWindow.location.href)){
+            return;
+        }
+        console.log('EhTagMiWifi');
+        let tableList = document.querySelectorAll("#torrentinfo form table");
+        if(tableList&&tableList.length)tableList.forEach(function (table) {
+            let href = '';
+            let a = table.querySelector('a');
+            if(a)href = a.href;
+            if(!href)return;
 
+            let magnet = href.replace(/.*?([0-9a-f]{40}).*$/i,"magnet:?xt=urn:btih:$1") ;
+            if(magnet.length != 60)return;
+
+            let insertionPoint = table.querySelector('input');
+            if(!insertionPoint)return;
+
+            var button = document.createElement("input");
+            button.type = "button";
+            button.value = "下载到小米路由器";
+            button.className = 'stdbtn';
+            button.onclick = function () {
+                unsafeWindow.resizeTo(1000, 600);
+                unsafeWindow.location.href =`https://d.miwifi.com/d2r/?url=${btoa(magnet)}`;
+            };
+            insertionPoint.parentNode.insertBefore( button, insertionPoint );
+        })
+
+
+
+
+
+
+    }
 
     //获取数据
     async function startProgram($scope) {
@@ -1388,6 +1443,8 @@ ${css}
         if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
             if(etbConfig.syringe)EhTagVersion();
             if(etbConfig.searchHelper)EhTagInputHelper();
+            if(etbConfig.download2miwifi)EhTagMiWifi();
+            // EhTagMiWifi();
             if(etbConfig.magnetHelper)EhTagMagnetHelper();
             if(etbConfig.UITranslate)EhTagUITranslator();
         }
