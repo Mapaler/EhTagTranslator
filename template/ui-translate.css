@@ -36,8 +36,8 @@
 }
 
 .icon_doujinshi,
-#gdc a[href="https://exhentai.org/doujinshi"]::after,
-.itdc a[href="https://exhentai.org/doujinshi"]::after,
+#gdc a[href$="hentai.org/doujinshi"]::after,
+.itdc a[href$="hentai.org/doujinshi"]::after,
 #searchbox .itc tr:nth-child(1) td:nth-child(1)::after{
     content: "同人本";
     border: 1px solid rgba(255, 054, 054,1);
@@ -49,8 +49,8 @@
 }
 
 .icon_manga,
-#gdc a[href="https://exhentai.org/manga"]::after,
-.itdc a[href="https://exhentai.org/manga"]::after,
+#gdc a[href$="hentai.org/manga"]::after,
+.itdc a[href$="hentai.org/manga"]::after,
 #searchbox .itc tr:nth-child(1) td:nth-child(2)::after{
     content: "漫画";
     border: 1px solid rgba(255, 183, 053,1);
@@ -62,8 +62,8 @@
 }
 
 .icon_artistcg,
-#gdc a[href="https://exhentai.org/artistcg"]::after,
-.itdc a[href="https://exhentai.org/artistcg"]::after,
+#gdc a[href$="hentai.org/artistcg"]::after,
+.itdc a[href$="hentai.org/artistcg"]::after,
 #searchbox .itc tr:nth-child(1) td:nth-child(3)::after{
     content: "画师CG";
     border: 1px solid rgba(234, 219, 053,1);
@@ -75,8 +75,8 @@
 }
 
 .icon_gamecg,
-#gdc a[href="https://exhentai.org/gamecg"]::after,
-.itdc a[href="https://exhentai.org/gamecg"]::after,
+#gdc a[href$="hentai.org/gamecg"]::after,
+.itdc a[href$="hentai.org/gamecg"]::after,
 #searchbox .itc tr:nth-child(1) td:nth-child(4)::after{
     content: "游戏cg";
     border: 1px solid rgba(055, 155, 054,1);
@@ -88,8 +88,8 @@
 }
 
 .icon_western,
-#gdc a[href="https://exhentai.org/western"]::after,
-.itdc a[href="https://exhentai.org/western"]::after,
+#gdc a[href$="hentai.org/western"]::after,
+.itdc a[href$="hentai.org/western"]::after,
 #searchbox .itc tr:nth-child(1) td:nth-child(5)::after{
     content: "西方";
     border: 1px solid rgba(163, 250, 071,1);
@@ -103,8 +103,8 @@
 
 
 .icon_non-h,
-#gdc a[href="https://exhentai.org/non-h"]::after,
-.itdc a[href="https://exhentai.org/non-h"]::after,
+#gdc a[href$="hentai.org/non-h"]::after,
+.itdc a[href$="hentai.org/non-h"]::after,
 #searchbox .itc tr:nth-child(2) td:nth-child(1)::after{
     content: "非H";
     border: 1px solid rgba(073, 179, 255,1);
@@ -116,8 +116,8 @@
 }
 
 .icon_imageset,
-#gdc a[href="https://exhentai.org/imageset"]::after,
-.itdc a[href="https://exhentai.org/imageset"]::after,
+#gdc a[href$="hentai.org/imageset"]::after,
+.itdc a[href$="hentai.org/imageset"]::after,
 #searchbox .itc tr:nth-child(2) td:nth-child(2)::after{
     content: "图集";
     border: 1px solid rgba(052, 055, 255,1);
@@ -130,8 +130,8 @@
 
 
 .icon_cosplay,
-#gdc a[href="https://exhentai.org/cosplay"]::after,
-.itdc a[href="https://exhentai.org/cosplay"]::after,
+#gdc a[href$="hentai.org/cosplay"]::after,
+.itdc a[href$="hentai.org/cosplay"]::after,
 #searchbox .itc tr:nth-child(2) td:nth-child(3)::after{
     content: "cosplay";
     border: 1px solid rgba(112, 054, 156,1);
@@ -143,8 +143,8 @@
 }
 
 .icon_asianporn,
-#gdc a[href="https://exhentai.org/asianporn"]::after,
-.itdc a[href="https://exhentai.org/asianporn"]::after,
+#gdc a[href$="hentai.org/asianporn"]::after,
+.itdc a[href$="hentai.org/asianporn"]::after,
 #searchbox .itc tr:nth-child(2) td:nth-child(4)::after{
     content: "亚洲";
     border: 1px solid rgba(243, 174, 243,1);
@@ -156,8 +156,8 @@
 }
 
 .icon_misc,
-#gdc a[href="https://exhentai.org/misc"]::after,
-.itdc a[href="https://exhentai.org/misc"]::after,
+#gdc a[href$="hentai.org/misc"]::after,
+.itdc a[href$="hentai.org/misc"]::after,
 #searchbox .itc tr:nth-child(2) td:nth-child(5)::after{
     content: "杂项";
     border: 1px solid rgba(214, 214, 214,1);

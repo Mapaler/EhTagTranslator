@@ -13,7 +13,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=13
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=19
-// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=0
+// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=1
 // @version     1.1.2
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -410,8 +410,6 @@ div.gtl{
             }
 
         };
-    /*    doujinshi	manga	artistcg	gamecg	western
-        non-h	imageset	cosplay	asianporn	misc*/
         /*种子下载页面*/
         translator.torrent = function () {
             routineReplace('#torrentinfo td span', {
@@ -585,6 +583,7 @@ div.gtl{
         translator.home = function () {
             routineReplace('#toppane h1.ih',{
                 "E-Hentai Galleries: The Free Hentai Doujinshi, Manga and Image Gallery System":"E-Hentai E绅士画廊:一个免费的绅士漫画、同人志和图片系统",
+                "ExHentai.org - The X Makes It Sound Cool":"ExHentai.org - X使它听起来很酷 ",
             });
             inputPlaceholder("#searchbox input[name=f_search]","搜索关键词");
             inputReplace("#searchbox input[name=f_apply]","搜索");
@@ -601,7 +600,7 @@ div.gtl{
                 "Thumbnails":"缩略图"
             })
             routineReplace('.itg th',{
-                "Published":"出版",
+                "Published":"发布时间",
                 "Name":"名称",
                 "Uploader":"上传者"
             });
