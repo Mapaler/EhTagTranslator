@@ -1411,9 +1411,9 @@ ${css}
         }
     }
 
+    //UI翻译用的样式
     if(etbConfig.UITranslate){
         if(hrefTest(/(exhentai\.org|e-hentai\.org)/)){
-            console.log('cssss',GM_getResourceText('ui-translate'));
             AddGlobalStyle(GM_getResourceText('ui-translate'))
         }
     }
