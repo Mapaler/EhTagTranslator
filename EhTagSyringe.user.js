@@ -13,7 +13,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=13
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=19
-// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.html?v=0
+// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=0
 // @version     1.1.2
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -1413,6 +1413,7 @@ ${css}
 
     if(etbConfig.UITranslate){
         if(hrefTest(/(exhentai\.org|e-hentai\.org)/)){
+            console.log('cssss',GM_getResourceText('ui-translate'));
             AddGlobalStyle(GM_getResourceText('ui-translate'))
         }
     }
