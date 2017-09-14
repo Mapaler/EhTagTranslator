@@ -1390,7 +1390,7 @@ ${css}
             if(etbConfig.syringe)EhTagVersion();
             if(etbConfig.searchHelper)EhTagInputHelper();
             if(etbConfig.magnetHelper)EhTagMagnetHelper();
-            EhTagUITranslator();
+            if(etbConfig.UITranslate)EhTagUITranslator();
         }
     };
 
