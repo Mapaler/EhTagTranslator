@@ -30,6 +30,7 @@
     font-weight: bold;
     text-align: center;
     border: 1px solid #4f535b;
+    text-decoration:none;
 }
 #searchbox .itc tr td.icon_disable::after{
     opacity: 0.5;
