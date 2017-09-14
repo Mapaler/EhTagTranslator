@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.7.4
+// @version     2.7.5
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -148,7 +148,7 @@ function dealVersion(response)
 	PageDOM = parser.parseFromString(response, "text/html");
 	
 				
-	var wiki_version = PageDOM.querySelector("#wiki-body div [href=wiki-version-number]");
+	var wiki_version = PageDOM.querySelector("#wiki-body div [title=wiki-version-number]");
 	var new_wiki_version = Number(wiki_version.textContent.replace(/\D/ig,""));
 
 	var page_get_w = document.querySelector("#ETB_page-get");
