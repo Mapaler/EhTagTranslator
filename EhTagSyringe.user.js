@@ -13,7 +13,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=12
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=18
-// @version     1.0.0
+// @version     1.1.0
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -45,12 +45,13 @@
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
 
+
     const headLoaded = new Promise(function (resolve, reject) {
         if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
             resolve(unsafeWindow.document.head);
         }else{
             //监听DOM变化
-
+            MutationObserver = window.MutationObserver;
             var observer = new MutationObserver(function(mutations) {
                 for(let i in mutations){
                     let mutation = mutations[i];
@@ -65,7 +66,6 @@
             observer.observe(document, {childList: true, subtree: true, attributes: true});
         }
     });
-
 
     function AddGlobalStyle(css) {
         //等待head加载完毕
@@ -1094,6 +1094,8 @@ div.gtl{
 
     }
 
+
+
     //获取数据
     async function startProgram($scope) {
         console.log('startProgram');
@@ -1397,6 +1399,8 @@ ${css}
         });
         return true;
     }
+
+
 
     async function myNotification(title,options)
     {
