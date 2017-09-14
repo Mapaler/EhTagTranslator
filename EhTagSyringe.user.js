@@ -267,7 +267,7 @@ div.gtl{
                 "Torrents":"种子",
                 "Favorites":"收藏",
                 "Settings":"设置",
-                "My Galleries":"我得画廊",
+                "My Galleries":"我的画廊",
                 "My Home":"我的首页",
                 "Toplists":"排行榜",
                 "Bounties":"悬赏",
