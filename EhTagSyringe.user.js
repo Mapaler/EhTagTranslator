@@ -36,21 +36,21 @@
 
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     unsafeWindow.wikiUpdate = autoUpdate;
+    MutationObserver = window.MutationObserver;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
-    var rows_title="rows"; //行名的地址
+    var rows_title="tags/rows"; //行名的地址
     var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
-
 
     const headLoaded = new Promise(function (resolve, reject) {
         if(unsafeWindow.document.head && unsafeWindow.document.head.nodeName == "HEAD"){
             resolve(unsafeWindow.document.head);
         }else{
             //监听DOM变化
-            MutationObserver = window.MutationObserver;
+
             var observer = new MutationObserver(function(mutations) {
                 for(let i in mutations){
                     let mutation = mutations[i];
@@ -65,6 +65,7 @@
             observer.observe(document, {childList: true, subtree: true, attributes: true});
         }
     });
+
 
     function AddGlobalStyle(css) {
         //等待head加载完毕
@@ -177,6 +178,545 @@ div.gtl{
 
 
     console.log('ets config:',etbConfig);
+
+
+    function EhTagUITranslator() {
+
+        //完整匹配才替换
+        function routineReplace(query,dictionaries) {
+            let elements = document.querySelectorAll(query);
+            if(elements && elements.length){
+                elements.forEach(function (element) {
+                    if(element){
+                        for(var i in element.childNodes){
+                            let node = element.childNodes[i];
+                            if(node.nodeName == '#text'){
+                                let key = trim(node.textContent);
+                                if(dictionaries[key]){
+                                    node.textContent = node.textContent.replace(key,dictionaries[key]);
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+        //不需要完整匹配直接替换
+        function localRoutineReplace(query,dictionaries) {
+            let elements = document.querySelectorAll(query);
+            if(elements && elements.length){
+                elements.forEach(function (element) {
+                    if(element){
+                        for(var key in dictionaries){
+                            element.innerHTML = element.innerHTML.replace(key,dictionaries[key])
+                        }
+                    }
+                })
+            }
+        }
+
+        function inputReplace(query,text) {
+            let input = document.querySelector(query);
+            if(input)input.value = text;
+        }
+        function inputPlaceholder(query,text) {
+            let input = document.querySelector(query);
+            if(input)input.placeholder = text;
+        }
+        function titlesReplace(query,dictionaries) {
+            let elements = document.querySelectorAll(query);
+            if(elements && elements.length){
+                elements.forEach(function (element) {
+                    if(element){
+                        if(element.title){
+                            let key = trim(element.title);
+                            if(key&&dictionaries[key]){
+                                element.title = element.title.replace(key,dictionaries[key]);
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+
+        function buildIcon(name,color,opacity=1.0) {
+
+
+            var sColor = color.toLowerCase();
+            var reg = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+            if(sColor && reg.test(sColor)){
+                if(sColor.length === 4){
+                    var sColorNew = "#";
+                    for(var i=1; i<4; i+=1){
+                        sColorNew += sColor.slice(i,i+1).concat(sColor.slice(i,i+1));
+                    }
+                    sColor = sColorNew;
+                }
+                var rgb = [];
+                for(var i=1; i<7; i+=2){
+                    rgb.push(parseInt("0x"+sColor.slice(i,i+2)));
+                }
+            }
+            let r = rgb[0]/255;
+            let g = rgb[1]/255;
+            let b = rgb[2]/255;
+
+
+
+            let svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="20px" viewBox="0 0 100 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <radialGradient cx="50%" cy="50%" fx="50%" fy="50%" r="78.7867333%" id="radialGradient-1">
+            <stop stop-color="rgba(${rgb[0]},${rgb[1]},${rgb[2]},0)" offset="0%"></stop>
+            <stop stop-color="rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.85)" offset="100%"></stop>
+        </radialGradient>
+        <rect id="path-2" x="0" y="0" width="100" height="20" rx="10"></rect>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="4" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.537307518 0" type="matrix" in="shadowInnerInner1" result="shadowMatrixInner1"></feColorMatrix>
+            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner2"></feGaussianBlur>
+            <feOffset dx="0" dy="-2" in="shadowBlurInner2" result="shadowOffsetInner2"></feOffset>
+            <feComposite in="shadowOffsetInner2" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner2"></feComposite>
+            <feColorMatrix values="0 0 0 0 ${r}   0 0 0 0 ${g}   0 0 0 0 ${b}  0 0 0 1 0" type="matrix" in="shadowInnerInner2" result="shadowMatrixInner2"></feColorMatrix>
+            <feGaussianBlur stdDeviation="1" in="SourceAlpha" result="shadowBlurInner3"></feGaussianBlur>
+            <feOffset dx="0" dy="2" in="shadowBlurInner3" result="shadowOffsetInner3"></feOffset>
+            <feComposite in="shadowOffsetInner3" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner3"></feComposite>
+            <feColorMatrix values="0 0 0 0 ${r}   0 0 0 0 ${g}   0 0 0 0 ${b}  0 0 0 1 0" type="matrix" in="shadowInnerInner3" result="shadowMatrixInner3"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner2"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner3"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect fill="#fff" opacity="1" x="0" y="0" width="100" height="20" rx="10"></rect>
+    <use fill="url(#radialGradient-1)" opacity="${opacity}" fill-rule="evenodd" xlink:href="#path-2"></use>
+    <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+    <text x="50%" y="50%" dy=".3em" fill="#000" text-anchor="middle" font-family="PingFangSC-Semibold, PingFang SC" font-size="12" font-weight="500" >
+        ${name}
+    </text>
+</svg>`;
+            return "data:image/svg+xml;base64,"+Base64.toBase64(svg)
+
+        }
+        unsafeWindow.svg = buildIcon;
+
+
+        var className = {
+            "artistcg" :"画师集",
+            "cosplay"  :"COSPLAY",
+            "doujinshi":"同人本",
+            "gamecg"   :"游戏CG",
+            "imageset" :"图集",
+            "manga"    :"漫画",
+            "misc"     :"杂项",
+            "non-h"    :"非H",
+            "western"  :"西方",
+            "asianporn":"亚洲"
+        };
+        var classColor = {
+            "artistcg" :"#E6D852",
+            "cosplay"  :"#5E328A",
+            "doujinshi":"#F85353",
+            "gamecg"   :"#4B923B",
+            "imageset" :"#2735F4",
+            "manga"    :"#F4B64C",
+            "misc"     :"#D4D4D4",
+            "non-h"    :"#5DAEF7",
+            "western"  :"#B2FA61",
+            "asianporn":"#E8AEEE"
+        };
+        var classIcon = {};
+
+        for(let key in className){
+            let name = className[key];
+            classIcon[key] = buildIcon(name,classColor[key]);
+            classIcon[key+"_d"] = buildIcon(name,classColor[key],0.5);
+        }
+
+
+
+        function classIconReplace(query) {
+            let elements = document.querySelectorAll(query);
+            if(elements && elements.length){
+                elements.forEach(function (element) {
+                    if(element){
+                        let key = element.alt;
+                        if(key && classIcon[key]){
+                            element.src = classIcon[key];
+                        }
+                    }
+                })
+            }
+        }
+
+
+        var translator = {};
+
+        /*公共*/
+        translator.public = function () {
+            routineReplace('#nb a,.ip a,#frontpage a',{
+                "Front Page":"首页",
+                "Torrents":"种子",
+                "Favorites":"收藏",
+                "Settings":"设置",
+                "My Galleries":"我得画廊",
+                "My Home":"我的首页",
+                "Toplists":"排行榜",
+                "Bounties":"悬赏",
+                "News":"新闻",
+                "Forums":"论坛",
+                "Wiki":"维基",
+                "HentaiVerse":"HV游戏",
+            });
+            titlesReplace(".ygm",{
+                "Contact Poster":"联系发帖人",
+                "Contact Uploader":"联系上传者",
+            });
+
+            classIconReplace(".ic");
+
+
+
+        };
+
+        /*画廊页*/
+        translator.gallery = function () {
+            routineReplace('.gdt1',{
+                "Posted:":"添加时间：",
+                "Parent:":"父级：",
+                "Visible:":"可见：",
+                "Language:":"语言：",
+                "File Size:":"体积：",
+                "Length:":"页数：",
+                "Favorited:":"收藏：",
+            });
+            routineReplace('.gdt2',{
+                "Yes":"是",
+                "No":"否",
+                "None":"无",
+            });
+            localRoutineReplace('.gdt2',{
+                "times":"次",
+                "pages":"页",
+                "Japanese":"日文",
+                "English":"英文",
+                "Chinese":"中文",
+                "Dutch":"荷兰语",
+                "French":"法语",
+                "German":"德语",
+                "Hungarian":"匈牙利",
+                "Italian":"意呆利",
+                "Korean":"韩语",
+                "Polish":"波兰语",
+                "Portuguese":"葡萄牙语",
+                "Russian":"俄语",
+                "Spanish":"西班牙语",
+                "Thai":"泰语",
+                "Vietnamese":"越南语",
+            });
+            routineReplace('#grt1',{
+                "Rating:":"评分：",
+            });
+            routineReplace('#favoritelink',{
+                "Add to Favorites":"添加收藏",
+            });
+            AddGlobalStyle(`.tc{ white-space:nowrap; }`);
+            routineReplace('.tc',{
+                "artist:":"艺术家：",
+                "character:":"角色：",
+                "female:":"女性：",
+                "group:":"团队：",
+                "language:":"语言：",
+                "male:":"男性：",
+                "misc:":"杂项：",
+                "parody:":"原作：",
+                "reclass:":"重新分类："
+            });
+            localRoutineReplace('#gd5 p',{
+                "Report Gallery":"举报画廊",
+                "Archive Download":"打包下载",
+                "Petition to Expunge":"请求删除",
+                "Petition to Rename":"请求重命名",
+                "Torrent Download":"种子下载",
+                "Show Gallery Stats":"画廊状态",
+            });
+            routineReplace('#gdo4 div',{
+                "Normal":"小图",
+                "Large":"大图",
+            });
+            localRoutineReplace('#gdo2 div',{
+                "rows":"行"
+            });
+            routineReplace('#cdiv .c4',{
+                "Uploader Comment":"上传者评论",
+            });
+            routineReplace('#cdiv .c4 a',{
+                "Vote+":"支持",
+                "Vote-":"反对"
+            });
+
+
+
+            localRoutineReplace('.gpc',{
+                "Showing":"当前页面显示图片为",
+                "of":"共",
+                "images":"张"
+            });
+
+
+            localRoutineReplace('#rating_label',{
+                "Average:":"平均:"
+            });
+            routineReplace('#tagmenu_act',{
+                "Vote Up":"支持",
+                "Vote Down":"反对",
+                "Show Tagged Galleries":"搜索标签",
+                "Show Tag Definition":"标签简介",
+                "Add New Tag":"添加新标签",
+            });
+            routineReplace('#postnewcomment a',{
+                "Post New Comment":"发表评论",
+            });
+
+
+            inputPlaceholder("#newtagfield","新增标签: 输入新的标签，用逗号分隔");
+
+            titlesReplace(".gdt2 .halp",{
+                "This gallery has been translated from the original language text.":"这个画廊已从原文翻译过来了。"
+            });
+
+            let rating_label = document.querySelector('#rating_label');
+            if(rating_label){
+                //监听评分显示DOM变化 触发替换内容
+                let observer = new MutationObserver(function(mutations) {
+                    for(let i in mutations){
+                        for(let n in mutations[i].addedNodes){
+                            let node = mutations[i].addedNodes[n];
+                            if(node.nodeName == "#text"){
+                                node.textContent = node.textContent.replace("Average:","平均:");
+                                node.textContent = node.textContent.replace("Rate as","打分");
+                                node.textContent = node.textContent.replace("stars","星");
+                            }
+                        }
+                    }
+                });
+                observer.observe(rating_label, {childList:true});
+            }
+
+        };
+    /*    doujinshi	manga	artistcg	gamecg	western
+        non-h	imageset	cosplay	asianporn	misc*/
+        /*种子下载页面*/
+        translator.torrent = function () {
+            routineReplace('#torrentinfo td span', {
+                "Posted:"   : "上传时间：",
+                "Size:"     : "体积：",
+                "Seeds:"    : "种源数：",
+                "Peers:"    : "下载中：",
+                "Downloads:": "下载次数：",
+                "Uploader:" : "上传者：",
+            });
+        };
+
+        /*用户设置页面*/
+        translator.settings = function () {
+            routineReplace('#outer h1',{
+                "Settings":"设置"
+            });
+            routineReplace('#outer h2',{
+                "Image Load Settings":"图像加载设置",
+                "Image Size Settings":"图像大小的设置",
+                "Gallery Name Display":"画廊的名字显示",
+                "Archiver Settings":"归档设置",
+                "Front Page Settings":"首页设置",
+                "Favorites":"收藏",
+                "Ratings":"评分",
+                "Tag Namespaces":"标签组",
+                "Excluded Languages":"排除语言",
+                "Search Result Count":"搜索结果数",
+                "Thumbnail Settings":"缩略图设置",
+                "Gallery Comments":"画廊评论",
+                "Gallery Tags":"画廊标签",
+                "Gallery Page Numbering":"画廊页面页码",
+                "Hentai@Home Local Network Host":"Hentai@Home本地网络服务器"
+            });
+            routineReplace('.optmain p',{
+                "Do you wish to load images through the Hentai@Home Network, if available?"
+                    :"是否希望通过 Hentai@Home 网路加载资源, 如果可以?",
+                "Normally, images are resampled to 1280 pixels of horizontal resolution for online viewing. You can alternatively select one of the following resample resolutions."
+                    :"通常情况，图像将重采样到1280像素宽度以用于在线浏览，您也可以选择以下重新采样分辨率。",
+                "To avoid murdering the staging servers, resolutions above 1280x are temporarily restricted to donators, people with any hath perk, and people with a UID below 3,000,000."
+                    :"但是为了避免负载过高，高于1280像素将只供给于赞助者、特殊贡献者，以及UID小于3,000,000的用户",
+                "While the site will automatically scale down images to fit your screen width, you can also manually restrict the maximum display size of an image. Like the automatic scaling, this does not resample the image, as the resizing is done browser-side. (0 = no limit)"
+                    :"虽然图片会自动根据窗口缩小，你也可以手动设置最大大小，图片并没有重新采样（0为不限制）",
+                "Many galleries have both an English/Romanized title and a title in Japanese script. Which gallery name would you like to see as default?"
+                    :"很多画廊都同时拥有英文或者日文标题，你想默认显示哪一个？",
+                "The default behavior for the Archiver is to confirm the cost and selection for original or resampled archive, then present a link that can be clicked or copied elsewhere. You can change this behavior here."
+                    :"默认归档下载方式为手动选择(原画质或压缩画质),然后手动改复制或点击下载链接,你可以修改归档下载方式",
+                "Which display mode would you like to use on the front and search pages?"
+                    :"你想在搜索页面显示哪种样式?",
+                "What categories would you like to view as default on the front page?"
+                    :"你希望在首页上看到哪些类别?",
+                "Here you can choose and rename your favorite categories."
+                    :"在这里你可以重命名你得收藏夹",
+                "You can also select your default sort order for galleries on your favorites page. Note that favorites added prior to the March 2016 revamp did not store a timestamp, and will use the gallery posted time regardless of this setting."
+                    :"你也可以选择收藏夹中默认排序.请注意，2016年3月改版之前加入收藏夹的画册并未保存收藏时间，会以画册发布时间代替.",
+                "By default, galleries that you have rated will appear with red stars for ratings of 2 stars and below, green for ratings between 2.5 and 4 stars, and blue for ratings of 4.5 or 5 stars. You can customize this by entering your desired color combination below."
+                    :"默认情况，被你评分的画册，2星以下显示红色，2.5星到4星显示绿色，4.5到5星显示蓝色. 你可以在下面输入自己所需的颜色组合.",
+                "If you want to exclude certain namespaces from a default tag search, you can check those below. Note that this does not prevent galleries with tags in these namespaces from appearing, it just makes it so that when searching tags, it will forego those namespaces."
+                    :"如果要从默认标签搜索中排除某些标签组，可以检查以下内容。 请注意，这不会阻止在这些标签组中的标签的展示区出现，它只是在搜索标签时排除这些标签组。",
+                "If you wish to hide galleries in certain languages from the gallery list and searches, select them from the list below."
+                    :"如果您希望以图库列表中的某些语言隐藏画廊并进行搜索，请从下面的列表中选择它们。",
+                "Note that matching galleries will never appear regardless of your search query."
+                    :"请注意，无论搜索查询如何，匹配的图库都不会出现。",
+                "How many results would you like per page for the index/search page and torrent search pages? (Hath Perk: Paging Enlargement Required)"
+                    :"搜索页面每页显示多少条数据？ （Hath Perk：付费扩展）",
+                "How would you like the mouse-over thumbnails on the front page to load when using List Mode?"
+                    :"你希望鼠标悬停缩略图何时加载?",
+                "You can set a default thumbnail configuration for all galleries you visit."
+                    :"画廊页面缩略图设置",
+                "Sort order for gallery comments:"
+                    :"评论排序方式:",
+                "Show gallery comment votes:"
+                    :"显示评论投票数:",
+                "Sort order for gallery tags:"
+                    :"图库标签排序方式:",
+                "Show gallery page numbers:"
+                    :"显示画廊页码:",
+                "This setting can be used if you have a H@H client running on your local network with the same public IP you browse the site with. Some routers are buggy and cannot route requests back to its own IP; this allows you to work around this problem."
+                    :"如果你本地安装了H@H客户端,本地ip与浏览网站的公共ip相同,一些路由器不支持回流导致无法访问到自己,你可以设置这里来解决",
+                "If you are running the client on the same PC you browse from, use the loopback address (127.0.0.1:port). If the client is running on another computer on your network, use its local network IP. Some browser configurations prevent external web sites from accessing URLs with local network IPs, the site must then be whitelisted for this to work."
+                    :"如果在同一台电脑上访问网站和运行客户端，请使用本地回环地址(127.0.0.1:端口号). 如果客户端在网络上的其他计算机运行,请使用那台机器的内网ip. 某些浏览器的配置可能阻止外部网站访问本地网络,你必须将网站列入白名单才能工作."
+            });
+            routineReplace('.optmain label',{
+                "Yes (Recommended)"
+                    : "是 (推荐)",
+                "No (You will not be able to browse as many pages. Enable only if having problems.)"
+                    : "不 (你将无法一次浏览多页，请只有在出问题的时候启动此功能.)",
+                "Auto": "自动",
+                "Default Title": "默认标题",
+                "Japanese Title (if available)": "日文标题 (如果可用)",
+                "Manual Select, Manual Start (Default)": "手动选择,手动下载 (默认)",
+                "Manual Select, Auto Start": "手动选择,自动下载",
+                "Auto Select Original, Manual Start": "自动选择原始画质,手动下载",
+                "Auto Select Original, Auto Start": "自动选择原始画质,自动下载",
+                "Auto Select Resample, Manual Start": "自动选择压缩画质,手动下载",
+                "Auto Select Resample, Auto Start": "自动选择压缩画质,自动下载",
+                "List View": "列表视图",
+                "Thumbnail View": "缩略图视图",
+                "By last gallery update time": "以最新的画册更新时间排序",
+                "By favorited time": "以收藏时间排序",
+                "artist":"艺术家",
+                "character":"角色",
+                "female":"女性",
+                "group":"团队",
+                "language":"语言",
+                "male":"男性",
+                "misc":"杂项",
+                "parody":"原作",
+                "reclass":"重新分类",
+                "25 results": "25个",
+                "50 results": "50个",
+                "100 results": "100个",
+                "200 results": "200个",
+                "On mouse-over (pages load faster, but there may be a slight delay before a thumb appears)"
+                    : "鼠标悬停时 (页面加载快,缩略图加载有延迟)",
+                "On page load (pages take longer to load, but there is no delay for loading a thumb after the page has loaded)"
+                    : "页面加载时 (页面加载时间更长,但是显示的时候无需等待)",
+                "Normal": "小图",
+                "Large": "大图",
+                "Oldest comments first": "最早的评论",
+                "Recent comments first": "最新的评论",
+                "By highest score": "分数最高",
+                "On score hover or click": "悬停或点击时",
+                "Always": "总是",
+                "Alphabetical": "按字母排序",
+                "By tag power": "按标签权重",
+                "No": "否",
+                "Yes": "是"
+            });
+
+            routineReplace('.optmain #ru2',{
+                "Each letter represents one star. The default RRGGB means R(ed) for the first and second star, G(reen) for the third and fourth, and B(lue) for the fifth. You can also use (Y)ellow for the normal stars. Any five-letter combination of R, G, B and Y will work."
+                    :"每个字母代表一个星,默认是 RRGGB ,第1和2是红色,第3和4是绿色,第5个为蓝色, \n你可以使用 R:红色 G:绿色 B:蓝色 Y:黄色 任何5位组合都是有效的.",
+            });
+
+            routineReplace('.optmain .optsub td,.optmain .optsub th',{
+                "Size:":"大小:",
+                "Rows:":"行数:",
+                "Horizontal:":"宽:",
+                "Vertical:":"高:",
+                "pixels":"像素",
+                "Original":"原始语言",
+                "Translated":"翻译版",
+                "Rewrite":"改编版",
+                "All":"所有",
+                "Japanese":"日文",
+                "English":"英文",
+                "Chinese":"中文",
+                "Dutch":"荷兰语",
+                "French":"法语",
+                "German":"德语",
+                "Hungarian":"匈牙利",
+                "Italian":"意呆利",
+                "Korean":"韩语",
+                "Polish":"波兰语",
+                "Portuguese":"葡萄牙语",
+                "Russian":"俄语",
+                "Spanish":"西班牙语",
+                "Thai":"泰语",
+                "Vietnamese":"越南语",
+                "N/A":"无效",
+                "Other":"其他",
+            });
+
+            inputReplace('#apply input[type=submit]','应用');
+            routineReplace('#msg',{
+                "Settings were updated":"设置已更新",
+            });
+        };
+
+        translator.home = function () {
+            routineReplace('#toppane h1.ih',{
+                "E-Hentai Galleries: The Free Hentai Doujinshi, Manga and Image Gallery System":"E-Hentai E绅士画廊:一个免费的绅士漫画、同人志和图片系统",
+            });
+            inputPlaceholder("#searchbox input[name=f_search]","搜索关键词");
+            inputReplace("#searchbox input[name=f_apply]","搜索");
+            inputReplace("#searchbox input[name=f_clear]","清空");
+
+            routineReplace('#searchbox .nopm a',{
+                "Show Advanced Options":"显示高级选项",
+                "Show File Search":"显示文件搜索",
+            });
+            localRoutineReplace('#dmo',{
+                "Display:":"视图:",
+                "Show ":"显示",
+                "List":"列表",
+                "Thumbnails":"缩略图"
+            })
+            routineReplace('.itg th',{
+                "Published":"出版",
+                "Name":"名称",
+                "Uploader":"上传者"
+            });
+
+
+        };
+
+
+        /*ui翻译路由*/
+        translator.public();
+        translator.home();
+        if(hrefTest(/exhentai\.org\/g\/|e-hentai\.org\/g\//))translator.gallery();
+        if(hrefTest(/gallerytorrents\.php/))translator.torrent();
+        if(hrefTest(/uconfig\.php/))translator.settings();
+
+    }
 
     //UI控制方法等等
     function EhTagBuilder(){
@@ -452,7 +992,7 @@ div.gtl{
 
         buttonInserPlace.appendChild(span);
     }
-    
+
     //搜索输入框助手
     function EhTagInputHelper() {
         if(!etbConfig.searchHelper){
@@ -463,7 +1003,7 @@ div.gtl{
         if(!tags)return;
 
         console.time('add datalist');
-        let stdinput = document.querySelector('.stdinput');
+        let stdinput = document.querySelector('#searchbox input[name=f_search]');
         if(!stdinput){return}
         stdinput.setAttribute("list", "tbs-tags");
 
@@ -553,8 +1093,6 @@ div.gtl{
 
 
     }
-
-
 
     //获取数据
     async function startProgram($scope) {
@@ -842,6 +1380,10 @@ ${css}
         return tags;
     }
 
+    function hrefTest(re) {
+        return re.test(unsafeWindow.location.href);
+    }
+
     async function autoUpdate() {
         var $scope = {};
         $scope.$apply = function(){};
@@ -855,8 +1397,6 @@ ${css}
         });
         return true;
     }
-
-
 
     async function myNotification(title,options)
     {
@@ -912,7 +1452,10 @@ ${css}
         });
     };
 
+    var bootstrapInited = false;
     var bootstrap = function(){
+        if(bootstrapInited)return;
+        bootstrapInited = true;
         //在github页面下添加生成工具
         if((/github\.com/).test(unsafeWindow.location.href)){
             EhTagBuilder();
@@ -923,6 +1466,7 @@ ${css}
             if(etbConfig.syringe)EhTagVersion();
             if(etbConfig.searchHelper)EhTagInputHelper();
             if(etbConfig.magnetHelper)EhTagMagnetHelper();
+            EhTagUITranslator();
         }
     };
 
@@ -931,6 +1475,9 @@ ${css}
     }else{
         document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
+    // domLoaded.then(function () {
+    //     bootstrap();
+    // });
 
     //注射器总开关
     if(etbConfig.syringe){
@@ -940,4 +1487,180 @@ ${css}
         }
     }
 
+
 })();
+(function(global) {
+    'use strict';
+    // existing version for noConflict()
+    var _Base64 = global.Base64;
+    var version = "2.1.4";
+    // if node.js, we use Buffer
+    var buffer;
+    if (typeof module !== 'undefined' && module.exports) {
+        buffer = require('buffer').Buffer;
+    }
+    // constants
+    var b64chars
+                     = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    var b64tab = function(bin) {
+        var t = {};
+        for (var i = 0, l = bin.length; i < l; i++) t[bin.charAt(i)] = i;
+        return t;
+    }(b64chars);
+    var fromCharCode = String.fromCharCode;
+    // encoder stuff
+    var cb_utob = function(c) {
+        if (c.length < 2) {
+            var cc = c.charCodeAt(0);
+            return cc < 0x80 ? c
+                : cc < 0x800 ? (fromCharCode(0xc0 | (cc >>> 6))
+                    + fromCharCode(0x80 | (cc & 0x3f)))
+                    : (fromCharCode(0xe0 | ((cc >>> 12) & 0x0f))
+                        + fromCharCode(0x80 | ((cc >>>  6) & 0x3f))
+                        + fromCharCode(0x80 | ( cc         & 0x3f)));
+        } else {
+            var cc = 0x10000
+                + (c.charCodeAt(0) - 0xD800) * 0x400
+                + (c.charCodeAt(1) - 0xDC00);
+            return (fromCharCode(0xf0 | ((cc >>> 18) & 0x07))
+                + fromCharCode(0x80 | ((cc >>> 12) & 0x3f))
+                + fromCharCode(0x80 | ((cc >>>  6) & 0x3f))
+                + fromCharCode(0x80 | ( cc         & 0x3f)));
+        }
+    };
+    var re_utob = /[\uD800-\uDBFF][\uDC00-\uDFFFF]|[^\x00-\x7F]/g;
+    var utob = function(u) {
+        return u.replace(re_utob, cb_utob);
+    };
+    var cb_encode = function(ccc) {
+        var padlen = [0, 2, 1][ccc.length % 3],
+            ord = ccc.charCodeAt(0) << 16
+                | ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8)
+                | ((ccc.length > 2 ? ccc.charCodeAt(2) : 0)),
+            chars = [
+                b64chars.charAt( ord >>> 18),
+                b64chars.charAt((ord >>> 12) & 63),
+                padlen >= 2 ? '=' : b64chars.charAt((ord >>> 6) & 63),
+                padlen >= 1 ? '=' : b64chars.charAt(ord & 63)
+            ];
+        return chars.join('');
+    };
+    var btoa = global.btoa ? function(b) {
+        return global.btoa(b);
+    } : function(b) {
+        return b.replace(/[\s\S]{1,3}/g, cb_encode);
+    };
+    var _encode = buffer
+        ? function (u) { return (new buffer(u)).toString('base64') }
+        : function (u) { return btoa(utob(u)) }
+    ;
+    var encode = function(u, urisafe) {
+        return !urisafe
+            ? _encode(u)
+            : _encode(u).replace(/[+\/]/g, function(m0) {
+                return m0 == '+' ? '-' : '_';
+            }).replace(/=/g, '');
+    };
+    var encodeURI = function(u) { return encode(u, true) };
+    // decoder stuff
+    var re_btou = new RegExp([
+        '[\xC0-\xDF][\x80-\xBF]',
+        '[\xE0-\xEF][\x80-\xBF]{2}',
+        '[\xF0-\xF7][\x80-\xBF]{3}'
+    ].join('|'), 'g');
+    var cb_btou = function(cccc) {
+        switch(cccc.length) {
+            case 4:
+                var cp = ((0x07 & cccc.charCodeAt(0)) << 18)
+                    |    ((0x3f & cccc.charCodeAt(1)) << 12)
+                    |    ((0x3f & cccc.charCodeAt(2)) <<  6)
+                    |     (0x3f & cccc.charCodeAt(3)),
+                    offset = cp - 0x10000;
+                return (fromCharCode((offset  >>> 10) + 0xD800)
+                    + fromCharCode((offset & 0x3FF) + 0xDC00));
+            case 3:
+                return fromCharCode(
+                    ((0x0f & cccc.charCodeAt(0)) << 12)
+                    | ((0x3f & cccc.charCodeAt(1)) << 6)
+                    |  (0x3f & cccc.charCodeAt(2))
+                );
+            default:
+                return  fromCharCode(
+                    ((0x1f & cccc.charCodeAt(0)) << 6)
+                    |  (0x3f & cccc.charCodeAt(1))
+                );
+        }
+    };
+    var btou = function(b) {
+        return b.replace(re_btou, cb_btou);
+    };
+    var cb_decode = function(cccc) {
+        var len = cccc.length,
+            padlen = len % 4,
+            n = (len > 0 ? b64tab[cccc.charAt(0)] << 18 : 0)
+                | (len > 1 ? b64tab[cccc.charAt(1)] << 12 : 0)
+                | (len > 2 ? b64tab[cccc.charAt(2)] <<  6 : 0)
+                | (len > 3 ? b64tab[cccc.charAt(3)]       : 0),
+            chars = [
+                fromCharCode( n >>> 16),
+                fromCharCode((n >>>  8) & 0xff),
+                fromCharCode( n         & 0xff)
+            ];
+        chars.length -= [0, 0, 2, 1][padlen];
+        return chars.join('');
+    };
+    var atob = global.atob ? function(a) {
+        return global.atob(a);
+    } : function(a){
+        return a.replace(/[\s\S]{1,4}/g, cb_decode);
+    };
+    var _decode = buffer
+        ? function(a) { return (new buffer(a, 'base64')).toString() }
+        : function(a) { return btou(atob(a)) };
+    var decode = function(a){
+        return _decode(
+            a.replace(/[-_]/g, function(m0) { return m0 == '-' ? '+' : '/' })
+                .replace(/[^A-Za-z0-9\+\/]/g, '')
+        );
+    };
+    var noConflict = function() {
+        var Base64 = global.Base64;
+        global.Base64 = _Base64;
+        return Base64;
+    };
+    // export Base64
+    global.Base64 = {
+        VERSION: version,
+        atob: atob,
+        btoa: btoa,
+        fromBase64: decode,
+        toBase64: encode,
+        utob: utob,
+        encode: encode,
+        encodeURI: encodeURI,
+        btou: btou,
+        decode: decode,
+        noConflict: noConflict
+    };
+    // if ES5 is available, make Base64.extendString() available
+    if (typeof Object.defineProperty === 'function') {
+        var noEnum = function(v){
+            return {value:v,enumerable:false,writable:true,configurable:true};
+        };
+        global.Base64.extendString = function () {
+            Object.defineProperty(
+                String.prototype, 'fromBase64', noEnum(function () {
+                    return decode(this)
+                }));
+            Object.defineProperty(
+                String.prototype, 'toBase64', noEnum(function (urisafe) {
+                    return encode(this, urisafe)
+                }));
+            Object.defineProperty(
+                String.prototype, 'toBase64URI', noEnum(function () {
+                    return encode(this, true)
+                }));
+        };
+    }
+    // that's it!
+})(this);
