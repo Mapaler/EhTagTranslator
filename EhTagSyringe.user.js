@@ -12,9 +12,9 @@
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=14
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=20
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=21
 // @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
-// @version     1.1.4
+// @version     1.1.6
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -41,8 +41,8 @@
     MutationObserver = window.MutationObserver;
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
-    var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
-    var rows_title="database/rows"; //行名的地址
+    var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
+    var rows_filename="rows"; //行名的地址
     var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
@@ -186,6 +186,7 @@ div.gtl{
         }
     }
 
+
     console.log('ets config:',etbConfig);
 
     function EhTagUITranslator(){
@@ -272,7 +273,7 @@ div.gtl{
                 "Torrents":"种子",
                 "Favorites":"收藏",
                 "Settings":"设置",
-                "My Galleries":"我得画廊",
+                "My Galleries":"我的画廊",
                 "My Home":"我的首页",
                 "Toplists":"排行榜",
                 "Bounties":"悬赏",
@@ -1365,7 +1366,7 @@ ${css}
     //获取行 并解析
     function getRows(){
         return new Promise(async function (resolve, reject) {
-            var url = `${wiki_raw_URL}/${rows_title}.md`+"?t="+new Date().getTime();
+            var url = `${wiki_raw_URL}/${rows_filename}.md`+"?t="+new Date().getTime();
             console.log(url);
             var data = await PromiseRequest.get(url);
             /*剔除表格以外的内容*/
@@ -1379,7 +1380,7 @@ ${css}
     function getTags(row) {
         return new Promise(async function (resolve, reject) {
 
-            var url = `${wiki_raw_URL}/database/${row}.md`+"?t="+new Date().getTime();
+            var url = `${wiki_raw_URL}/${row}.md`+"?t="+new Date().getTime();
             console.log(url);
             console.time(`加载 ${row}`);
             var data = await PromiseRequest.get(url);
@@ -1439,7 +1440,7 @@ ${css}
         return re.test(unsafeWindow.location.href);
     }
 
-    
+
     function tagsIndexes(tags) {
         let map = {};
         console.time('构建索引');
@@ -1455,7 +1456,7 @@ ${css}
         console.timeEnd('构建索引');
         return map;
     }
-    
+
     async function autoUpdate() {
         var $scope = {};
         $scope.$apply = function(){};
@@ -1551,6 +1552,9 @@ ${css}
     }else{
         document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
+    // domLoaded.then(function () {
+    //     bootstrap();
+    // });
 
     //注射器总开关
     if(etbConfig.syringe){

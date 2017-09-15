@@ -6,21 +6,21 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.7.5
+// @version     2.8.0
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
 (function() {
 var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
-var wiki_version="wiki-version"; //版本的地址
-var rows_title="rows"; //行名的地址
+var wiki_version_filename="version"; //版本的地址
+var rows_filename="rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
 var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
 var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
 var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "LocalDebug"; //本程序的版本
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
-var wikiVersion = 3; //当前Wiki版本，用于提醒是否需要更新脚本
+var database_structure_version = 4; //当前数据库结构版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -100,14 +100,14 @@ if(typeof(GM_listValues) == "undefined")
 	}
 }
 
-
 var ds = [];
 var rowObj = function(){
 	var obj = {
 		name:"",
-		cname:"",
-		info:"",
+		cname:[],
+		info:[],
 		tags:[],
+		links:[],
 		addTagFromName: function(rowObj)
 		{
 			if (rowObj == undefined) rowObj = this;
@@ -122,7 +122,12 @@ var rowObj = function(){
 						statetxt.classList.add("page-load");
 						statetxt.innerHTML = "获取成功";
 					}
-					console.debug("正在处理 %s %s 页面",rowObj.name,rowObj.cname);
+					console.debug("正在处理 %s %s 页面",rowObj.name,
+						rowObj.cname
+							.filter(function(item){return item.type==0;})
+							.map(function(item){return item.text;})
+							.join("")
+					);
 					dealTags(response.responseText,rowObj);
 				}
 			});
@@ -134,8 +139,18 @@ var tagObj = function(){
 	var obj = {
 		type:0,
 		name:"",
-		cname:"",
-		info:"",
+		cname:[],
+		info:[],
+		links:[],
+	}
+	return obj;
+}
+//一条新的外部链接
+var linkObj = function(text,href,title){
+	var obj = {
+		text:text||"",
+		href:href||"",
+		title:title||"",
 	}
 	return obj;
 }
@@ -144,11 +159,15 @@ var tagObj = function(){
 //处理版本的页面
 function dealVersion(response)
 {
-	var parser = new DOMParser();
-	PageDOM = parser.parseFromString(response, "text/html");
+	var PageDOM = new DOMParser().parseFromString(response, "text/html");
 	
 				
-	var wiki_version = PageDOM.querySelector("#wiki-body div [title=wiki-version-number]");
+	var wiki_version = PageDOM.querySelector("#wiki-body div [title=database-structure-version]");
+	if (!wiki_version)
+	{
+		alert("未找到数据库结构版本，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
+		return;
+	}
 	var new_wiki_version = Number(wiki_version.textContent.replace(/\D/ig,""));
 
 	var page_get_w = document.querySelector("#ETB_page-get");
@@ -156,19 +175,19 @@ function dealVersion(response)
 	{
 		var statetxt = page_get_w.querySelector(".page-get-wiki-version");
 		statetxt.classList.add("page-load");
-		statetxt.innerHTML = "最新版本" + new_wiki_version + "，当前" + wikiVersion;
+		statetxt.innerHTML = "最新版本" + new_wiki_version + "，当前" + database_structure_version;
 	}
 	
-	if (new_wiki_version > wikiVersion)
+	if (new_wiki_version > database_structure_version)
 	{
 		alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
+		return;
 	}
 }
 //处理行的页面
 function dealRows(response, dataset)
 {
-	var parser = new DOMParser();
-	PageDOM = parser.parseFromString(response, "text/html");
+	var PageDOM = new DOMParser().parseFromString(response, "text/html");
 	
 	var page_get_w = document.querySelector("#ETB_page-get");
 	if (page_get_w)
@@ -185,9 +204,10 @@ function dealRows(response, dataset)
 	{
 		var trow = table.rows[ri];
 		var row = new rowObj;
-		row.name = trow.cells[0].textContent;
-		row.cname = trow.cells[1].textContent;
-		row.info = trow.cells[2];
+		row.name = trow.cells[0].textContent.replace(/(^\s|\s$)/ig,""); //去除首尾空格;
+		row.cname = InfoToArray(trow.cells[1]);
+		row.info = InfoToArray(trow.cells[2]);
+		row.links = LinksToArray(trow.cells[3]);
 		row.addTagFromName();
 		dataset.push(row);
 		
@@ -199,7 +219,10 @@ function dealRows(response, dataset)
 						var div = document.createElement("div");
 						var span1 = document.createElement("span");
 						span1.className = "page-title"; 
-						span1.innerHTML = row.cname ; 
+						span1.innerHTML = row.cname
+											.filter(function(item){return item.type==0;})
+											.map(function(item){return item.text;})
+											.join(""); 
 						div.appendChild(span1);
 						var span2 = document.createElement("span");
 						span2.className = "page-get-" + row.name;
@@ -213,88 +236,6 @@ function dealRows(response, dataset)
 	}
 }
 
-//获取介绍是图片还是文字
-function getInfoString(dom, creatImage)
-{
-	if (creatImage == undefined) creatImage = true;
-	var info = [];
-	if (dom.childNodes != undefined)
-	{
-		for (var ci=0, cilen=dom.childNodes.length; ci<cilen; ci++)
-		{
-			var node = dom.childNodes[ci];
-			info = info.concat(getDomInfoString(node, creatImage))
-		}
-	}
-	var outTxt = info.join("");
-	if (outTxt != dealEmoji(outTxt))
-	{
-		if (!creatImage) outTxt = dealEmoji(outTxt); //去除Emoji
-	}
-	
-	
-	function getDomInfoString(node,creatImage)
-	{
-		var info = [];
-		switch (node.nodeName) {
-			case "BR":
-				info.push(
-					 "\""
-					,"\\A"
-					,"\""
-				);
-				break;
-			case "IMG":
-				if (creatImage)
-				{
-					var osrc = node.getAttribute("data-canonical-src");
-					if (osrc)
-					{
-						if (osrc.indexOf("?")>0) //动态链接
-						{
-							var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
-							if(osrct.substr(osrct.length-1,1)=="h")
-							{
-								osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
-							}
-						}else //静态链接
-						{
-							if(osrc.substr(osrc.length-1,1)=="h")
-							{
-								osrc = osrc.substring(0,osrc.length-1);
-							}
-						}
-						info.push(
-							"url(\""
-							,osrc
-							,"\")"
-						);
-					}else if(node.title) //链接写在title
-					{
-						info.push(
-							"url(\""
-							,node.title
-							,"\")"
-						);
-					}
-				}
-				break;
-			case "#text":
-			default:
-				if ((ci==0 || ci==(dom.childNodes.length-1) || dom.childNodes.length < 2) && node.textContent == "\n")
-					break;
-				info.push(
-					"\""
-					,specialCharToCss(node.textContent)
-					,"\""
-				);
-				break;
-		}
-		return info;
-	}
-	return outTxt;
-}
-
 //生成按钮
 function specialCharToCss(str)
 {
@@ -306,12 +247,133 @@ function specialCharToCss(str)
 	return strn;
 }
 
+//将外部链接变换为数组
+function LinksToArray(linksDom)
+{
+	var arr = [];
+	var as = linksDom.querySelectorAll("a");
+	for (var ai=0;ai<as.length;ai++)
+	{
+    var a = as[ai];
+		arr.push(new linkObj(a.textContent,a.href,a.title));
+	}
+	return arr;
+}
+//介绍信息转为数组
+function InfoToArray(infoDom)
+{
+	var arr = [];
+	if (infoDom.childNodes != undefined)
+	{
+		for (var ci=0, cilen=infoDom.childNodes.length; ci<cilen; ci++)
+		{
+			var node = infoDom.childNodes[ci];
+			//type，0是文字，1是换行，2是图片，3是链接
+			var InfoObj = {type:0};
+			switch (node.nodeName) {
+				case "#text":
+					InfoObj.type = 0;
+					if (node.textContent == "\n")
+						continue;
+					InfoObj.text = node.textContent;
+					break;
+				case "BR":
+					InfoObj.type = 1;
+					break;
+				case "IMG":
+					InfoObj.type = 2;
+					var osrc = node.getAttribute("data-canonical-src");
+					if (osrc) //链接写在data-canonical-src
+					{
+						InfoObj.src = osrc;
+					}else if(node.title.length > 0) //链接写在title
+					{
+						InfoObj.src = node.title;
+					}else if(node.src.length > 0) //链接写在src
+					{
+						InfoObj.src = node.src;
+					}else
+					{
+						console.error("发现未知的其他图片地址格式",node,"来自",infoDom);
+					}
+					InfoObj.alt = node.alt;
+					break;
+				case "A":
+					InfoObj.type = 3;
+					InfoObj.text = node.textContent;
+					InfoObj.href = node.href;
+					InfoObj.title = node.title;
+					break;
+				default: //未知的其他格式
+					console.error("发现未知的其他Node格式：" + node.nodeName,node,"来自",infoDom);
+					continue;
+			}
+			arr.push(InfoObj);
+		}
+	}
+	return arr;
+}
+//介绍信息数组输出到CSS
+function InfoArrayToCssString(infoArr, creatImage)
+{
+	if (creatImage == undefined) creatImage = true;
+	var infoArrTmp = infoArr.concat(); //创建编辑用临时数组
+	var str = [];
+	var lastText = false;
+	var strPart = [];
+	while (infoArrTmp.length>0)
+	{
+		var inf = infoArrTmp.shift();
+		if (inf.type == 0 || inf.type == 1 || inf.type == 3)
+		{ //处理文本
+			if (lastText)
+			{ //添加一条新的文本
+				strPart.push(inf.text || "\\A");
+			}else
+			{ //处理每一张图片
+				str.push(strPart.map(function(item){return 'url("' + item + '")'}).join(""));
+				strPart = [];
+				lastText = true;
+				strPart.push(inf.text || "\\A");
+			}
+		}else if (creatImage) //如果同意生成图片
+		{ //处理图片
+			if (lastText)
+			{ //处理每一条文本
+				var txtTmp = strPart.join("");
+				if (!creatImage) txtTmp = dealEmoji(txtTmp); //去除Emoji
+				str.push('"' + txtTmp + '"');
+				strPart = [];
+				lastText = false;
+				strPart.push(inf.src);
+			}else
+			{ //添加一张新的图片
+				strPart.push(inf.src);
+			}
+		}
+	}
+	//最后没被处理掉的
+	if (lastText)
+	{ //处理每一条文本
+		var txtTmp = strPart.join("");
+		if (!creatImage) txtTmp = dealEmoji(txtTmp); //去除Emoji
+		str.push('"' + txtTmp + '"');
+		strPart = [];
+		lastText = false;
+	}else
+	{ //处理每一张图片
+		str.push(strPart.map(function(item){return 'url("' + item + '")'}).join(""));
+		strPart = [];
+		lastText = true;
+	}
+	return str.join("");
+}
+
 //处理Tag页面
 function dealTags(response, rowdataset)
 {
 	var rowTags = rowdataset.tags;
-	var parser = new DOMParser();
-	PageDOM = parser.parseFromString(response, "text/html");
+	var PageDOM = new DOMParser().parseFromString(response, "text/html");
 	
 	var table = PageDOM.querySelector("#wiki-body div table").tBodies[0];
 	
@@ -321,13 +383,15 @@ function dealTags(response, rowdataset)
 		var tag = new tagObj;
 		if (trow.cells.length > 2)
 		{//没有足够单元格的跳过
-			tag.name = trow.cells[0].textContent;
-			tag.cname = trow.cells[1];
-			tag.info = trow.cells[2];
-			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0;
-			if (tag.type != 1 && getInfoString(tag.cname,true).replace(/\s/ig,"").length < 1) //不是注释，中文名又没有文字
+			tag.name = trow.cells[0].textContent.replace(/(^\s|\s$)/ig,""); //去除首尾空格
+			tag.cname = InfoToArray(trow.cells[1]);
+			tag.info = InfoToArray(trow.cells[2]);
+			tag.links = LinksToArray(trow.cells[3]);
+			//type=0代表一行翻译，1代表注释
+			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0; //英文去除所有空格后如果没有文字，则算为注释
+			if (tag.type != 1 && tag.cname.length < 1) //不是注释，中文名又没有文字
 			{
-				console.error("发现无中文翻译行%d - %s:%s",ri,rowdataset.name,tag.name);
+				//console.error("发现无中文翻译行%d - %s:%s",ri,rowdataset.name,tag.name);
 			}
 			if (tag.type != 1 && rowTags.some(function(ttag){return ttag.name == tag.name;})) //从数组中搜索任一符合条件的，返回true
 			{
@@ -350,17 +414,27 @@ function startProgram(dataset, mode){
 	{
 		GM_xmlhttpRequest({
 			method: "GET",
-			url: wiki_URL + "/" + wiki_version,
+			url: wiki_URL + "/" + wiki_version_filename,
 			onload: function(response) {
-				dealVersion(response.responseText,dataset);
+				dealVersion(response.responseText);
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: wiki_URL + "/" + rows_title,
+					url: wiki_URL + "/" + rows_filename,
 					onload: function(response) {
 						dealRows(response.responseText,dataset);
 					}
 				});
-			}
+			},
+			onerror: function(response) {
+				dealVersion("");
+				GM_xmlhttpRequest({
+					method: "GET",
+					url: wiki_URL + "/" + rows_filename,
+					onload: function(response) {
+						dealRows(response.responseText,dataset);
+					}
+				});
+			},
 		});
 		downOverCheckHook = setInterval(function () { startProgramCheck(dataset, mode) }, 200);
 	}
@@ -582,6 +656,9 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 		cssAry.push(""
 ,"/* " + row.name
 ," * " + row.cname
+			.filter(function(item){return item.type==0;})
+			.map(function(item){return item.text;})
+			.join("")
 ," */"
 		);
 
@@ -596,13 +673,13 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 ,"    font-size:0px;"
 ,"  }"
 ,"  a[id=\"ta_" + tagid + "\"]::before{"
-,"    content:" + getInfoString(tag.cname, createCnameImage) + ";"
+,"    content:" + InfoArrayToCssString(tag.cname, createCnameImage) + ";"
 ,"  }"
 //▲CSS内容部分
 			);
 			if (createInfo)
 			{
-				var sinfo = getInfoString(tag.info, createInfoImage);
+				var sinfo = InfoArrayToCssString(tag.info, createInfoImage);
 				if (sinfo.replace(/\s/ig,"").length > 0)
 				{
 					cssAry.push(""
@@ -618,8 +695,8 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 		else
 		{ //将注释写成CSS注释
 			cssAry.push(
- "/* " + getInfoString(tag.cname, false)
-," * " + getInfoString(tag.info, false)
+ "/* " + InfoArrayToCssString(tag.cname, false)
+," * " + InfoArrayToCssString(tag.info, false)
 ," */"
 			);
 		}
@@ -684,7 +761,10 @@ function buildJSOutput(dataset)
 							//tBody
 							json.dataset.forEach(function(item){
 								var tr = tb.insertRow();
-								tr.insertCell().appendChild(document.createTextNode(item.cname));
+								tr.insertCell().appendChild(document.createTextNode(item.cname
+									.filter(function(item){return item.type==0;})
+									.map(function(item){return item.text;})
+									.join("")));
 								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==0}).length));
 								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==1}).length));
 							})
@@ -723,87 +803,84 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 	if (createInfo == undefined) createInfo = true;
 	if (createInfoImage == undefined) createInfoImage = true;
 	if (createCnameImage == undefined) createCnameImage = true;
-	function doForAllTag(dom, tag, callback)
-	{
-		var tagDoms = dom.getElementsByTagName(tag);
-		for (var di=0, dilen=tagDoms.length; di<dilen; di++)
-		{
-			callback(tagDoms[di]);
-		}
-	}
-	function removeSelf(dom)
-	{
-		dom.parentNode.removeChild(dom);
-	}
-	function resetImageSrc(dom)
-	{
-		var osrc = dom.getAttribute("data-canonical-src");
-		if (osrc)
-		{
-			if (osrc.indexOf("?")>0) //动态链接
-			{
-				var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
-				if(osrct.substr(osrct.length-1,1)=="h")
-				{
-					osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
-				}
-			}else //静态链接
-			{
-				if(osrc.substr(osrc.length-1,1)=="h")
-				{
-					osrc = osrc.substring(0,osrc.length-1);
-				}
-			}
-			dom.src=osrc;
-			dom.removeAttribute("data-canonical-src");
-		}else if(dom.title) //链接写在title
-		{
-			dom.src=dom.title;
-			dom.removeAttribute("title");
-		}
-	}
-	var outArray = //重新生成处理过的数组
+
+	var outArray =
+	/*
+	 * 生成一个不会干涉到原对象的Row对象
+	 */ 
 	dataset.map(function(row_orignal){
-		var row=new rowObj;
-		row.name=row_orignal.name;
-		row.cname=row_orignal.cname;
-		row.info=row_orignal.info.cloneNode(true);
+		var row = Object.assign(new rowObj(), row_orignal);
+		row.cname=row_orignal.cname
+			.filter(function(item){return createCnameImage || item.type != 2;})
+			.map(function(item){
+				var newItem = Object.assign({}, item);
+				if(createCnameImage && item.text) {
+					newItem.text = dealEmoji(item.text);
+				}
+				return newItem;
+			});
 		if (createInfo)
 		{
-
-			doForAllTag(row.info, "img", createInfoImage ? resetImageSrc : removeSelf);
-			row.info = row.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-			if (!createInfoImage) row.info = dealEmoji(row.info); //去除Emoji
+			row.info=row_orignal.info
+				.filter(function(item){return createInfoImage || item.type != 2;})
+				.map(function(item){
+					var newItem = Object.assign({}, item);
+					if(createInfoImage && item.text) {
+						newItem.text = dealEmoji(item.text);
+					}
+					return newItem;
+				});
 		}
 		else
 		{
-			row.info = "";
+			row.info = null;
 		}
-		
-		row.tags = //重新生成处理过的Tag
-	row_orignal.tags.map(function(tag_orignal){
-		var tag=new tagObj;
-		tag.type=tag_orignal.type;
-		tag.name=tag_orignal.name;
-		tag.cname=tag_orignal.cname.cloneNode(true);
-		tag.info=tag_orignal.info.cloneNode(true);
+		row.links=row_orignal.links
+			.map(function(item){
+				var newItem = Object.assign(new linkObj(), item);
+				return newItem;
+			});
 
-		doForAllTag(tag.cname, "img", createCnameImage ? resetImageSrc : removeSelf);
-		tag.cname = tag.cname.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-		if (!createCnameImage) tag.cname = dealEmoji(tag.cname); //去除Emoji
+		row.tags =
+		/*
+		 * 生成一个不会干涉到原对象的Tag对象
+		 */ 
+		row_orignal.tags.map(function(tag_orignal){
+			var tag = Object.assign(new tagObj(), tag_orignal);
+			tag.cname=tag_orignal.cname
+				.filter(function(item){return createCnameImage || item.type != 2;})
+				.map(function(item){
+					var newItem = Object.assign({}, item);
+					if(createCnameImage && item.text) {
+						newItem.text = dealEmoji(item.text);
+					}
+					return newItem;
+				});
+			tag.links=tag_orignal.links
+				.map(function(item){
+					var newItem = Object.assign(new linkObj(), item);
+					return newItem;
+				});
 
-		if (createInfo || tag.type==1)
-		{
-			doForAllTag(tag.info, "img", createInfoImage ? resetImageSrc : removeSelf);
-			tag.info = tag.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-			if (!createInfoImage) tag.info = dealEmoji(tag.info); //去除Emoji
-		}
-		else
-		{
-			tag.info = "";
-		}
-		return tag;
-	})//row.tags.forEach
+			if (createInfo || tag.type==1)
+			{
+				tag.info=tag_orignal.info
+					.filter(function(item){return createInfoImage || item.type != 2;})
+					.map(function(item){
+						var newItem = Object.assign({}, item);
+						if(createInfoImage && item.text) {
+							newItem.text = dealEmoji(item.text);
+						}
+						return newItem;
+					});
+			}
+			else
+			{
+				tag.info = null;
+			}
+			return tag;
+		})//row.tags.forEach
+
 		return row;
 	});//dataset.forEach
 
@@ -812,6 +889,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 	{
 		"scriptName":scriptName,
 		"scriptVersion":scriptVersion,
+		"database-structure-version":scriptVersion,
 		"date":date.getTime(),
 		"dataset":outArray
 	}

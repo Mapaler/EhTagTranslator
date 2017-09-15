@@ -1,9 +1,9 @@
 # EhTagTranslator
 将E绅士tag翻译成中文。  
-![FBI WARNING](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/FBI%20WARNING.png)  
+![FBI WARNING](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/project-document/images/FBI%20WARNING.png)  
 **This is a project for adult website, and the content of this item may include "sexual expression" and "restricted images" show.View at your own risk.**
 
-![预览图](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/preview.png)
+![预览图](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/project-document/images/preview.png)
 
 ## 使用方法
 
@@ -16,7 +16,7 @@ EhTagTranslator是一个免费开源项目，Tag翻译数据库由各位网友�
 
 请访问页面上方的[Wiki](https://github.com/Mapaler/EhTagTranslator/wiki)
 
-![Wiki地址](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/document/images/where%20is%20wiki.png)
+![Wiki地址](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/project-document/images/where%20is%20wiki.png)
 
 ## License|许可协议
 ### EhTagTranslator官方程序
