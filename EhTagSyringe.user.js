@@ -882,7 +882,7 @@ div.gtl{
                                 let tag = getTag(keys[0],keys[1]);
                                 if(tag&&tag.links){
                                     tag.links.forEach(function (a) {
-                                        linkBox.innerHTML +=`<img src="https://ehgt.org/g/mr.gif" class="mr" alt=">"> <a target="_blank" href="${a.href}">${a.title}</a>`
+                                        linkBox.innerHTML +=` <img src="https://ehgt.org/g/mr.gif" class="mr" alt=">"> <a target="_blank" title="${a.href}" href="${a.href}">${a.title}</a> `
                                     })
                                 }
                             }
