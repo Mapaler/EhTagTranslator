@@ -388,6 +388,7 @@ function dealTags(response, rowdataset)
 			tag.cname = InfoToArray(trow.cells[1]);
 			tag.info = InfoToArray(trow.cells[2]);
 			tag.links = LinksToArray(trow.cells[3]);
+			//type=0代表一行翻译，1代表注释
 			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0; //英文去除所有空格后如果没有文字，则算为注释
 			if (tag.type != 1 && tag.cname.length < 1) //不是注释，中文名又没有文字
 			{
@@ -761,7 +762,10 @@ function buildJSOutput(dataset)
 							//tBody
 							json.dataset.forEach(function(item){
 								var tr = tb.insertRow();
-								tr.insertCell().appendChild(document.createTextNode(item.cname));
+								tr.insertCell().appendChild(document.createTextNode(item.cname
+									.filter(function(item){return item.type==0;})
+									.map(function(item){return item.text;})
+									.join("")));
 								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==0}).length));
 								tr.insertCell().appendChild(document.createTextNode(item.tags.filter(function(item){return item.type==1}).length));
 							})
@@ -800,90 +804,83 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 	if (createInfo == undefined) createInfo = true;
 	if (createInfoImage == undefined) createInfoImage = true;
 	if (createCnameImage == undefined) createCnameImage = true;
-	function doForAllTag(dom, tag, callback)
-	{
-		var tagDoms = dom.getElementsByTagName(tag);
-		for (var di=0, dilen=tagDoms.length; di<dilen; di++)
-		{
-			callback(tagDoms[di]);
-		}
-	}
-	function removeSelf(dom)
-	{
-		dom.parentNode.removeChild(dom);
-	}
-	function resetImageSrc(dom)
-	{
-		var osrc = dom.getAttribute("data-canonical-src");
-		if (osrc)
-		{
-			if (osrc.indexOf("?")>0) //动态链接
-			{
-				var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
-				if(osrct.substr(osrct.length-1,1)=="h")
-				{
-					osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
-				}
-			}else //静态链接
-			{
-				if(osrc.substr(osrc.length-1,1)=="h")
-				{
-					osrc = osrc.substring(0,osrc.length-1);
-				}
-			}
-			dom.src=osrc;
-			dom.removeAttribute("data-canonical-src");
-		}else if(dom.title) //链接写在title
-		{
-			dom.src=dom.title;
-			dom.removeAttribute("title");
-		}
-	}
-	var outArray = //重新生成处理过的数组
+
+	var outArray =
+	/*
+	 * 生成一个不会干涉到原对象的Row对象
+	 */ 
 	dataset.map(function(row_orignal){
-		var row=new rowObj;
-		row.name=row_orignal.name;
-		row.cname=row_orignal.cname;
-		row.info=row_orignal.info.cloneNode(true);
+		var row = Object.assign(new rowObj(), row_orignal);
+		row.cname=row_orignal.cname
+			.filter(function(item){return createCnameImage || item.type != 2;})
+			.map(function(item){
+				var newItem = Object.assign({}, item);
+				if(createCnameImage) {
+					newItem.text = dealEmoji(item.text);
+				}
+				return newItem;
+			});
 		if (createInfo)
 		{
-
-			doForAllTag(row.info, "img", createInfoImage ? resetImageSrc : removeSelf);
-			row.info = row.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-			if (!createInfoImage) row.info = dealEmoji(row.info); //去除Emoji
+			row.info=row_orignal.info
+				.filter(function(item){return createInfoImage || item.type != 2;})
+				.map(function(item){
+					var newItem = Object.assign({}, item);
+					if(createInfoImage) {
+						newItem.text = dealEmoji(item.text);
+					}
+					return newItem;
+				});
 		}
 		else
 		{
-			row.info = "";
+			row.info = null;
 		}
-		
-		row.tags = //重新生成处理过的Tag
+		row.links=row_orignal.links
+			.map(function(item){
+				var newItem = Object.assign(new linkObj(), item);
+				return newItem;
+			});
 
-	row_orignal.tags.map(function(tag_orignal){
-		var tag=new tagObj;
-		tag.type=tag_orignal.type;
-		tag.name=tag_orignal.name;
-		tag.cname=tag_orignal.cname.cloneNode(true);
-		tag.info=tag_orignal.info.cloneNode(true);
-		tag.links=tag_orignal.links.innerHTML; //创建一个空数组
+		row.tags =
 		/*
-*/
-		doForAllTag(tag.cname, "img", createCnameImage ? resetImageSrc : removeSelf);
-		tag.cname = tag.cname.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-		if (!createCnameImage) tag.cname = dealEmoji(tag.cname); //去除Emoji
+		 * 生成一个不会干涉到原对象的Tag对象
+		 */ 
+		row_orignal.tags.map(function(tag_orignal){
+			var tag = Object.assign(new tagObj(), tag_orignal);
+			tag.cname=tag_orignal.cname
+				.filter(function(item){return createCnameImage || item.type != 2;})
+				.map(function(item){
+					var newItem = Object.assign({}, item);
+					if(createCnameImage) {
+						newItem.text = dealEmoji(item.text);
+					}
+					return newItem;
+				});
+			tag.links=tag_orignal.links
+				.map(function(item){
+					var newItem = Object.assign(new linkObj(), item);
+					return newItem;
+				});
 
-		if (createInfo || tag.type==1)
-		{
-			doForAllTag(tag.info, "img", createInfoImage ? resetImageSrc : removeSelf);
-			tag.info = tag.info.innerHTML.replace(/(?:^\n|\n$)/igm,"");
-			if (!createInfoImage) tag.info = dealEmoji(tag.info); //去除Emoji
-		}
-		else
-		{
-			tag.info = "";
-		}
-		return tag;
-	})//row.tags.forEach
+			if (createInfo || tag.type==1)
+			{
+				tag.info=tag_orignal.info
+					.filter(function(item){return createInfoImage || item.type != 2;})
+					.map(function(item){
+						var newItem = Object.assign({}, item);
+						if(createInfoImage) {
+							newItem.text = dealEmoji(item.text);
+						}
+						return newItem;
+					});
+			}
+			else
+			{
+				tag.info = null;
+			}
+			return tag;
+		})//row.tags.forEach
 
 		return row;
 	});//dataset.forEach
