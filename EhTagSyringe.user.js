@@ -13,9 +13,9 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @require     https://greasyfork.org/scripts/5672-aria2-rpc/code/Aria2%20RPC.js?version=118265
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=15
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=21
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=22
 // @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
-// @version     1.1.8
+// @version     1.1.9
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -91,7 +91,7 @@
         'ariaHelper':false,
         'ariaOptions':{
             auth:{
-                type:0,
+                type: '0',
                 user: '',
                 pass: ''
             },
@@ -704,7 +704,9 @@ div.gtl{
             $scope.pluginVersion = pluginVersion;
             $scope.pluginName = pluginName;
 
-            $scope.config = etbConfig;
+            $scope.nowConfig = etbConfig;
+            //编辑用的配置拷贝一份
+            $scope.config = JSON.parse(JSON.stringify(etbConfig));
 
             $scope.nowPage = "menu";
             $scope.menuShow = false;
@@ -739,7 +741,7 @@ div.gtl{
                     var css = buildCSS($scope.dataset,$scope.wikiVersion);
                     // 存储
                     $scope.css     = css;
-                    $scope.cssStylish = buildStylishCSS(css,$scope.config);
+                    $scope.cssStylish = buildStylishCSS(css,$scope.nowConfig);
                     $scope.nowPage = 'css';
                     $scope.$apply();
                 },0);
@@ -772,8 +774,14 @@ div.gtl{
             $scope.ariaConfig = function () {
                 $scope.nowPage = "ariaOptions";
             };
+
+            $scope.optionChange = function (d1, d2) {
+                return JSON.stringify(d1) == JSON.stringify(d2);
+            };
+
             //保存设置
             $scope.optionSave = function () {
+                $scope.nowConfig = etbConfig = JSON.parse(JSON.stringify($scope.config));
                 GM_setValue('config',etbConfig);
                 myNotification('保存成功');
 
@@ -781,7 +789,8 @@ div.gtl{
             //重置设置
             $scope.optionReset = function () {
                 if(confirm('确定要重置配置吗？')){
-                    $scope.config = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
+                    $scope.nowConfig = etbConfig = JSON.parse(JSON.stringify(defaultConfig));
+                    $scope.config = JSON.parse(JSON.stringify(defaultConfig));
                     GM_setValue('config',etbConfig);
                     myNotification('已重置');
                 }

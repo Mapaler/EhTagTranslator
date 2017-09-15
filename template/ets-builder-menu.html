@@ -184,13 +184,13 @@
                 <span class="description">在下载链接旁增加下载到小米路由器的按钮</span>
             </div>
         </label>
-        <label class="select-menu-item">
+        <div class="select-menu-item">
             <input type="checkbox" ng-model="config.ariaHelper" class="octicon octicon-question select-menu-item-icon ETB_create-syringe">
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">Aria2下载按钮</span>
-                <span class="description">在下载链接旁增加通过Aria2下载的按钮,<a href="javascrip:;" ng-click="ariaConfig()">修改Aria2参数</a></span>
+                <span class="description">在下载链接旁增加通过Aria2下载的按钮 <br> <button ng-click="ariaConfig()">修改Aria2参数</button></span>
             </div>
-        </label>
+        </div>
 
         <div class="select-menu-item">
             <svg width="16" height="16" viewBox="0 0 64 64" version="1.1"
@@ -243,6 +243,7 @@
                     <button id="ETB_save-option" ng-click="optionSave()" name="ETB_save-option"
                             class="btn btn-sm btn-primary ETB_save-option">保存
                     </button>
+                    <span style="color: red;" ng-if="!optionChange(config,nowConfig)">未保存!</span>
                 </div>
             </div>
         </div>
@@ -265,15 +266,14 @@
                 <span class="description">
                     <input type="text" ng-model="config.ariaOptions.host">
                     :
-                    <input type="number" ng-model="config.ariaOptions.port">
+                    <input type="number" style="width: 50px;" ng-model="config.ariaOptions.port">
                 </span>
             </div>
         </label>
         <label class="select-menu-item">
             <div class="select-menu-item-text">
-                <span class="select-menu-item-heading">认证方式</span>
-                <span class="description">
-                    <select ng-model="config.ariaOptions.auth.type">
+                <span class="select-menu-item-heading">
+                    认证方式:<select ng-model="config.ariaOptions.auth.type">
                         <option value="0">匿名</option>
                         <option value="1">简单</option>
                         <option value="2">加密</option>
@@ -291,9 +291,9 @@
         </label>
         <label class="select-menu-item" ng-if="config.ariaOptions.auth.type!=0">
             <div class="select-menu-item-text">
-                <span class="select-menu-item-heading">账号</span>
+                <span class="select-menu-item-heading">密码</span>
                 <span class="description">
-                    <input type="text" ng-model="config.ariaOptions.auth.pass">
+                    <input type="password" ng-model="config.ariaOptions.auth.pass">
                 </span>
             </div>
         </label>
