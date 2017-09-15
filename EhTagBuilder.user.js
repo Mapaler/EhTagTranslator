@@ -815,7 +815,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 			.filter(function(item){return createCnameImage || item.type != 2;})
 			.map(function(item){
 				var newItem = Object.assign({}, item);
-				if(createCnameImage) {
+				if(createCnameImage && item.text) {
 					newItem.text = dealEmoji(item.text);
 				}
 				return newItem;
@@ -826,7 +826,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 				.filter(function(item){return createInfoImage || item.type != 2;})
 				.map(function(item){
 					var newItem = Object.assign({}, item);
-					if(createInfoImage) {
+					if(createInfoImage && item.text) {
 						newItem.text = dealEmoji(item.text);
 					}
 					return newItem;
@@ -852,7 +852,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 				.filter(function(item){return createCnameImage || item.type != 2;})
 				.map(function(item){
 					var newItem = Object.assign({}, item);
-					if(createCnameImage) {
+					if(createCnameImage && item.text) {
 						newItem.text = dealEmoji(item.text);
 					}
 					return newItem;
@@ -869,7 +869,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 					.filter(function(item){return createInfoImage || item.type != 2;})
 					.map(function(item){
 						var newItem = Object.assign({}, item);
-						if(createInfoImage) {
+						if(createInfoImage && item.text) {
 							newItem.text = dealEmoji(item.text);
 						}
 						return newItem;
