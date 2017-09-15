@@ -423,7 +423,7 @@ div.gtl{
                 let linkBoxPlaceObserver = new MutationObserver(function(mutations) {
                     for(var i in mutations){
                         let mutation = mutations[i];
-                        if(mutation.type == "childList" && mutation.addedNodes.length>=21){
+                        if(mutation.type == "childList" && mutation.addedNodes.length>=2){
                             routineReplace('#tagmenu_act a',{
                                 "Vote Up":"支持标签",
                                 "Vote Down":"反对标签",
