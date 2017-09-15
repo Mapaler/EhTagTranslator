@@ -14,7 +14,7 @@
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=14
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=21
 // @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
-// @version     1.1.7
+// @version     1.1.8
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -862,6 +862,9 @@ div.gtl{
         console.log('map',map);
         // document.body.appendChild(linkBox);
         AddGlobalStyle(`div#tagmenu_act{height:auto}`);
+        if(!linkBoxPlace){
+            return;
+        }
 
         linkBoxPlace.insertBefore(linkBox,linkBoxPlace.childNodes[0]);
         function getTag(r, i) {
@@ -1552,7 +1555,9 @@ ${css}
         //在EH站点下添加版本提示功能
         if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
             if(etbConfig.syringe)EhTagVersion();
-            if(etbConfig.syringe)EhTagSyringeLink();
+            if(etbConfig.syringe && (/(exhentai\.org\/g\/|e-hentai\.org\/g\/)/).test(unsafeWindow.location.href)){
+                EhTagSyringeLink();
+            }
             if(etbConfig.searchHelper)EhTagInputHelper();
             if(etbConfig.download2miwifi)EhTagMiWifi();
             // EhTagMiWifi();
