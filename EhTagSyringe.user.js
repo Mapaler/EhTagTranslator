@@ -427,6 +427,7 @@ div.gtl{
                             routineReplace('#tagmenu_act a',{
                                 "Vote Up":"支持标签",
                                 "Vote Down":"反对标签",
+                                "Withdraw Vote":"撤销投票",
                                 "Show Tagged Galleries":"搜索标签",
                                 "Show Tag Definition":"标签简介",
                                 "Add New Tag":"添加新标签",
@@ -872,10 +873,10 @@ div.gtl{
 
         if(taglist&&linkBoxPlace){
             let linkBoxPlaceObserver = new MutationObserver(function(mutations) {
-                console.log('linkBoxPlaceObserver',mutations);
+                // console.log('linkBoxPlaceObserver',mutations);
                 for(var i in mutations){
                     let mutation = mutations[i];
-                    if(mutation.type == "childList" && mutation.addedNodes.length>=21){
+                    if(mutation.type == "childList" && mutation.addedNodes.length>=2){
                         linkBoxPlace.insertBefore(linkBox,linkBoxPlace.childNodes[0]);
                     }
                 }
