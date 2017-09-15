@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.0
+// @version     2.8.2
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -814,7 +814,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 			.filter(function(item){return createCnameImage || item.type != 2;})
 			.map(function(item){
 				var newItem = Object.assign({}, item);
-				if(createCnameImage && item.text) {
+				if(!createCnameImage && item.text) {
 					newItem.text = dealEmoji(item.text);
 				}
 				return newItem;
@@ -825,7 +825,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 				.filter(function(item){return createInfoImage || item.type != 2;})
 				.map(function(item){
 					var newItem = Object.assign({}, item);
-					if(createInfoImage && item.text) {
+					if(!createInfoImage && item.text) {
 						newItem.text = dealEmoji(item.text);
 					}
 					return newItem;
@@ -851,7 +851,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 				.filter(function(item){return createCnameImage || item.type != 2;})
 				.map(function(item){
 					var newItem = Object.assign({}, item);
-					if(createCnameImage && item.text) {
+					if(!createCnameImage && item.text) {
 						newItem.text = dealEmoji(item.text);
 					}
 					return newItem;
@@ -868,7 +868,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 					.filter(function(item){return createInfoImage || item.type != 2;})
 					.map(function(item){
 						var newItem = Object.assign({}, item);
-						if(createInfoImage && item.text) {
+						if(!createInfoImage && item.text) {
 							newItem.text = dealEmoji(item.text);
 						}
 						return newItem;
@@ -889,7 +889,7 @@ function createOutputJSON(dataset, createInfo, createInfoImage, createCnameImage
 	{
 		"scriptName":scriptName,
 		"scriptVersion":scriptVersion,
-		"database-structure-version":scriptVersion,
+		"database-structure-version":database_structure_version,
 		"date":date.getTime(),
 		"dataset":outArray
 	}
