@@ -11,7 +11,8 @@
 // @connect     github.com
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=14
+// @require     https://greasyfork.org/scripts/5672-aria2-rpc/code/Aria2%20RPC.js?version=118265
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=15
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=21
 // @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
 // @version     1.1.8
@@ -35,6 +36,7 @@
 
 (function() {
     'use strict';
+    console.log(Aria2);
 
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     unsafeWindow.wikiUpdate = autoUpdate;
@@ -86,6 +88,16 @@
         'magnetHelper':true,
         'UITranslate':true,
         'download2miwifi':false,
+        'ariaHelper':false,
+        'ariaOptions':{
+            auth:{
+                type:0,
+                user: '',
+                pass: ''
+            },
+            host: 'localhost',
+            port: 6800
+        },
         'style':{
             'public':`div#taglist {
     overflow: visible;
@@ -756,6 +768,9 @@ div.gtl{
             //打开设置界面
             $scope.openOption = function () {
                 $scope.nowPage = "option";
+            };
+            $scope.ariaConfig = function () {
+                $scope.nowPage = "ariaOptions";
             };
             //保存设置
             $scope.optionSave = function () {

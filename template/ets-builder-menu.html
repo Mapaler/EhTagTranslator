@@ -180,11 +180,17 @@
         <label class="select-menu-item">
             <input type="checkbox" ng-model="config.download2miwifi" class="octicon octicon-question select-menu-item-icon ETB_create-syringe">
             <div class="select-menu-item-text">
-                <span class="select-menu-item-heading">下载到小米路由器</span>
-                <span class="description">在种子按钮增加下载到小米路由器的按钮</span>
+                <span class="select-menu-item-heading">小米路由器下载按钮</span>
+                <span class="description">在下载链接旁增加下载到小米路由器的按钮</span>
             </div>
         </label>
-
+        <label class="select-menu-item">
+            <input type="checkbox" ng-model="config.ariaHelper" class="octicon octicon-question select-menu-item-icon ETB_create-syringe">
+            <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">Aria2下载按钮</span>
+                <span class="description">在下载链接旁增加通过Aria2下载的按钮,<a href="javascrip:;" ng-click="ariaConfig()">修改Aria2参数</a></span>
+            </div>
+        </label>
 
         <div class="select-menu-item">
             <svg width="16" height="16" viewBox="0 0 64 64" version="1.1"
@@ -243,6 +249,61 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="ariaOptions">
+    <div class="select-menu-header" ng-click="openOption()">
+        <svg aria-label="Close" class="octicon octicon-x js-menu-close" height="16" role="img" version="1.1"
+             viewBox="0 0 12 16" width="12">
+            <path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"/>
+        </svg>
+        <span class="select-menu-title">返回插件设置</span>
+    </div>
+    <div class="select-menu-list js-navigation-container">
+
+        <label class="select-menu-item">
+            <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">地址</span>
+                <span class="description">
+                    <input type="text" ng-model="config.ariaOptions.host">
+                    :
+                    <input type="number" ng-model="config.ariaOptions.port">
+                </span>
+            </div>
+        </label>
+        <label class="select-menu-item">
+            <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">认证方式</span>
+                <span class="description">
+                    <select ng-model="config.ariaOptions.auth.type">
+                        <option value="0">匿名</option>
+                        <option value="1">简单</option>
+                        <option value="2">加密</option>
+                    </select>
+                </span>
+            </div>
+        </label>
+        <label class="select-menu-item" ng-if="config.ariaOptions.auth.type!=0">
+            <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">账号</span>
+                <span class="description">
+                    <input type="text" ng-model="config.ariaOptions.auth.user">
+                </span>
+            </div>
+        </label>
+        <label class="select-menu-item" ng-if="config.ariaOptions.auth.type!=0">
+            <div class="select-menu-item-text">
+                <span class="select-menu-item-heading">账号</span>
+                <span class="description">
+                    <input type="text" ng-model="config.ariaOptions.auth.pass">
+                </span>
+            </div>
+        </label>
+    </div>
+
+
+</script>
+
+
+
 <script type="text/ng-template" id="getData">
     <div class="select-menu-header" ng-click="closeMenu()">
         <svg aria-label="Close" class="octicon octicon-x js-menu-close" height="16" role="img" version="1.1"
@@ -275,6 +336,9 @@
     </div>
 </script>
 
+
+
+
 <script type="text/ng-template" id="css">
     <div class="select-menu-header" ng-click="closeMenu()">
         <svg width="12" height="16" viewBox="0 0 12 16" version="1.1"
@@ -286,41 +350,9 @@
     </div>
 
     <div class="select-menu-list js-navigation-container">
-        <!--<div class="textareaBox">-->
-            <!--<textarea ng-model="cssStylish" wrap="off"></textarea>-->
-        <!--</div>-->
-        <button class="select-menu-item select-menu-action" ng-click="saveCss()">
+        <button style="width: 100%;" class="select-menu-item select-menu-action" ng-click="saveCss()">
             <span class="octicon octicon-book select-menu-item-icon">💉</span>
-            <div class="select-menu-item-text" >注入到E站页面</div>
+            <div class="select-menu-item-text" >保存数据</div>
         </button>
-        <button class="select-menu-item select-menu-action" ng-click="copyStylishCss()">
-            <svg width="16" height="16" viewBox="0 0 64 64" version="1.1"
-                 class="octicon octicon-book select-menu-item-icon">
-                <defs>
-                    <path d="M0 14.995C0 6.714 6.713 0 14.995 0h34.01C57.286 0 64 6.713 64 14.995v34.01C64 57.287 57.287 64 49.005 64h-34.01C6.714 64 0 57.287 0 49.005v-34.01z" id="a"/>
-                </defs>
-                <g fill="none" fill-rule="evenodd">
-                    <mask id="b" fill="#fff">
-                        <use xlink:href="#a"/>
-                    </mask>
-                    <use fill-opacity="0" fill="#FFF" xlink:href="#a"/>
-                    <path fill="#2ECC71" mask="url(#b)" d="M30 0v39H0V0z"/>
-                    <path fill="#E74C3C" mask="url(#b)" d="M64 0v21H34V0z"/>
-                    <path fill="#F39C12" mask="url(#b)" d="M30 43v21H0V43z"/>
-                    <path fill="#3498DB" mask="url(#b)" d="M64 25.5v39H34v-39z"/>
-                </g>
-            </svg>
-            <div class="select-menu-item-text" >复制Mozilla格式（用于火狐Stylish或酷容Stylish初次安装）</div>
-        </button>
-        <button class="select-menu-item select-menu-action" ng-click="copyCss()">
-            <svg width="16" height="16" viewBox="0 0 16 16" version="1.1"
-                 class="octicon octicon-book select-menu-item-icon">
-                <path d="M2 5h4v1H2v-1z m0 3h4v-1H2v1z m0 2h4v-1H2v1z m11-5H9v1h4v-1z m0 2H9v1h4v-1z m0 2H9v1h4v-1z m2-6v9c0 0.55-0.45 1-1 1H8.5l-1 1-1-1H1c-0.55 0-1-0.45-1-1V3c0-0.55 0.45-1 1-1h5.5l1 1 1-1h5.5c0.55 0 1 0.45 1 1z m-8 0.5l-0.5-0.5H1v9h6V3.5z m7-0.5H8.5l-0.5 0.5v8.5h6V3z"></path>
-            </svg>
-            <div class="select-menu-item-text">仅复制翻译样式（用于仅更新酷容Stylish数据库）</div>
-        </button>
-
-
-
     </div>
 </script>
