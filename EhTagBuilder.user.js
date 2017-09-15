@@ -236,88 +236,6 @@ function dealRows(response, dataset)
 	}
 }
 
-//将HTML格式的介绍，转为CSS格式
-function getInfoString(dom, creatImage)
-{
-	if (creatImage == undefined) creatImage = true;
-	var info = [];
-	if (dom.childNodes != undefined)
-	{
-		for (var ci=0, cilen=dom.childNodes.length; ci<cilen; ci++)
-		{
-			var node = dom.childNodes[ci];
-			info = info.concat(getDomInfoString(node, creatImage))
-		}
-	}
-	var outTxt = info.join("");
-	if (outTxt != dealEmoji(outTxt))
-	{
-		if (!creatImage) outTxt = dealEmoji(outTxt); //去除Emoji
-	}
-	
-	
-	function getDomInfoString(node,creatImage)
-	{
-		var info = [];
-		switch (node.nodeName) {
-			case "BR":
-				info.push(
-					 "\""
-					,"\\A"
-					,"\""
-				);
-				break;
-			case "IMG":
-				if (creatImage)
-				{
-					var osrc = node.getAttribute("data-canonical-src");
-					if (osrc)
-					{
-						if (osrc.indexOf("?")>0) //动态链接
-						{
-							var osrct = osrc.substring(0,osrc.indexOf("?")); //获取
-							if(osrct.substr(osrct.length-1,1)=="h")
-							{
-								osrc = osrc.substring(0,osrc.indexOf("?")-1) + osrc.substring(osrc.indexOf("?"));
-							}
-						}else //静态链接
-						{
-							if(osrc.substr(osrc.length-1,1)=="h")
-							{
-								osrc = osrc.substring(0,osrc.length-1);
-							}
-						}
-						info.push(
-							"url(\""
-							,osrc
-							,"\")"
-						);
-					}else if(node.title) //链接写在title
-					{
-						info.push(
-							"url(\""
-							,node.title
-							,"\")"
-						);
-					}
-				}
-				break;
-			case "#text":
-			default:
-				if ((ci==0 || ci==(dom.childNodes.length-1) || dom.childNodes.length < 2) && node.textContent == "\n")
-					break;
-				info.push(
-					"\""
-					,specialCharToCss(node.textContent)
-					,"\""
-				);
-				break;
-		}
-		return info;
-	}
-	return outTxt;
-}
-
 //生成按钮
 function specialCharToCss(str)
 {
@@ -365,12 +283,15 @@ function InfoToArray(infoDom)
 				case "IMG":
 					InfoObj.type = 2;
 					var osrc = node.getAttribute("data-canonical-src");
-					if (osrc) //链接写在src
+					if (osrc) //链接写在data-canonical-src
 					{
 						InfoObj.src = osrc;
 					}else if(node.title.length > 0) //链接写在title
 					{
 						InfoObj.src = node.title;
+					}else if(node.src.length > 0) //链接写在src
+					{
+						InfoObj.src = node.src;
 					}else
 					{
 						console.error("发现未知的其他图片地址格式",node,"来自",infoDom);
@@ -468,7 +389,7 @@ function dealTags(response, rowdataset)
 			tag.info = InfoToArray(trow.cells[2]);
 			tag.links = LinksToArray(trow.cells[3]);
 			tag.type = tag.name.replace(/\s/ig,"").length < 1 ? 1 : 0; //英文去除所有空格后如果没有文字，则算为注释
-			if (tag.type != 1 && getInfoString(tag.cname,true).replace(/\s/ig,"").length < 1) //不是注释，中文名又没有文字
+			if (tag.type != 1 && tag.cname.length < 1) //不是注释，中文名又没有文字
 			{
 				//console.error("发现无中文翻译行%d - %s:%s",ri,rowdataset.name,tag.name);
 			}
