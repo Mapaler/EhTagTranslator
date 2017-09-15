@@ -201,12 +201,10 @@ div.gtl{
 
     console.log('ets config:',etbConfig);
 
-    etbConfig.ariaOptions.auth.type *= 1;
     let ariaOptions = JSON.parse(JSON.stringify(etbConfig.ariaOptions));
     ariaOptions.auth.type *= 1;
-    console.log(new Aria2(ariaOptions));
-
-
+    unsafeWindow.aria = new Aria2(ariaOptions);
+    console.log('unsafeWindow.aria',unsafeWindow.aria);
 
     function EhTagUITranslator(){
 
