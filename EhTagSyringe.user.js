@@ -14,7 +14,7 @@
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=14
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=20
 // @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
-// @version     1.1.3
+// @version     1.1.4
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -42,7 +42,7 @@
 
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator"; //GitHub wiki 的地址
-    var rows_title="tags/rows"; //行名的地址
+    var rows_title="database/rows"; //行名的地址
     var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
     var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
     var rootScope = null;
@@ -172,6 +172,13 @@ div.gtl{
         // GM_setValue('config',etbConfig);
     }
 
+    if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
+        var tagsData = GM_getValue('tags');
+    }else{
+        var tagsData = [];
+    }
+
+
     // 配置自动升级
     for(var i in defaultConfig){
         if(typeof etbConfig[i] === "undefined"){
@@ -179,11 +186,9 @@ div.gtl{
         }
     }
 
-
     console.log('ets config:',etbConfig);
 
-
-    function EhTagUITranslator() {
+    function EhTagUITranslator(){
 
         //完整匹配才替换
         function routineReplace(query,dictionaries) {
@@ -717,6 +722,7 @@ div.gtl{
                 GM_setValue('tags',{
                     css:$scope.css,
                     data:$scope.dataset,
+                    map:tagsIndexes($scope.dataset),
                     version:$scope.wikiVersion,
                     update_time:new Date().getTime()
                 });
@@ -804,7 +810,7 @@ div.gtl{
     //样式写入方法 enema syringe
     function EhTagSyringe(){
         console.time('EhTagSyringe Load Enema');
-        let tags = GM_getValue('tags');
+        let tags = tagsData;
         console.timeEnd('EhTagSyringe Load Enema');
         if(!tags)return;
 
@@ -829,8 +835,68 @@ div.gtl{
         console.timeEnd('EhTagSyringe Infusion');
     }
 
+    function EhTagSyringeLink() {
+        let taglist = document.querySelector("#taglist");
+        var linkBoxPlace = document.querySelector("#tagmenu_act");
+        var linkBox = document.createElement("div");
+        linkBox.id = "TES-link-box";
+        linkBox.style.marginBottom='5px';
+        console.log(tagsData);
+        let tags = tagsData.data;
+        let map = tagsData.map||{};
+        console.log('map',map);
+        // document.body.appendChild(linkBox);
+        AddGlobalStyle(`div#tagmenu_act{height:auto}`);
+
+        linkBoxPlace.insertBefore(linkBox,linkBoxPlace.childNodes[0]);
+        function getTag(r, i) {
+            r = r.replace(/_/igm," ");
+            i = i.replace(/_/igm," ");
+            let mr = map[r];
+            return tags[mr.index].tags[mr.tags[i]];
+        }
+
+        if(taglist&&linkBoxPlace){
+            let linkBoxPlaceObserver = new MutationObserver(function(mutations) {
+                console.log('linkBoxPlaceObserver',mutations);
+                for(var i in mutations){
+                    let mutation = mutations[i];
+                    if(mutation.type == "childList" && mutation.addedNodes.length>=21){
+                        linkBoxPlace.insertBefore(linkBox,linkBoxPlace.childNodes[0]);
+                    }
+                }
+            });
+            linkBoxPlaceObserver.observe(linkBoxPlace, {childList: true});
+
+            let observer = new MutationObserver(function(mutations) {
+                console.log('taglist_a',mutations);
+                linkBox.innerHTML="";
+                for(let i in mutations){
+                    let mutation = mutations[i];
+                    if(mutation.type == 'attributes' && mutation.attributeName == 'style'){
+                        let a = mutation.target;
+                        if(a.style.color == 'blue'){
+                            let keys = a.id.replace('ta_','').split(':');
+                            if(keys.length == 2){
+                                let tag = getTag(keys[0],keys[1]);
+                                if(tag&&tag.links){
+                                    tag.links.forEach(function (a) {
+                                        linkBox.innerHTML +=`<img src="https://ehgt.org/g/mr.gif" class="mr" alt=">"> <a target="_blank" href="${a.href}">${a.title}</a>`
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            observer.observe(taglist, {childList: true, subtree: true, attributes: true});
+
+
+        }
+    }
+
     //EH站更新提示
-    function EhTagVersion() {
+    function EhTagVersion(){
         console.log('EhTagVersion');
         var buttonInserPlace = document.querySelector("#nb"); //按钮插入位置
         if(!buttonInserPlace)return;
@@ -855,7 +921,7 @@ div.gtl{
             $scope.iconImg = iconImg;
             $scope.config = etbConfig;
             $scope.noData = false;
-            let tags = GM_getValue('tags');
+            let tags = tagsData;
             if(!tags){
                 $scope.noData =true;
             }
@@ -933,11 +999,11 @@ div.gtl{
     }
 
     //搜索输入框助手
-    function EhTagInputHelper() {
+    function EhTagInputHelper(){
         if(!etbConfig.searchHelper){
             return;
         }
-        let tags = GM_getValue('tags');
+        let tags = tagsData;
         // console.log(tags);
         if(!tags)return;
 
@@ -987,7 +1053,7 @@ div.gtl{
     }
 
     //磁力链复制助手
-    function EhTagMagnetHelper() {
+    function EhTagMagnetHelper(){
         if(!(/gallerytorrents\.php/).test(unsafeWindow.location.href)){
             return;
         }
@@ -1034,7 +1100,7 @@ div.gtl{
     }
 
     //小米路由下载助手
-    function EhTagMiWifi() {
+    function EhTagMiWifi(){
         if(!(/gallerytorrents\.php/).test(unsafeWindow.location.href)){
             return;
         }
@@ -1071,7 +1137,7 @@ div.gtl{
     }
 
     //获取数据
-    async function startProgram($scope) {
+    async function startProgram($scope){
         console.log('startProgram');
 
         //存放承诺
@@ -1107,7 +1173,7 @@ div.gtl{
     }
 
     //构建css
-    function buildCSS(dataset,wikiVersion) {
+    function buildCSS(dataset,wikiVersion){
         console.time('生成css样式');
         var css = "";
 
@@ -1148,7 +1214,7 @@ content:"${content}";
     }
 
     //Stylish css
-    function buildStylishCSS(css,config) {
+    function buildStylishCSS(css,config){
         var cssStylish = "@namespace url(http://www.w3.org/1999/xhtml);\n";
 
         cssStylish+=`@-moz-document
@@ -1185,7 +1251,6 @@ ${css}
         return cssStylish;
     }
 
-
     //转换换行
     function htmlBr2cssBr(mdText){
         return mdText.replace(/<br[ \t]*(\/)?>/igm,"\\A ");
@@ -1210,8 +1275,7 @@ ${css}
         });
     }
 
-    function specialCharToCss(str)
-    {
+    function specialCharToCss(str){
         var strn = str;
         strn = strn.replace("\\","\\\\");
         strn = strn.replace("\"","\\\"");
@@ -1266,7 +1330,7 @@ ${css}
         }
     }
 
-    function timeInterval (time) {
+    function timeInterval (time){
         if(!time){
             return '';
         }
@@ -1299,7 +1363,7 @@ ${css}
     }
 
     //获取行 并解析
-    function getRows() {
+    function getRows(){
         return new Promise(async function (resolve, reject) {
             var url = `${wiki_raw_URL}/${rows_title}.md`+"?t="+new Date().getTime();
             console.log(url);
@@ -1315,7 +1379,7 @@ ${css}
     function getTags(row) {
         return new Promise(async function (resolve, reject) {
 
-            var url = `${wiki_raw_URL}/tags/${row}.md`+"?t="+new Date().getTime();
+            var url = `${wiki_raw_URL}/database/${row}.md`+"?t="+new Date().getTime();
             console.log(url);
             console.time(`加载 ${row}`);
             var data = await PromiseRequest.get(url);
@@ -1324,7 +1388,7 @@ ${css}
         });
     }
 
-    function parseTable(data,name) {
+    function parseTable(data,name){
         /*剔除表格以外的内容*/
         var re = (/^\s*(\|.*\|)\s*$/gm);
         var table = "";
@@ -1343,11 +1407,15 @@ ${css}
         var count = [];
         tableArr.forEach(function (tr,index) {
             if(index>1){
-                let t = {
-                    name  : trim(tr[1]||""),
-                    cname : trim(tr[2]||""),
-                    info  : trim(tr[3]||"")
-                };
+                let t = {};
+                tr[1] = trim(tr[1]||"");
+                tr[2] = trim(tr[2]||"");
+                tr[3] = trim(tr[3]||"");
+                tr[4] = trim(tr[4]||"");
+                if(tr[1])t.name  = tr[1];
+                if(tr[2])t.cname = tr[2];
+                if(tr[3])t.info  = tr[3];
+                if(tr[4])t.links = mdLinks(tr[4]);
                 tags.push(t);
                 if(t.name){count++};
             }
@@ -1355,11 +1423,39 @@ ${css}
         console.log(name,count);
         return tags;
     }
+    function mdLinks(mdText) {
+        var links = [];
+        mdText.replace(/\[(.*?)\]\((.*?)\)/igm,function (text,alt,href,index) {
+            links.push({
+                title:alt,
+                href:href,
+            });
+            return text;
+        });
+        return links
+    }
 
-    function hrefTest(re) {
+    function hrefTest(re){
         return re.test(unsafeWindow.location.href);
     }
 
+    
+    function tagsIndexes(tags) {
+        let map = {};
+        console.time('构建索引');
+        tags.forEach(function (v,row) {
+            map[v.name] = {
+                index:row,
+                tags:{}
+            };
+            v.tags.forEach(function (tag,index) {
+                map[v.name].tags[tag.name] = index;
+            })
+        });
+        console.timeEnd('构建索引');
+        return map;
+    }
+    
     async function autoUpdate() {
         var $scope = {};
         $scope.$apply = function(){};
@@ -1368,13 +1464,12 @@ ${css}
         GM_setValue('tags',{
             css:css,
             data:$scope.dataset,
+            map:tagsIndexes($scope.dataset),
             version:$scope.wikiVersion,
             update_time:new Date().getTime()
         });
         return true;
     }
-
-
 
     async function myNotification(title,options)
     {
@@ -1442,6 +1537,7 @@ ${css}
         //在EH站点下添加版本提示功能
         if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
             if(etbConfig.syringe)EhTagVersion();
+            if(etbConfig.syringe)EhTagSyringeLink();
             if(etbConfig.searchHelper)EhTagInputHelper();
             if(etbConfig.download2miwifi)EhTagMiWifi();
             // EhTagMiWifi();
@@ -1455,9 +1551,6 @@ ${css}
     }else{
         document.addEventListener('DOMContentLoaded',bootstrap,false);
     }
-    // domLoaded.then(function () {
-    //     bootstrap();
-    // });
 
     //注射器总开关
     if(etbConfig.syringe){
