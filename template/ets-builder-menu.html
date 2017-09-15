@@ -276,12 +276,12 @@
                     认证方式:<select ng-model="config.ariaOptions.auth.type">
                         <option value="0">匿名</option>
                         <option value="1">简单</option>
-                        <option value="2">加密</option>
+                        <option value="2">Token</option>
                     </select>
                 </span>
             </div>
         </label>
-        <label class="select-menu-item" ng-if="config.ariaOptions.auth.type!=0">
+        <label class="select-menu-item" ng-if="config.ariaOptions.auth.type==1">
             <div class="select-menu-item-text">
                 <span class="select-menu-item-heading">账号</span>
                 <span class="description">
@@ -291,7 +291,8 @@
         </label>
         <label class="select-menu-item" ng-if="config.ariaOptions.auth.type!=0">
             <div class="select-menu-item-text">
-                <span class="select-menu-item-heading">密码</span>
+                <span class="select-menu-item-heading" ng-if="config.ariaOptions.auth.type==1">密码</span>
+                <span class="select-menu-item-heading" ng-if="config.ariaOptions.auth.type==2">Token</span>
                 <span class="description">
                     <input type="password" ng-model="config.ariaOptions.auth.pass">
                 </span>

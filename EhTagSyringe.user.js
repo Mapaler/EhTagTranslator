@@ -13,9 +13,9 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @require     https://greasyfork.org/scripts/5672-aria2-rpc/code/Aria2%20RPC.js?version=118265
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=15
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=22
-// @resource    ui-translate       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
-// @version     1.1.9
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=23
+// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=3
+// @version     1.1.10
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -36,7 +36,6 @@
 
 (function() {
     'use strict';
-    console.log(Aria2);
 
     window.requestAnimationFrame = unsafeWindow.requestAnimationFrame;
     unsafeWindow.wikiUpdate = autoUpdate;
@@ -95,7 +94,7 @@
                 user: '',
                 pass: ''
             },
-            host: 'localhost',
+            host: '127.0.0.1',
             port: 6800
         },
         'style':{
@@ -199,7 +198,15 @@ div.gtl{
     }
 
 
+
     console.log('ets config:',etbConfig);
+
+    etbConfig.ariaOptions.auth.type *= 1;
+    let ariaOptions = JSON.parse(JSON.stringify(etbConfig.ariaOptions));
+    ariaOptions.auth.type *= 1;
+    console.log(new Aria2(ariaOptions));
+
+
 
     function EhTagUITranslator(){
 
