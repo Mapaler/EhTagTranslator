@@ -387,13 +387,7 @@ div.gtl{
             localRoutineReplace('#rating_label',{
                 "Average:":"平均:"
             });
-            routineReplace('#tagmenu_act',{
-                "Vote Up":"支持",
-                "Vote Down":"反对",
-                "Show Tagged Galleries":"搜索标签",
-                "Show Tag Definition":"标签简介",
-                "Add New Tag":"添加新标签",
-            });
+
             routineReplace('#postnewcomment a',{
                 "Post New Comment":"发表评论",
             });
@@ -422,6 +416,27 @@ div.gtl{
                 });
                 observer.observe(rating_label, {childList:true});
             }
+
+
+            var tagmenu_act = document.querySelector("#tagmenu_act");
+            if(tagmenu_act){
+                let linkBoxPlaceObserver = new MutationObserver(function(mutations) {
+                    for(var i in mutations){
+                        let mutation = mutations[i];
+                        if(mutation.type == "childList" && mutation.addedNodes.length>=21){
+                            routineReplace('#tagmenu_act a',{
+                                "Vote Up":"支持标签",
+                                "Vote Down":"反对标签",
+                                "Show Tagged Galleries":"搜索标签",
+                                "Show Tag Definition":"标签简介",
+                                "Add New Tag":"添加新标签",
+                            });
+                        }
+                    }
+                });
+                linkBoxPlaceObserver.observe(tagmenu_act, {childList: true});
+            }
+
 
         };
         /*种子下载页面*/
@@ -649,8 +664,6 @@ div.gtl{
             if(itc_inputs)itc_inputs.forEach(function (input) {
                 input.parentNode.className = input.value*1?"":"icon_disable";
             });
-
-
         };
 
 
