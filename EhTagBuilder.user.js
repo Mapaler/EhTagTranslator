@@ -338,7 +338,6 @@ function InfoArrayToCssString(infoArr, creatImage)
 			}
 		}else if (creatImage) //如果同意生成图片
 		{ //处理图片
-			console.log(inf);
 			if (lastText)
 			{ //处理每一条文本
 				var txtTmp = strPart.join("");
