@@ -1548,7 +1548,7 @@ div.gtl{
                     var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     css += `
 a[id="ta_${tagid}"]{
-font-size:0px;
+font-size:0;
 }
 a[id="ta_${tagid}"]::before{
 content:"${cname}";
