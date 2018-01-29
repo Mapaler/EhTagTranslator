@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.2
+// @version     2.8.3
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -275,7 +275,7 @@ function InfoToArray(infoDom)
 					InfoObj.type = 0;
 					if (node.textContent == "\n")
 						continue;
-					InfoObj.text = node.textContent;
+					InfoObj.text = node.textContent.replace("\"","\\\"");
 					break;
 				case "BR":
 					InfoObj.type = 1;
