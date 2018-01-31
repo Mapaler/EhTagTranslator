@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.3
+// @version     2.8.4
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -375,11 +375,17 @@ function dealTags(response, rowdataset)
 	var rowTags = rowdataset.tags;
 	var PageDOM = new DOMParser().parseFromString(response, "text/html");
 	
-	var table = PageDOM.querySelector("#wiki-body div table").tBodies[0];
-	
-	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
+	var table = PageDOM.querySelector("#wiki-body div table");
+	if (table == undefined)
 	{
-		var trow = table.rows[ri];
+		alert(PageDOM.title + "\n该页面未发现数据表格，可能存在格式错误。")
+		console.error("未发现表格",PageDOM.title);
+	}
+	var tBody = table.tBodies[0];
+	
+	for(var ri=0, rilen=tBody.rows.length; ri<rilen; ri++)
+	{
+		var trow = tBody.rows[ri];
 		var tag = new tagObj;
 		if (trow.cells.length > 2)
 		{//没有足够单元格的跳过
