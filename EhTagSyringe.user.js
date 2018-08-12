@@ -16,7 +16,7 @@
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=16
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=24
 // @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=4
-// @version     1.1.11
+// @version     1.1.12
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
