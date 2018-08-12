@@ -1646,7 +1646,7 @@ ${css}
             PromiseRequest.get(wiki_URL+'/_history?t='+new Date().getTime()).then(function (response) {
                 var parser = new DOMParser();
                 var PageDOM = parser.parseFromString(response, "text/html");
-                var lastDOM = PageDOM.querySelector('#version-form  table  tr:nth-child(1)');
+                var lastDOM = PageDOM.querySelector('#version-form ul li:nth-child(1)');
                 if(!lastDOM){
                     reject();
                     return;
