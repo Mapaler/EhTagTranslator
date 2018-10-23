@@ -13,10 +13,10 @@
 // @connect     127.0.0.1
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=16
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=24
-// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=4
-// @version     1.1.12
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=40
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=40
+// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=40
+// @version     1.2.0
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -359,6 +359,7 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
         'UITranslate':true,
         'download2miwifi':false,
         'ariaHelper':false,
+        'doubleLang': false,
         'ariaOptions':{
             auth:{
                 type: '0',
@@ -1143,6 +1144,12 @@ div.gtl{
         .hideTranslate #taglist a::before{display:none !important;}
         .hideTranslate #taglist a::after{display:none !important;}
         `);
+
+        AddGlobalStyle(`
+        .doubleLang #taglist a{font-size:12px !important;}
+        .doubleLang #taglist a::before{padding-right: 3px;}
+        `);
+
         console.timeEnd('EhTagSyringe Infusion');
     }
 
@@ -1259,13 +1266,11 @@ div.gtl{
             };
             $scope.showRow = {};
             $scope.showRow.value = false;
+            $scope.showRow.double = !!$scope.config.doubleLang;
             $scope.showRow.change = function(value){
-                if(value){
-                    document.body.className = "hideTranslate"
-                }else{
-                    document.body.className = "";
-                }
+                document.body.className = ($scope.showRow.value?" hideTranslate ":'') + ($scope.showRow.double?" doubleLang ":'');
             };
+            $scope.showRow.change();
 
             $scope.VersionCheck = function () {
                 getWikiVersion().then(function (Version) {
@@ -1930,4 +1935,3 @@ ${css}
 
 
 })();
-
