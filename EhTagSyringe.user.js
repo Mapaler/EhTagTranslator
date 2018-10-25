@@ -13,10 +13,10 @@
 // @connect     127.0.0.1
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=40
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=40
-// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=40
-// @version     1.2.0
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
+// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=41
+// @version     1.2.1
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
