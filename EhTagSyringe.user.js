@@ -374,20 +374,22 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     overflow: visible;
     min-height: 295px;
     height: auto;
+    position: static;
+    z-index: 10;
 }
 div#gmid {
     min-height: 330px;
     height:auto;
-    position: static;
 }
 #taglist a{
-  background:inherit;
+    background:inherit;
+    position: relative;
 }
 #taglist a::before{
     font-size:12px;
     overflow: hidden;
-    line-height: 20px;
     height: 20px;
+    line-height: 20px;
 }
 #taglist a::after{
     display: block;
@@ -407,14 +409,14 @@ div#gmid {
     opacity: 0;
     transition: opacity 0.2s;
     transform: translate(-50%,20px);
-    top:0;
+    top:-14px;
     left: 50%;
     pointer-events:none;
-    padding-top: 8px;
     font-weight: 400;
     line-height: 20px;
 }
-#taglist a:hover::after,#taglist a:focus::after{
+#taglist a:hover::after,
+#taglist a:focus::after{
     opacity: 1;
     pointer-events:auto;
 }
@@ -425,10 +427,38 @@ div#gmid {
     background-color: inherit;
     border: 1px solid #000;
     border-width: 1px 1px 0 1px;
-    margin: -4px -5px;
-    padding: 3px 4px;
+    margin: -4px -5px -4px -5px;
+    padding: 4px 4px 4px 4px;
     color:inherit;
     border-radius: 5px 5px 0 0;
+}
+.doubleLang #taglist a{font-size:12px !important;}
+.doubleLang #taglist a::before{
+    margin-right: 8px;
+}
+.doubleLang #taglist a::after{top:1px;}
+.doubleLang #taglist a:focus,
+.doubleLang #taglist a:hover {
+    background-color: inherit;
+    border: 1px solid #000;
+    border-width: 1px 1px 0 1px;
+    margin: -4px -5px;
+    padding: 4px 4px;
+    color:inherit;
+    border-radius: 5px 5px 0 0;
+}
+.doubleLang #taglist a:focus::before,
+.doubleLang #taglist a:hover::before {
+    border: none;
+    border-image-source:  url(/img/mr.gif);
+    border-image-slice: 0 5 0 0;
+    border-image-width: 7px 5px 8px 0;
+    border-image-outset: 0 1px 0 0;
+    border-image-repeat: round;
+    color:inherit;
+    font-size: inherit;
+    margin: -4px 3px -4px -4px;
+    padding: 4px 5px 4px 4px;
 }
 div.gt,
 div.gtw,
@@ -436,11 +466,10 @@ div.gtl{
     line-height: 20px;
     height: 20px;
 }
-
-#taglist a:hover::after{ z-index: 9999998; }
-#taglist a:focus::after { z-index: 9999996; }
-#taglist a:hover::before{ z-index: 9999999; }
-#taglist a:focus::before { z-index: 9999997; }`,
+#taglist a:hover { z-index: 60; }
+#taglist a:focus { z-index: 50; }
+#taglist a::after{ z-index: -1; }
+#taglist a::before { z-index: 1; }`,
             'ex':`#taglist a::after{ color:#fff; }`,
             'eh':`#taglist a::after{ color:#000; }`,
         }
@@ -1146,8 +1175,6 @@ div.gtl{
         `);
 
         AddGlobalStyle(`
-        .doubleLang #taglist a{font-size:12px !important;}
-        .doubleLang #taglist a::before{padding-right: 3px;}
         `);
 
         console.timeEnd('EhTagSyringe Infusion');
@@ -1268,7 +1295,16 @@ div.gtl{
             $scope.showRow.value = false;
             $scope.showRow.double = !!$scope.config.doubleLang;
             $scope.showRow.change = function(value){
-                document.body.className = ($scope.showRow.value?" hideTranslate ":'') + ($scope.showRow.double?" doubleLang ":'');
+                if ($scope.showRow.value)
+                {
+                    document.body.classList.add("hideTranslate");
+                }else
+                    document.body.classList.remove("hideTranslate");
+                if($scope.showRow.double)
+                {
+                    document.body.classList.add("doubleLang");
+                }else
+                    document.body.classList.remove("doubleLang");
             };
             $scope.showRow.change();
 
