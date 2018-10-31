@@ -1696,13 +1696,13 @@ ${css}
                 var time = 0;
                 var commit = "";
 
-                var timeDOM = lastDOM.querySelector(".date relative-time");
+                var timeDOM = lastDOM.querySelector("relative-time");
                 if(timeDOM)time = Date.parse(new Date(timeDOM.getAttribute('datetime')));
 
-                var codeDOM = lastDOM.querySelector(".commit-meta code");
+                var codeDOM = lastDOM.querySelector(".flex-shrink-0:nth-last-child(1)");
                 if(codeDOM)code = codeDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
 
-                var commitDOM = lastDOM.querySelector(".commit code");
+                var commitDOM = lastDOM.querySelector(".text-gray-dark");
                 if(commitDOM)commit = commitDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
 
                 var v = {
