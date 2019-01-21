@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.5
+// @version     2.8.6
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -275,7 +275,7 @@ function InfoToArray(infoDom)
 					InfoObj.type = 0;
 					if (node.textContent == "\n")
 						continue;
-					InfoObj.text = node.textContent.replace(/\"/igm,"\\\""); //将引号改为斜杠引号
+					InfoObj.text = node.textContent;
 					break;
 				case "BR":
 					InfoObj.type = 1;
@@ -341,6 +341,7 @@ function InfoArrayToCssString(infoArr, creatImage)
 			if (lastText)
 			{ //处理每一条文本
 				var txtTmp = strPart.join("");
+				txtTmp = txtTmp.replace(/\"/igm,"\\\""); //将引号改为斜杠引号
 				if (!creatImage) txtTmp = dealEmoji(txtTmp); //去除Emoji
 				str.push('"' + txtTmp + '"');
 				strPart = [];
@@ -356,6 +357,7 @@ function InfoArrayToCssString(infoArr, creatImage)
 	if (lastText)
 	{ //处理每一条文本
 		var txtTmp = strPart.join("");
+		txtTmp = txtTmp.replace(/\"/igm,"\\\""); //将引号改为斜杠引号
 		if (!creatImage) txtTmp = dealEmoji(txtTmp); //去除Emoji
 		str.push('"' + txtTmp + '"');
 		strPart = [];
