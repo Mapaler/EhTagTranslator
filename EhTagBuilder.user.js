@@ -6,7 +6,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.4
+// @version     2.8.5
 // @grant       none
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -275,7 +275,7 @@ function InfoToArray(infoDom)
 					InfoObj.type = 0;
 					if (node.textContent == "\n")
 						continue;
-					InfoObj.text = node.textContent.replace("\"","\\\"");
+					InfoObj.text = node.textContent.replace(/\"/igm,"\\\""); //将引号改为斜杠引号
 					break;
 				case "BR":
 					InfoObj.type = 1;
@@ -318,25 +318,25 @@ function InfoArrayToCssString(infoArr, creatImage)
 {
 	if (creatImage == undefined) creatImage = true;
 	var infoArrTmp = infoArr.concat(); //创建编辑用临时数组
-	var str = [];
-	var lastText = false;
-	var strPart = [];
+	var str = []; //最终输出的内容字符串的部件数组
+	var lastText = false; //上一条是不是文字，用渝判断下一条是储存到临时数组等候拼接还是将前方的加入最终字符串
+	var strPart = []; //当前的临时字符串（储存多块相邻文本，用于拼接）
 	while (infoArrTmp.length>0)
 	{
 		var inf = infoArrTmp.shift();
-		if (inf.type == 0 || inf.type == 1 || inf.type == 3)
+		if (inf.type == 0 || inf.type == 1 || inf.type == 3) //type，0是文字，1是换行，2是图片，3是链接
 		{ //处理文本
-			if (lastText)
-			{ //添加一条新的文本
+			if (lastText) //如果上一条不是文本
+			{ //添加一条新的文本，或者换行
 				strPart.push(inf.text || "\\A");
 			}else
 			{ //处理每一张图片
-				str.push(strPart.map(function(item){return 'url("' + item + '")'}).join(""));
+				str.push(strPart.map(function(item){return 'url("' + item + '")'}).join("")); //已储存的图片添加到最终字符串
 				strPart = [];
 				lastText = true;
 				strPart.push(inf.text || "\\A");
 			}
-		}else if (creatImage) //如果同意生成图片
+		}else if (creatImage) //如果同意生成图片，才处理图片
 		{ //处理图片
 			if (lastText)
 			{ //处理每一条文本
