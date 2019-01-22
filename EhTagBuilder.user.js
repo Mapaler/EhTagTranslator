@@ -1437,7 +1437,7 @@ else if (GM_getValue("ETB_option-version", "number") < optionVersion)
 
 var menu_modal = buildMenuModal("menu", null, "请选择任务 v" + scriptVersion, null, [
 		buildMenuList([
-			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylish扩展安装。理论上安卓火狐也可使用。",buildSVG("css"),function(){
+			buildMenuItem("生成CSS","生成用户样式版EhTagTranslator，请使用Stylus扩展安装。安卓火狐也可使用。",buildSVG("css"),function(){
 					startProgram(ds,0);
 				}
 			,0),
