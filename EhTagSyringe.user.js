@@ -16,7 +16,7 @@
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
 // @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=41
-// @version     1.2.2
+// @version     1.2.3
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -483,11 +483,9 @@ div.gtl{
         // 不用存储 反正是默认的
         // GM_setValue('config',etbConfig);
     }
-
+    var tagsData = [];
     if ((/(exhentai\.org|e-hentai\.org)/).test(unsafeWindow.location.href)) {
-        var tagsData = GM_getValue('tags');
-    }else{
-        var tagsData = [];
+        tagsData = GM_getValue('tags');
     }
 
 
@@ -1808,9 +1806,9 @@ ${css}
                 tr[2] = trim(tr[2]||"");
                 tr[3] = trim(tr[3]||"");
                 tr[4] = trim(tr[4]||"");
-                if(tr[1])t.name  = tr[1];
-                if(tr[2])t.cname = tr[2];
-                if(tr[3])t.info  = tr[3];
+                if(tr[1])t.name  = tr[1].replace(/\\~/g, '~');
+                if(tr[2])t.cname = tr[2].replace(/\\~/g, '~');
+                if(tr[3])t.info  = tr[3].replace(/\\~/g, '~');
                 if(tr[4])t.links = mdLinks(tr[4]);
                 tags.push(t);
                 if(t.name){count++};
