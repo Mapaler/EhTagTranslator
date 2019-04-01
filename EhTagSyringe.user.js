@@ -15,7 +15,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.1
+// @version     1.3.3
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -86,7 +86,7 @@ const uiTranslateStyle = `
 const baseStyle = {
     // language=CSS
     'public':`
-div.gt:before {
+div.gt:before,div.gtl:before {
     font-size: 9pt;
 }
 #nb {
@@ -1671,10 +1671,10 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
                     if(!tag.info)tag.info="";
                     var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     css += `
-a[id="ta_${tagid}"], .gt[title="${tagid2}"]{
+a[id="ta_${tagid}"], .gt[title="${tagid2}"], .gtl[title="${tagid2}"]{
 font-size:0;
 }
-a[id="ta_${tagid}"]::before, .gt[title="${tagid2}"]:before{
+a[id="ta_${tagid}"]::before, .gt[title="${tagid2}"]:before, .gtl[title="${tagid2}"]:before{
 content:"${cname}";
 }
 `;
