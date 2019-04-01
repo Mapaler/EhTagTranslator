@@ -15,7 +15,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.3
+// @version     1.3.4
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -1666,7 +1666,7 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
             row.tags.forEach(function (tag) {
                 if(tag.name){
                     var tagid = (row.name=="misc"?"":row.name + ":") + tag.name.replace(/\s/ig,"_");
-                    var tagid2 = (row.name=="misc"?"":row.name + ":") + tag.name;
+                    var tagid2 = (row.name=="misc"?":":row.name + ":") + tag.name;
                     var cname = mdImg2cssImg(specialCharToCss(tag.cname),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     if(!tag.info)tag.info="";
                     var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
