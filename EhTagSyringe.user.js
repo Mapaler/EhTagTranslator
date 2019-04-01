@@ -15,8 +15,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @resource    ui-translate     https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ui-translate.css?v=41
-// @version     1.2.3
+// @version     1.3.0
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -32,6 +31,170 @@
 // @grant       GM_openInTab
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
+
+// language=CSS
+const uiTranslateStyle = `
+/** uiTranslateStyle **/
+.cs, .cn {
+    font-size: 0 !important;
+    text-align: center;
+    line-height: 0px;
+}
+.cs:after, .cn:after {
+    font-size: 9pt;
+    display: block;
+    text-align: center;
+    line-height: 20px;
+}
+.cn:after {
+    line-height: 35px;
+}
+
+.ct1:after{
+    content: "其他";
+}
+.ct8:after{
+    content: "亚洲";
+}
+.ct7:after{
+    content: "Cosplay";
+}
+.ct6:after{
+    content: "图集";
+}
+.ct9:after{
+    content: "非H";
+}
+.ct2:after{
+     content: "同人";
+ }
+.ct3:after{
+    content: "漫画";
+}
+.ct4:after{
+    content: "画师集";
+}
+.ct5:after{
+    content: "游戏CG";
+}
+.cta:after{
+    content: "西方";
+}
+`;
+
+
+const baseStyle = {
+    // language=CSS
+    'public':`
+div.gt:before {
+    font-size: 9pt;
+}
+#nb {
+    overflow: visible;
+}
+    div#taglist {
+overflow: visible;
+min-height: 295px;
+height: auto;
+position: static;
+z-index: 10;
+}
+div#gmid {
+min-height: 330px;
+height:auto;
+}
+#taglist a{
+background:inherit;
+position: relative;
+}
+#taglist a::before{
+font-size:12px;
+overflow: hidden;
+height: 20px;
+line-height: 20px;
+}
+#taglist a::after{
+display: block;
+color:#FF8E8E;
+font-size:14px;
+background: inherit;
+border: 1px solid #000;
+border-radius:5px;
+position:absolute;
+float: left;
+z-index:999;
+padding:8px;
+box-shadow: 3px 3px 10px #000;
+min-width:150px;
+max-width:500px;
+white-space:pre-wrap;
+opacity: 0;
+transition: opacity 0.2s;
+transform: translate(-50%,20px);
+top:-14px;
+left: 50%;
+pointer-events:none;
+font-weight: 400;
+line-height: 20px;
+}
+#taglist a:hover::after,
+#taglist a:focus::after{
+opacity: 1;
+pointer-events:auto;
+}
+#taglist a:focus::before,
+#taglist a:hover::before {
+font-size: 12px;
+position: relative;
+background-color: inherit;
+border: 1px solid #000;
+border-width: 1px 1px 0 1px;
+margin: -4px -5px -4px -5px;
+padding: 4px 4px 4px 4px;
+color:inherit;
+border-radius: 5px 5px 0 0;
+}
+.doubleLang #taglist a{font-size:12px !important;}
+.doubleLang #taglist a::before{
+margin-right: 8px;
+}
+.doubleLang #taglist a::after{top:1px;}
+.doubleLang #taglist a:focus,
+.doubleLang #taglist a:hover {
+background-color: inherit;
+border: 1px solid #000;
+border-width: 1px 1px 0 1px;
+margin: -4px -5px;
+padding: 4px 4px;
+color:inherit;
+border-radius: 5px 5px 0 0;
+}
+.doubleLang #taglist a:focus::before,
+.doubleLang #taglist a:hover::before {
+border: none;
+border-image-source:  url(/img/mr.gif);
+border-image-slice: 0 5 0 0;
+border-image-width: 7px 5px 8px 0;
+border-image-outset: 0 1px 0 0;
+border-image-repeat: round;
+color:inherit;
+font-size: inherit;
+margin: -4px 3px -4px -4px;
+padding: 4px 5px 4px 4px;
+}
+div.gt,
+div.gtw,
+div.gtl{
+line-height: 20px;
+height: 20px;
+}
+#taglist a:hover { z-index: 60; }
+#taglist a:focus { z-index: 50; }
+#taglist a::after{ z-index: -1; }
+#taglist a::before { z-index: 1; }`,
+    'ex':`#taglist a::after{ color:#fff; }`,
+    'eh':`#taglist a::after{ color:#000; }`,
+}
 
 
 var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
@@ -370,108 +533,9 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
             port: 6800
         },
         'style':{
-            'public':`div#taglist {
-    overflow: visible;
-    min-height: 295px;
-    height: auto;
-    position: static;
-    z-index: 10;
-}
-div#gmid {
-    min-height: 330px;
-    height:auto;
-}
-#taglist a{
-    background:inherit;
-    position: relative;
-}
-#taglist a::before{
-    font-size:12px;
-    overflow: hidden;
-    height: 20px;
-    line-height: 20px;
-}
-#taglist a::after{
-    display: block;
-    color:#FF8E8E;
-    font-size:14px;
-    background: inherit;
-    border: 1px solid #000;
-    border-radius:5px;
-    position:absolute;
-    float: left;
-    z-index:999;
-    padding:8px;
-    box-shadow: 3px 3px 10px #000;
-    min-width:150px;
-    max-width:500px;
-    white-space:pre-wrap;
-    opacity: 0;
-    transition: opacity 0.2s;
-    transform: translate(-50%,20px);
-    top:-14px;
-    left: 50%;
-    pointer-events:none;
-    font-weight: 400;
-    line-height: 20px;
-}
-#taglist a:hover::after,
-#taglist a:focus::after{
-    opacity: 1;
-    pointer-events:auto;
-}
-#taglist a:focus::before,
-#taglist a:hover::before {
-    font-size: 12px;
-    position: relative;
-    background-color: inherit;
-    border: 1px solid #000;
-    border-width: 1px 1px 0 1px;
-    margin: -4px -5px -4px -5px;
-    padding: 4px 4px 4px 4px;
-    color:inherit;
-    border-radius: 5px 5px 0 0;
-}
-.doubleLang #taglist a{font-size:12px !important;}
-.doubleLang #taglist a::before{
-    margin-right: 8px;
-}
-.doubleLang #taglist a::after{top:1px;}
-.doubleLang #taglist a:focus,
-.doubleLang #taglist a:hover {
-    background-color: inherit;
-    border: 1px solid #000;
-    border-width: 1px 1px 0 1px;
-    margin: -4px -5px;
-    padding: 4px 4px;
-    color:inherit;
-    border-radius: 5px 5px 0 0;
-}
-.doubleLang #taglist a:focus::before,
-.doubleLang #taglist a:hover::before {
-    border: none;
-    border-image-source:  url(/img/mr.gif);
-    border-image-slice: 0 5 0 0;
-    border-image-width: 7px 5px 8px 0;
-    border-image-outset: 0 1px 0 0;
-    border-image-repeat: round;
-    color:inherit;
-    font-size: inherit;
-    margin: -4px 3px -4px -4px;
-    padding: 4px 5px 4px 4px;
-}
-div.gt,
-div.gtw,
-div.gtl{
-    line-height: 20px;
-    height: 20px;
-}
-#taglist a:hover { z-index: 60; }
-#taglist a:focus { z-index: 50; }
-#taglist a::after{ z-index: -1; }
-#taglist a::before { z-index: 1; }`,
-            'ex':`#taglist a::after{ color:#fff; }`,
-            'eh':`#taglist a::after{ color:#000; }`,
+            'public':``,
+            'ex':``,
+            'eh':``,
         }
     };
 
@@ -522,6 +586,19 @@ div.gtl{
                 })
             }
         }
+
+        function routineTextReplace(query,dictionaries) {
+            let elements = document.querySelectorAll(query);
+            if(elements && elements.length){
+                elements.forEach(function (element) {
+                    let key = trim(element.innerText);
+                    if(dictionaries[key]){
+                        element.innerText = dictionaries[key];
+                    }
+                })
+            }
+        }
+
 
         //不需要完整匹配直接替换
         function localRoutineReplace(query,dictionaries) {
@@ -580,10 +657,14 @@ div.gtl{
 
         /*公共*/
         translator.public = function () {
-            routineReplace('#nb a,.ip a,#frontpage a',{
+            routineTextReplace('#nb a,.ip a,#frontpage a',{
                 "Front Page":"首页",
                 "Torrents":"种子",
+                "Watched": "关注",
+                "Popular": "流行",
                 "Favorites":"收藏",
+                "My Uploads":"我的上传",
+                "My Tags":"我的标签",
                 "Settings":"设置",
                 "My Galleries":"我的画廊",
                 "My Home":"我的首页",
@@ -599,9 +680,12 @@ div.gtl{
                 "Contact Uploader":"联系上传者",
             });
 
-            //classIconReplace(".ic");
-
-
+            localRoutineReplace('#iw p',{
+                "You do not have any watched tags. You can change your watched tags from ":"你没有任何关注的标签,你可以修改她->"
+            });
+            localRoutineReplace('#iw a',{
+                "My Tags":"我的标签"
+            });
 
         };
 
@@ -1156,13 +1240,13 @@ div.gtl{
         console.time('EhTagSyringe Infusion');
         unsafeWindow.tags = tags;
         AddGlobalStyle(tags.css);
-        AddGlobalStyle(etbConfig.style.public);
+        AddGlobalStyle(baseStyle.public);
 
         if((/(exhentai\.org)/).test(unsafeWindow.location.href)){
-            AddGlobalStyle(etbConfig.style.ex);
+            AddGlobalStyle(baseStyle.ex);
         }
         if((/(e-hentai\.org)/).test(unsafeWindow.location.href)){
-            AddGlobalStyle(etbConfig.style.eh);
+            AddGlobalStyle(baseStyle.eh);
         }
 
         //临时隐藏翻译用的样式
@@ -1586,10 +1670,10 @@ div.gtl{
                     if(!tag.info)tag.info="";
                     var content = mdImg2cssImg(htmlBr2cssBr(specialCharToCss(tag.info)),etbConfig.imageLimit<0?Infinity:etbConfig.imageLimit);
                     css += `
-a[id="ta_${tagid}"]{
+a[id="ta_${tagid}"], .gt[title="${tagid}"]{
 font-size:0;
 }
-a[id="ta_${tagid}"]::before{
+a[id="ta_${tagid}"]::before, .gt[title="${tagid}"]:before{
 content:"${cname}";
 }
 `;
@@ -1955,7 +2039,7 @@ ${css}
     //注射器总开关
     if(etbConfig.syringe){
         //注入css 不需要等待页面
-        if((/(exhentai\.org\/g\/|e-hentai\.org\/g\/)/).test(unsafeWindow.location.href)){
+        if((/(exhentai\.org\/|e-hentai\.org\/)/).test(unsafeWindow.location.href)){
             EhTagSyringe();
         }
     }
@@ -1963,9 +2047,8 @@ ${css}
     //UI翻译用的样式
     if(etbConfig.UITranslate){
         if(hrefTest(/(exhentai\.org|e-hentai\.org)/)){
-            AddGlobalStyle(GM_getResourceText('ui-translate'))
+            AddGlobalStyle(uiTranslateStyle)
         }
     }
-
 
 })();
