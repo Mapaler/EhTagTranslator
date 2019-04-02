@@ -15,7 +15,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.4
+// @version     1.3.5
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -38,7 +38,7 @@ const uiTranslateStyle = `
 .cs, .cn {
     font-size: 0 !important;
     text-align: center;
-    line-height: 0px;
+    line-height: 0 !important;
 }
 .cs:after, .cn:after {
     font-size: 9pt;
