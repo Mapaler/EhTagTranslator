@@ -1,11 +1,15 @@
 // ==UserScript==
 // @name        EhTagBuilder
 // @name:zh-CN	E绅士标签构建者
+// @name:zh-TW	E紳士標籤構建者
+// @name:zh-HK	E紳士標籤構建者
 // @namespace   http://www.mapaler.com/
 // @homepage	https://github.com/Mapaler/EhTagTranslator
 // @supportURL  https://github.com/Mapaler/EhTagTranslator/issues
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
+// @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
+// @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
 // @version     2.8.8
