@@ -4,6 +4,8 @@
 // @name:zh-TW	E紳士翻譯注射器💉
 // @name:zh-HK	E紳士翻譯注射器💉
 // @namespace   http://www.mapaler.com/
+// @homepage	https://github.com/Mapaler/EhTagTranslator
+// @supportURL  https://github.com/Mapaler/EhTagTranslator/issues
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文，并注射到E站
 // @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
@@ -33,6 +35,7 @@
 // @grant       GM_addValueChangeListener
 // @grant       GM_setClipboard
 // @grant       GM_openInTab
+// @author      xioxin <i@xioxin.com>
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
 
@@ -485,7 +488,6 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
     var rows_filename="rows"; //行名的地址
-
     var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
     var pluginVersion = "未获取到版本"; //本程序的版本
     var pluginName = "EhTagSyringe"; //本程序的名称

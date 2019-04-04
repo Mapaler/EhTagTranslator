@@ -2,12 +2,15 @@
 // @name        EhTagBuilder
 // @name:zh-CN	E绅士标签构建者
 // @namespace   http://www.mapaler.com/
+// @homepage	https://github.com/Mapaler/EhTagTranslator
+// @supportURL  https://github.com/Mapaler/EhTagTranslator/issues
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.6
+// @version     2.8.8
 // @grant       none
+// @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 
@@ -17,8 +20,14 @@ var wiki_version_filename="version"; //版本的地址
 var rows_filename="rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
 var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
-var scriptName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagBuilder"; //本程序的名称
-var scriptVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "LocalDebug"; //本程序的版本
+var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+var scriptVersion = "LocalDebug"; //本程序的版本
+var scriptName = "EhTagBuilder"; //本程序的名称
+if (typeof(GM_info)!="undefined")
+{
+	scriptVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
+	scriptName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+}
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
 var database_structure_version = 4; //当前数据库结构版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
