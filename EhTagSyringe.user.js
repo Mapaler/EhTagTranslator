@@ -1,9 +1,13 @@
 // ==UserScript==
 // @name        EhTagSyringe
 // @name:zh-CN	E绅士翻译注射器💉
+// @name:zh-TW	E紳士翻譯注射器💉
+// @name:zh-HK	E紳士翻譯注射器💉
 // @namespace   http://www.mapaler.com/
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文，并注射到E站
+// @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
+// @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
@@ -481,8 +485,15 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
     var rows_filename="rows"; //行名的地址
-    var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
-    var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
+
+    var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+    var pluginVersion = "未获取到版本"; //本程序的版本
+    var pluginName = "EhTagSyringe"; //本程序的名称
+    if (typeof(GM_info)!="undefined")
+    {
+        pluginVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
+        pluginName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+    }
     var rootScope = null;
 
     const headLoaded = new Promise(function (resolve, reject) {
