@@ -15,7 +15,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.5
+// @version     1.3.6
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -148,7 +148,7 @@ font-size: 12px;
 position: relative;
 background-color: inherit;
 border: 1px solid #000;
-border-width: 1px 1px 0 1px;
+border-bottom-width: 0;
 margin: -4px -5px -4px -5px;
 padding: 4px 4px 4px 4px;
 color:inherit;
@@ -191,7 +191,10 @@ height: 20px;
 #taglist a:hover { z-index: 60; }
 #taglist a:focus { z-index: 50; }
 #taglist a::after{ z-index: -1; }
-#taglist a::before { z-index: 1; }`,
+#taglist a::before { 
+    z-index: 1;
+    white-space:nowrap;
+}`,
     'ex':`#taglist a::after{ color:#fff; }`,
     'eh':`#taglist a::after{ color:#000; }`,
 }
@@ -1678,6 +1681,11 @@ a[id="ta_${tagid}"]::before, .gt[title="${tagid2}"]:before, .gtl[title="${tagid2
 content:"${cname}";
 }
 `;
+                    if(!content)css+=`
+a[id="ta_${tagid}"]:hover::before{
+border-width:1px !important;
+border-radius:5px !important;
+}`;
                     if(content)css+=`a[id="ta_${tagid}"]::after{
 content:"${content}";
 }`;
