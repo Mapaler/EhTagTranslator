@@ -10,8 +10,10 @@
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/s/\w+/\d+-\d+.*$/
-// @version     1.9.2
+// @version     1.9.3
 // @grant       GM_setClipboard
+// @author      Mapaler <mapaler@163.com>
+// @copyright	2017+, Mapaler <mapaler@163.com>
 // ==/UserScript==
 				
 //没有扩展时的debug
@@ -114,7 +116,7 @@ var gdtlObj = function(){
 			}else
 			{
 				var srcA = [];
-				srcA.push("http://");
+				srcA.push(location.protocol,"//"); //添加https: 和 //
 				switch (type)
 				{
 					case 1:case "s":case "手": 
@@ -153,11 +155,11 @@ var gdtlObj = function(){
 						pressCtrl = true;
 					}
 					//shiftKey
-					if(e && e.shiftKey){ // 有按下 Ctrl 
+					if(e && e.shiftKey){ // 有按下 Shift
 						pressShift = true;
 					}
 					//altKey
-					if(e && e.altKey){ // 有按下 Ctrl 
+					if(e && e.altKey){ // 有按下 Alt
 						pressAlt = true;
 					}
 					
