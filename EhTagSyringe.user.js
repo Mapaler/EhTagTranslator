@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.7
+// @version     1.3.8
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -1461,7 +1461,7 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
         if(!tags)return;
 
         console.time('add datalist');
-        let stdinput = document.querySelector('#searchbox input[name=f_search]');
+        let stdinput = document.querySelector('#searchbox input[name=f_search]') || document.querySelector('#newtagfield');
         if(!stdinput){return}
         stdinput.setAttribute("list", "tbs-tags");
 
