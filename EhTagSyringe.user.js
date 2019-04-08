@@ -1,9 +1,15 @@
 // ==UserScript==
 // @name        EhTagSyringe
 // @name:zh-CN	E绅士翻译注射器💉
+// @name:zh-TW	E紳士翻譯注射器💉
+// @name:zh-HK	E紳士翻譯注射器💉
 // @namespace   http://www.mapaler.com/
+// @homepage	https://github.com/Mapaler/EhTagTranslator
+// @supportURL  https://github.com/Mapaler/EhTagTranslator/issues
 // @description Build EhTagTranslater from Wiki.
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文，并注射到E站
+// @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
+// @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
@@ -15,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.5
+// @version     1.3.7
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -29,6 +35,7 @@
 // @grant       GM_addValueChangeListener
 // @grant       GM_setClipboard
 // @grant       GM_openInTab
+// @author      xioxin <i@xioxin.com>
 // @copyright	2017+, Mapaler <mapaler@163.com> , xioxin <i@xioxin.com>
 // ==/UserScript==
 
@@ -148,7 +155,7 @@ font-size: 12px;
 position: relative;
 background-color: inherit;
 border: 1px solid #000;
-border-width: 1px 1px 0 1px;
+border-bottom-width: 0;
 margin: -4px -5px -4px -5px;
 padding: 4px 4px 4px 4px;
 color:inherit;
@@ -191,7 +198,10 @@ height: 20px;
 #taglist a:hover { z-index: 60; }
 #taglist a:focus { z-index: 50; }
 #taglist a::after{ z-index: -1; }
-#taglist a::before { z-index: 1; }`,
+#taglist a::before { 
+    z-index: 1;
+    white-space:nowrap;
+}`,
     'ex':`#taglist a::after{ color:#fff; }`,
     'eh':`#taglist a::after{ color:#000; }`,
 }
@@ -478,8 +488,14 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
     var rows_filename="rows"; //行名的地址
-    var pluginVersion = typeof(GM_info)!="undefined" ? GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "") : "未获取到版本"; //本程序的版本
-    var pluginName = typeof(GM_info)!="undefined" ? (GM_info.script.localizedName ? GM_info.script.localizedName : GM_info.script.name) : "EhTagSyringe"; //本程序的名称
+    var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+    var pluginVersion = "未获取到版本"; //本程序的版本
+    var pluginName = "EhTagSyringe"; //本程序的名称
+    if (typeof(GM_info)!="undefined")
+    {
+        pluginVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
+        pluginName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+    }
     var rootScope = null;
 
     const headLoaded = new Promise(function (resolve, reject) {
@@ -1678,10 +1694,16 @@ a[id="ta_${tagid}"]::before, .gt[title="${tagid2}"]:before, .gtl[title="${tagid2
 content:"${cname}";
 }
 `;
+//当没有内容时，封闭标签边框
+                    if(!content)css+=`
+a[id="ta_${tagid}"]:hover::before,a[id="ta_${tagid}"]:focus::before{
+border-width:1px !important;
+border-radius:5px !important;
+}`;
+
                     if(content)css+=`a[id="ta_${tagid}"]::after{
 content:"${content}";
 }`;
-
                 }else{
                     css += `\n/* ${row.cname} */\n`;
                 }
