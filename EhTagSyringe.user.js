@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
-// @version     1.3.6
+// @version     1.3.7
 // @run-at      document-start
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
@@ -1694,15 +1694,16 @@ a[id="ta_${tagid}"]::before, .gt[title="${tagid2}"]:before, .gtl[title="${tagid2
 content:"${cname}";
 }
 `;
+//当没有内容时，封闭标签边框
                     if(!content)css+=`
-a[id="ta_${tagid}"]:hover::before{
+a[id="ta_${tagid}"]:hover::before,a[id="ta_${tagid}"]:focus::before{
 border-width:1px !important;
 border-radius:5px !important;
 }`;
+
                     if(content)css+=`a[id="ta_${tagid}"]::after{
 content:"${content}";
 }`;
-
                 }else{
                     css += `\n/* ${row.cname} */\n`;
                 }
