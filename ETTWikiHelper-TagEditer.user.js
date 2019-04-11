@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.0.0
+// @version     1.0.1
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -155,11 +155,11 @@ divCaption.appendChild(document.createElement("span")).appendChild(document.crea
 //添加窗体鼠标拖拽移动
 var windowPosition = ewhWindow.position = [0, 0]; //[X,Y] 用以储存窗体开始拖动时的鼠标相对窗口坐标差值。
 divCaption.addEventListener("mousedown", function(e) { //按下鼠标则添加移动事件
-	var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth + document.documentElement.scrollLeft,document.documentElement.scrollLeft), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight + document.documentElement.scrollTop,document.documentElement.scrollTop); //不允许鼠标超出网页。
+	var eX = limitMaxAndMin(e.clientX,document.documentElement.clientWidth,0), eY = limitMaxAndMin(e.clientY,document.documentElement.clientHeight,0); //不允许鼠标超出网页。
 	windowPosition[0] = eX - ewhWindow.offsetLeft;
 	windowPosition[1] = eY - ewhWindow.offsetTop;
 	var handler_mousemove = function(e) { //移动鼠标则修改窗体坐标
-		var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth + document.documentElement.scrollLeft,document.documentElement.scrollLeft), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight + document.documentElement.scrollTop,document.documentElement.scrollTop); //不允许鼠标超出网页。
+		var eX = limitMaxAndMin(e.clientX,document.documentElement.clientWidth,0), eY = limitMaxAndMin(e.clientY,document.documentElement.clientHeight,0); //不允许鼠标超出网页。
 		ewhWindow.style.left = (eX - windowPosition[0]) + 'px';
 		ewhWindow.style.top = (eY - windowPosition[1]) + 'px';
 	};
