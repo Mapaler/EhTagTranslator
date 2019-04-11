@@ -1465,7 +1465,7 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
         if(!tags)return;
 
         console.time('add datalist');
-        let stdinput = document.querySelector('#searchbox input[name=f_search]');
+        let stdinput = document.querySelector('#searchbox input[name=f_search]') || document.querySelector('#newtagfield');
         if(!stdinput){return}
         stdinput.setAttribute("list", "tbs-tags");
 
