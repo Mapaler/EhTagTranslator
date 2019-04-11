@@ -20,7 +20,7 @@
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=41
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
 // @version     1.3.8
 // @run-at      document-start
 // @grant       unsafeWindow
@@ -194,6 +194,10 @@ div.gtw,
 div.gtl{
 line-height: 20px;
 height: 20px;
+}
+.gl3c div.gt {
+line-height: unset;
+height: unset;
 }
 #taglist a:hover { z-index: 60; }
 #taglist a:focus { z-index: 50; }
