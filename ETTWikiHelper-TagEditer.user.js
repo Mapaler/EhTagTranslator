@@ -70,6 +70,9 @@ var ewh_tag_styleText_Default = `
 	line-height: 14px;
 	font-size: 14px;
 }
+.ewh-windowcaption::before{
+	content: "🏷️";
+}
 .ewh-caption-btn { /*平时的按钮*/
 	padding: 0;
 	font-size: 14px;
@@ -139,9 +142,6 @@ divCaptionBar.addEventListener("mousedown", function(e) { //按下鼠标则添�
 //生成切换浮动状态的按钮
 var spnCaption = divCaptionBar.appendChild(document.createElement("div"));
 spnCaption.className = "ewh-windowcaption";
-var captionIcon = spnCaption.appendChild(document.createElement("span"));
-captionIcon.className = "icons";
-captionIcon.appendChild(document.createTextNode("🏷️"));
 spnCaption.appendChild(document.createTextNode(scriptName));
 
 //生成切换浮动状态的按钮
