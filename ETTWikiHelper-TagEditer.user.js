@@ -121,11 +121,11 @@ function limitMaxAndMin(num,max,min)
 //添加窗体鼠标拖拽移动
 var windowPosition = ewhWindow.position = [0, 0]; //[X,Y] 用以储存窗体开始拖动时的鼠标相对窗口坐标差值。
 divCaptionBar.addEventListener("mousedown", function(e) { //按下鼠标则添加移动事件
-	var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth,0), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight,0); //不允许鼠标超出网页。
+	var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth + document.documentElement.scrollLeft,document.documentElement.scrollLeft), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight + document.documentElement.scrollTop,document.documentElement.scrollTop); //不允许鼠标超出网页。
 	windowPosition[0] = eX - ewhWindow.offsetLeft;
 	windowPosition[1] = eY - ewhWindow.offsetTop;
 	var handler_mousemove = function(e) { //移动鼠标则修改窗体坐标
-		var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth,0), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight,0); //不允许鼠标超出网页。
+		var eX = limitMaxAndMin(e.pageX,document.documentElement.clientWidth + document.documentElement.scrollLeft,document.documentElement.scrollLeft), eY = limitMaxAndMin(e.pageY,document.documentElement.clientHeight + document.documentElement.scrollTop,document.documentElement.scrollTop); //不允许鼠标超出网页。
 		ewhWindow.style.left = (eX - windowPosition[0]) + 'px';
 		ewhWindow.style.top = (eY - windowPosition[1]) + 'px';
 	};
