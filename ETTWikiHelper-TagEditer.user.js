@@ -138,6 +138,7 @@ var ewh_tag_styleText_Default = `
 `;
 //获取Tag编辑区
 var ewhWindow = document.querySelector("#gd4");
+
 //增加浮动窗标题栏
 var divCaptionBar = ewhWindow.insertBefore(document.createElement("div"),gd4.firstChild);
 divCaptionBar.className = "ewh-bar-floatcaption";
@@ -208,3 +209,13 @@ btnCloseFloat.onclick = function(){
 	ewhWindow.removeAttribute("style");
 	ewhWindow.classList.remove("ewh-float");
 };
+
+//增加标签搜索框
+var divSearchBar = ewhWindow.appendChild(document.createElement("div"));
+divSearchBar.className = "ewh-bar-tagsearch";
+
+var iptTagSearch = divSearchBar.appendChild(document.createElement("input"));
+iptTagSearch.type = "text";
+iptTagSearch.placeholder = "标签搜索：";
+iptTagSearch.dataList = "tbs-tags";
+
