@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.1.0
+// @version     1.1.1
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // ==/UserScript==
@@ -291,7 +291,7 @@ if (tagdatalist) //如果存在则生成标签搜索框
 			{
 				newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+this.value):this.value;
 				spnTagSearchInfo.innerHTML = "你添加了 " + clabel.split(":")[0] + "：";
-				var regArr = /^(\w+):"([\w+\s]+)\$"$/ig.exec(this.value);
+				var regArr = /^(\w+):"([\w+\s\-\'\.]+)\$"$/ig.exec(this.value);
 				aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(" ","_");
 				aTagSearchInfo.innerHTML = clabel;
 				this.value = "";
