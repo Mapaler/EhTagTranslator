@@ -5,10 +5,13 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.1.3
+// @version     1.2.0
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_deleteValue
 // ==/UserScript==
 
 var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
@@ -138,7 +141,7 @@ var ewh_tag_styleText_Default = `
 	position: relative;
 }
 .ewh-ipt-tagsearch{
-	width: calc(100% - 300px);
+	width: 200px;
 	box-sizing: border-box;
 }
 .ewh-tagsearchtext,.ewh-tagsearchlink{
@@ -193,6 +196,7 @@ divCaption.appendChild(document.createElement("span")).appendChild(document.crea
 //添加窗体鼠标拖拽移动
 var windowPosition = ewhWindow.position = [0, 0]; //[X,Y] 用以储存窗体开始拖动时的鼠标相对窗口坐标差值。
 divCaption.addEventListener("mousedown", function(e) { //按下鼠标则添加移动事件
+	if (!ewhWindow.classList.contains("ewh-float")) return; //如果不是浮动窗体直接结束
 	var eX = limitMaxAndMin(e.clientX,document.documentElement.clientWidth,0), eY = limitMaxAndMin(e.clientY,document.documentElement.clientHeight,0); //不允许鼠标超出网页。
 	windowPosition[0] = eX - ewhWindow.offsetLeft;
 	windowPosition[1] = eY - ewhWindow.offsetTop;
@@ -203,6 +207,9 @@ divCaption.addEventListener("mousedown", function(e) { //按下鼠标则添加�
 	};
 	var handler_mouseup = function(e) { //抬起鼠标则取消移动事件
 		document.removeEventListener("mousemove", handler_mousemove);
+		if (ewhWindow.style.left) GM_setValue("floatwindow-left",ewhWindow.style.left); //储存窗体位置
+		if (ewhWindow.style.top) GM_setValue("floatwindow-top",ewhWindow.style.top); //储存窗体位置
+
 	};
 	document.addEventListener("mousemove", handler_mousemove);
 	document.addEventListener("mouseup", handler_mouseup, { once: true });
@@ -219,10 +226,13 @@ ragOpacity.type = "range";
 ragOpacity.max = 1;
 ragOpacity.min = 0.5;
 ragOpacity.step = 0.01;
-ragOpacity.value = 0.8;
 ragOpacity.title = "窗体不透明度";
 ragOpacity.onchange = ragOpacity.oninput = function(){
 	ewhWindow.style.opacity = this.value;
+};
+ragOpacity.onchange = function(){
+	ragOpacity.oninput();
+	if (ewhWindow.style.opacity) GM_setValue("floatwindow-opacity",ewhWindow.style.opacity); //储存窗体透明度
 };
 
 //生成打开浮动状态的按钮
@@ -231,9 +241,12 @@ btnOpenFloat.className = "ewh-cpt-btn material-icons ewh-btn-openfloat";
 btnOpenFloat.title = "浮动标签编辑框";
 btnOpenFloat.appendChild(document.createElement("span").appendChild(document.createTextNode("open_in_new")));
 btnOpenFloat.onclick = function(){
-	ewhWindow.setAttribute("style",ewhWindow.getAttribute("style_bak"));
-	ewhWindow.removeAttribute("style_bak");
+	//ewhWindow.setAttribute("style",ewhWindow.getAttribute("style_bak"));
+	//ewhWindow.removeAttribute("style_bak");
 	ewhWindow.classList.add("ewh-float");
+	ewhWindow.style.left = GM_getValue("floatwindow-left");
+	ewhWindow.style.top = GM_getValue("floatwindow-top");
+	ewhWindow.style.opacity = ragOpacity.value = GM_getValue("floatwindow-opacity") || 0.8;
 };
 GM_registerMenuCommand("打开浮动标签编辑框", btnOpenFloat.onclick);
 
@@ -243,10 +256,19 @@ btnCloseFloat.className = "ewh-cpt-btn material-icons ewh-btn-closefloat";
 btnCloseFloat.title = "关闭浮动窗体";
 btnCloseFloat.appendChild(document.createElement("span").appendChild(document.createTextNode("close")));
 btnCloseFloat.onclick = function(){
-	ewhWindow.setAttribute("style_bak",ewhWindow.getAttribute("style"));
+	//ewhWindow.setAttribute("style_bak",ewhWindow.getAttribute("style"));
+	if (ewhWindow.style.left) GM_setValue("floatwindow-left",ewhWindow.style.left); //储存窗体位置
+	if (ewhWindow.style.top) GM_setValue("floatwindow-top",ewhWindow.style.top); //储存窗体位置
+	if (ewhWindow.style.opacity) GM_setValue("floatwindow-opacity",ewhWindow.style.opacity); //储存窗体透明度
 	ewhWindow.removeAttribute("style");
 	ewhWindow.classList.remove("ewh-float");
 };
+GM_registerMenuCommand("重置浮动窗位置与透明度", function(){
+	btnCloseFloat.onclick(); //先关掉窗体，然后删除设置
+	GM_deleteValue("floatwindow-left");
+	GM_deleteValue("floatwindow-top");
+	GM_deleteValue("floatwindow-opacity");
+});
 
 //获取标签数据列表
 var tagdatalist = document.querySelector("#tbs-tags");
@@ -281,21 +303,28 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				aTagSearchInfo.innerHTML = "";
 				return;
 			};
-			var clabel = false;
+			var clabel = false, useGuess = false, guess = false;
+			if (this.value.replace(/[\w\:\"\s\-\.\'\$]/,"").length>0) useGuess = true; //如果存在非tag字符，则尝试搜索中文。
 			for (var ti=0;ti<taglist.length;ti++)
 			{ //循环搜索列表中是否已存在这个Tag
 				if (taglist[ti].value == this.value)
 				{
 					clabel = taglist[ti].label;
 					break;
+				}else if(useGuess && taglist[ti].label.indexOf(this.value)>0)
+				{
+					clabel = taglist[ti].label;
+					guess = true; //标记为猜的
+					this.value = taglist[ti].value; //目前的输入修改为猜的tag
+					break;
 				}
 			}
 			if (clabel)
 			{
 				newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+this.value):this.value;
-				spnTagSearchInfo.innerHTML = "你添加了 " + clabel.split(":")[0] + "：";
+				spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + clabel.split(":")[0] + "：";
 				var regArr = /^(\w+):"([\w+\s\-\'\.]+)\$"$/ig.exec(this.value);
-				aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(" ","_");
+				aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(/\s/igm,"_");
 				aTagSearchInfo.innerHTML = clabel;
 				this.value = "";
 			}else
@@ -304,6 +333,6 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				aTagSearchInfo.removeAttribute("id");
 				aTagSearchInfo.innerHTML = "";
 			}
-		}   
+		}
 	};
 }
