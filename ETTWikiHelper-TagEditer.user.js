@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.1.2
+// @version     1.1.3
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -276,8 +276,9 @@ if (tagdatalist) //如果存在则生成标签搜索框
 		if(e.keyCode==13){ //回车，将内容附加到真实Tag框，并清空搜索框
 			if (this.value == 0)
 			{ //如果什么都没输入
-				aTagSearchInfo.removeAttribute("id");
 				spnTagSearchInfo.innerHTML = "";
+				aTagSearchInfo.removeAttribute("id");
+				aTagSearchInfo.innerHTML = "";
 				return;
 			};
 			var clabel = false;
@@ -300,7 +301,7 @@ if (tagdatalist) //如果存在则生成标签搜索框
 			}else
 			{
 				spnTagSearchInfo.innerHTML = "☹️数据库里没有这个标签";
-				aTagSearchInfo.id = "";
+				aTagSearchInfo.removeAttribute("id");
 				aTagSearchInfo.innerHTML = "";
 			}
 		}   
