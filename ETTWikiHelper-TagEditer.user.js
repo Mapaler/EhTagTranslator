@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.1.3
+// @version     1.2.0
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -281,19 +281,26 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				aTagSearchInfo.innerHTML = "";
 				return;
 			};
-			var clabel = false;
+			var clabel = false, useGuess = false, guess = false;
+			if (this.value.replace(/[\w\:\"\s\-\.\'\$]/,"").length>0) useGuess = true; //如果存在非tag字符，则尝试搜索中文。
 			for (var ti=0;ti<taglist.length;ti++)
 			{ //循环搜索列表中是否已存在这个Tag
 				if (taglist[ti].value == this.value)
 				{
 					clabel = taglist[ti].label;
 					break;
+				}else if(useGuess && taglist[ti].label.indexOf(this.value)>0)
+				{
+					clabel = taglist[ti].label;
+					guess = true; //标记为猜的
+					this.value = taglist[ti].value; //目前的输入修改为猜的tag
+					break;
 				}
 			}
 			if (clabel)
 			{
 				newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+this.value):this.value;
-				spnTagSearchInfo.innerHTML = "你添加了 " + clabel.split(":")[0] + "：";
+				spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + clabel.split(":")[0] + "：";
 				var regArr = /^(\w+):"([\w+\s\-\'\.]+)\$"$/ig.exec(this.value);
 				aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(" ","_");
 				aTagSearchInfo.innerHTML = clabel;
@@ -304,6 +311,6 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				aTagSearchInfo.removeAttribute("id");
 				aTagSearchInfo.innerHTML = "";
 			}
-		}   
+		}
 	};
 }
