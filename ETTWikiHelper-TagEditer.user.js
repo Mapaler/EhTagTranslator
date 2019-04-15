@@ -5,9 +5,10 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.1.1
+// @version     1.1.2
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
+// @grant       GM_registerMenuCommand
 // ==/UserScript==
 
 var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
@@ -234,6 +235,7 @@ btnOpenFloat.onclick = function(){
 	ewhWindow.removeAttribute("style_bak");
 	ewhWindow.classList.add("ewh-float");
 };
+GM_registerMenuCommand("打开浮动标签编辑框", btnOpenFloat.onclick);
 
 //生成关闭浮动状态的按钮
 var btnCloseFloat = divButtonBox.appendChild(document.createElement("button"));
