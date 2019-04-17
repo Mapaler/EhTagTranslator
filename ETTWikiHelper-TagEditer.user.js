@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.2.0
+// @version     1.3.0
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -15,12 +15,21 @@
 // ==/UserScript==
 
 var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
-var scriptVersion = "LocalDebug"; //本程序的版本
+var scriptVersion = "unknown"; //本程序的版本
 var scriptName = "ETTWikiHelper-TagEditer"; //本程序的名称
 if (typeof(GM_info)!="undefined")
 {
 	scriptVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
-	scriptName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+	if (GM_info.script.name_i18n)
+	{
+		var i18n = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+		scriptName = GM_info.script.name_i18n[i18n]; //支持Tampermonkey
+	}
+	else
+	{
+		scriptName = GM_info.script.localizedName || //支持Greasemonkey 油猴子 3.x
+					GM_info.script.name; //支持Violentmonkey 暴力猴
+	}
 }
 
 //限定数值最大最小值
@@ -301,6 +310,7 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				spnTagSearchInfo.innerHTML = "";
 				aTagSearchInfo.removeAttribute("id");
 				aTagSearchInfo.innerHTML = "";
+				if (newTagText.value.length > 0)tag_from_field(); //如果输入框有内容点击Tag提交
 				return;
 			};
 			var clabel = false, useGuess = false, guess = false;
@@ -321,12 +331,21 @@ if (tagdatalist) //如果存在则生成标签搜索框
 			}
 			if (clabel)
 			{
-				newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+this.value):this.value;
-				spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + clabel.split(":")[0] + "：";
 				var regArr = /^(\w+):"([\w+\s\-\'\.]+)\$"$/ig.exec(this.value);
-				aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(/\s/igm,"_");
-				aTagSearchInfo.innerHTML = clabel;
-				this.value = "";
+				var shortTag = (regArr[1]=="misc"?"":(regArr[1].substr(0,1) + ":")) + regArr[2]; //缩减Tag长度，以便一次能多提交一些Tag
+				if ((newTagText.value+","+shortTag).length>200)
+				{
+					spnTagSearchInfo.innerHTML = "⛔超长（原始标签输入框限定200字符）";
+					aTagSearchInfo.removeAttribute("id");
+					aTagSearchInfo.innerHTML = "";
+				}else
+				{
+					newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+shortTag):shortTag;
+					spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + clabel.split(":")[0] + "：";
+					aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(/\s/igm,"_");
+					aTagSearchInfo.innerHTML = clabel;
+					this.value = "";
+				}
 			}else
 			{
 				spnTagSearchInfo.innerHTML = "☹️数据库里没有这个标签";
