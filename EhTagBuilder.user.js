@@ -12,10 +12,15 @@
 // @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.8
+// @version     2.8.9
 // @grant       none
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
+//-@grant       GM_xmlhttpRequest
+//-@grant       GM_getValue
+//-@grant       GM_setValue
+//-@grant       GM_deleteValue
+//-@grant       GM_listValues
 // ==/UserScript==
 
 (function() {
@@ -24,13 +29,21 @@ var wiki_version_filename="version"; //版本的地址
 var rows_filename="rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
 var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
-var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
-var scriptVersion = "LocalDebug"; //本程序的版本
+var scriptVersion = "unknown"; //本程序的版本
 var scriptName = "EhTagBuilder"; //本程序的名称
 if (typeof(GM_info)!="undefined")
 {
 	scriptVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
-	scriptName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+	if (GM_info.script.name_i18n)
+	{
+		var i18n = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+		scriptName = GM_info.script.name_i18n[i18n]; //支持Tampermonkey
+	}
+	else
+	{
+		scriptName = GM_info.script.localizedName || //支持Greasemonkey 油猴子 3.x
+					GM_info.script.name; //支持Violentmonkey 暴力猴
+	}
 }
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
 var database_structure_version = 4; //当前数据库结构版本，用于提醒是否需要更新脚本
