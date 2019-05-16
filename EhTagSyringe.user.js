@@ -23,6 +23,7 @@
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
 // @version     1.3.8
 // @run-at      document-start
+// @inject-into page
 // @grant       unsafeWindow
 // @grant       GM_xmlhttpRequest
 // @grant       GM_getValue
@@ -202,7 +203,7 @@ height: unset;
 #taglist a:hover { z-index: 60; }
 #taglist a:focus { z-index: 50; }
 #taglist a::after{ z-index: -1; }
-#taglist a::before { 
+#taglist a::before {
     z-index: 1;
     white-space:nowrap;
 }`,
@@ -498,7 +499,16 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     if (typeof(GM_info)!="undefined")
     {
         pluginVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
-        pluginName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+
+        if (GM_info.script.hasOwnProperty('localizedName')) {
+            pluginName = GM.info.script.localizedName;
+        } else if (GM_info.script.hasOwnProperty('name_i8n')) {
+            pluginName = GM_info.script.name_i18n[lang];
+        } else if (GM_info.script.hasOwnProperty('name')) {
+            pluginName = GM_info.script.name;
+        } else {
+            pluginName = "EhTagSyringe";
+        }
     }
     var rootScope = null;
 
