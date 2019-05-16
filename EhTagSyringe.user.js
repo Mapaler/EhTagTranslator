@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
-// @version     1.3.9
+// @version     1.3.10
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -501,7 +501,7 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
         pluginVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
 
         if (GM_info.script.hasOwnProperty('localizedName')) {
-            pluginName = GM.info.script.localizedName; //Greasemonkey 3.x
+            pluginName = GM_info.script.localizedName; //Greasemonkey 3.x，程序不支持4.x
         } else if (GM_info.script.hasOwnProperty('name_i8n')) {
             pluginName = GM_info.script.name_i18n[lang]; //Tampermonkey
         } else if (GM_info.script.hasOwnProperty('name')) {
