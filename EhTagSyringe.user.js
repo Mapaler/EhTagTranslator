@@ -494,20 +494,18 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
     var rows_filename="rows"; //行名的地址
     var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
-    var pluginVersion = "未获取到版本"; //本程序的版本
-    var pluginName = "EhTagSyringe"; //本程序的名称
+    var pluginVersion = "未获取到版本"; //本程序的默认版本
+    var pluginName = "EhTagSyringe"; //本程序的默认名称
     if (typeof(GM_info)!="undefined")
     {
         pluginVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
 
         if (GM_info.script.hasOwnProperty('localizedName')) {
-            pluginName = GM.info.script.localizedName;
+            pluginName = GM.info.script.localizedName; //Greasemonkey 3.x
         } else if (GM_info.script.hasOwnProperty('name_i8n')) {
-            pluginName = GM_info.script.name_i18n[lang];
+            pluginName = GM_info.script.name_i18n[lang]; //Tampermonkey
         } else if (GM_info.script.hasOwnProperty('name')) {
-            pluginName = GM_info.script.name;
-        } else {
-            pluginName = "EhTagSyringe";
+            pluginName = GM_info.script.name; //其他monkey
         }
     }
     var rootScope = null;
