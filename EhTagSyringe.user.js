@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
-// @version     1.3.11
+// @version     1.3.12
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -103,7 +103,7 @@ div.gt:before,div.gtl:before {
     div#taglist {
 overflow: visible;
 min-height: 295px;
-height: auto;
+height: auto !important;
 position: static;
 z-index: 10;
 }
