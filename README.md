@@ -1,3 +1,8 @@
+# 已迁移
+该项目及翻译数据库已迁移到 GitHub 组织 [EhTagTranslation](https://github.com/EhTagTranslation)。本项目及 Wiki 即日起停止更新。
+
+需要安装新的翻译工具，请移步 [EhTagTranslation/EhSyringe](https://github.com/EhTagTranslation/EhSyringe)；想要提供或使用新的翻译，请移步 [EhTagTranslation/Database](https://github.com/EhTagTranslation/Database)。
+
 # EhTagTranslator
 将E绅士tag翻译成中文。  
 ![FBI WARNING](https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/project-document/images/FBI%20WARNING.png)  
