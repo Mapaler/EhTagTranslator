@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.3.0
+// @version     1.4.0
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -281,6 +281,22 @@ GM_registerMenuCommand("重置浮动窗位置与透明度", function(){
 
 //获取标签数据列表
 var tagdatalist = document.querySelector("#tbs-tags");
+//获取真实标签输入框
+var newTagText = document.querySelector("#newtagfield");
+if (!tagdatalist) //没有ETS，但有ETS扩展版的处理方式
+{
+	var tagDataStr = localStorage.getItem("EhSyringe.tag-list"); //ETS扩展版1.2.1的数据
+	if (typeof(tagDataStr) == "string")
+	{
+		var tagData = JSON.parse(tagDataStr);
+		var tagdatalist = document.createElement("datalist");
+		tagdatalist.id = "tbs-tags";
+		tagData.forEach(function(tag){
+			tagdatalist.appendChild(new Option(tag.namespace+":"+tag.name,tag.search));
+		})
+		newTagText.insertAdjacentElement('afterend',tagdatalist);
+	}
+}
 if (tagdatalist) //如果存在则生成标签搜索框
 {
 	var taglist = tagdatalist.options;
@@ -288,8 +304,6 @@ if (tagdatalist) //如果存在则生成标签搜索框
 	var divSearchBar = ewhWindow.insertBefore(document.createElement("div"),document.querySelector("#tagmenu_act"));
 	divSearchBar.className = "ewh-bar-tagsearch";
 
-	//获取真实标签输入框
-	var newTagText = document.querySelector("#newtagfield");
 	//增加标签搜索框
 	var iptTagSearch = divSearchBar.appendChild(document.createElement("input"));
 	iptTagSearch.type = "text";
@@ -331,7 +345,7 @@ if (tagdatalist) //如果存在则生成标签搜索框
 			}
 			if (clabel)
 			{
-				var regArr = /^(\w+):"([\w+\s\-\'\.]+)\$"$/ig.exec(this.value);
+				var regArr = /^(\w+):"?([\w+\s\-\'\.]+)\$?"?$/ig.exec(this.value);
 				var shortTag = (regArr[1]=="misc"?"":(regArr[1].substr(0,1) + ":")) + regArr[2]; //缩减Tag长度，以便一次能多提交一些Tag
 				if ((newTagText.value+","+shortTag).length>200)
 				{
