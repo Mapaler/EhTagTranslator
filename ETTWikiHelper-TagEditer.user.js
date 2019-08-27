@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.4.1
+// @version     1.4.2
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -288,12 +288,23 @@ if (!tagdatalist) //没有ETS，但有ETS扩展版的处理方式
 	var tagDataStr = localStorage.getItem("EhSyringe.tag-list"); //ETS扩展版1.2.1的数据
 	if (typeof(tagDataStr) == "string")
 	{
+		var nameSpaceC = {
+			artist:"艺术家",
+			female:"女性",
+			male:"男性",
+			parody:"原作",
+			character:"角色",
+			group:"团队",
+			language:"语言",
+			reclass:"重新分类",
+			misc:"杂项"
+		};
 		var tagData = JSON.parse(tagDataStr);
 		var tagdatalist = document.createElement("datalist");
 		tagdatalist.id = "tbs-tags";
 		newTagText.setAttribute("list","tbs-tags");
 		tagData.forEach(function(tag){
-			tagdatalist.appendChild(new Option(tag.namespace+":"+tag.name,tag.search));
+			tagdatalist.appendChild(new Option(nameSpaceC[tag.namespace]+":"+tag.name,tag.search));
 		})
 		newTagText.insertAdjacentElement('afterend',tagdatalist);
 	}
@@ -356,7 +367,7 @@ if (tagdatalist) //如果存在则生成标签搜索框
 				}else
 				{
 					newTagText.value = (newTagText.value.length>0)?(newTagText.value+","+shortTag):shortTag;
-					spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + clabel.split(":")[0] + "：";
+					spnTagSearchInfo.innerHTML = (guess?"程序猜测你想添加":"你添加了")+" " + (tagData?"":(clabel.split(":")[0] + "："));
 					aTagSearchInfo.id = "ta_" + (regArr[1]=="misc"?"":regArr[1]+":") + regArr[2].replace(/\s/igm,"_");
 					aTagSearchInfo.innerHTML = clabel;
 					this.value = "";
