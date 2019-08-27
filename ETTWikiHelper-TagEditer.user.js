@@ -5,7 +5,7 @@
 // @description Help to edit the gallery's tags.
 // @description:zh-CN	辅助编辑画廊的标签
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/g/\d+/\w+/.*$/
-// @version     1.4.0
+// @version     1.4.1
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2019+, Mapaler <mapaler@163.com>
 // @grant       GM_registerMenuCommand
@@ -291,6 +291,7 @@ if (!tagdatalist) //没有ETS，但有ETS扩展版的处理方式
 		var tagData = JSON.parse(tagDataStr);
 		var tagdatalist = document.createElement("datalist");
 		tagdatalist.id = "tbs-tags";
+		newTagText.setAttribute("list","tbs-tags");
 		tagData.forEach(function(tag){
 			tagdatalist.appendChild(new Option(tag.namespace+":"+tag.name,tag.search));
 		})
