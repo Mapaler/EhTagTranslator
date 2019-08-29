@@ -19,9 +19,9 @@
 // @connect     127.0.0.1
 // @icon        http://exhentai.org/favicon.ico
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
-// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
-// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
-// @version     1.3.13
+// @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=43
+// @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=43
+// @version     1.3.14
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -1817,10 +1817,10 @@ ${css}
                 var timeDOM = lastDOM.querySelector("relative-time");
                 if(timeDOM)time = Date.parse(new Date(timeDOM.getAttribute('datetime')));
 
-                var codeDOM = lastDOM.querySelector(".commit-title .message");
+                var codeDOM = lastDOM.querySelector(".commit-links-group .sha");
                 if(codeDOM)code = codeDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
 
-                var commitDOM = lastDOM.querySelector(".commit-links-group .sha");
+                var commitDOM = lastDOM.querySelector(".commit-title .message");
                 if(commitDOM)commit = commitDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
                 var v = {
                     update_time:time,
