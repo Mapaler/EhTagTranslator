@@ -10,7 +10,7 @@
 // @description:zh-CN	从Wiki获取EhTagTranslater数据库，将E绅士TAG翻译为中文，并注射到E站
 // @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
 // @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文，並注射到E站
-// @include     *://github.com/Mapaler/EhTagTranslator*
+// @include     *://github.com/EhTagTranslation/Database*
 // @include     *://exhentai.org/*
 // @include     *://e-hentai.org/*
 // @connect     raw.githubusercontent.com
@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=41
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=42
-// @version     1.3.12
+// @version     1.3.13
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -490,10 +490,9 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     unsafeWindow.wikiUpdate = autoUpdate;
     MutationObserver = window.MutationObserver;
 
-    var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
-    var wiki_raw_URL="https://raw.githubusercontent.com/wiki/Mapaler/EhTagTranslator/database"; //GitHub wiki 的原始文件地址
+    var version_URL="https://github.com/EhTagTranslation/Database/commits"; //GitHub wiki 的地址
+    var wiki_raw_URL="https://raw.githubusercontent.com/EhTagTranslation/Database/master/database"; //GitHub wiki 的原始文件地址
     var rows_filename="rows"; //行名的地址
-    var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
     var pluginVersion = "未获取到版本"; //本程序的默认版本
     var pluginName = "EhTagSyringe"; //本程序的默认名称
     if (typeof(GM_info)!="undefined")
@@ -1803,10 +1802,10 @@ ${css}
     function getWikiVersion(){
         return new Promise(function (resolve, reject) {
 
-            PromiseRequest.get(wiki_URL+'/_history?t='+new Date().getTime()).then(function (response) {
+            PromiseRequest.get(version_URL+'?t='+new Date().getTime()).then(function (response) {
                 var parser = new DOMParser();
                 var PageDOM = parser.parseFromString(response, "text/html");
-                var lastDOM = PageDOM.querySelector('#version-form ul li:nth-child(1)');
+                var lastDOM = PageDOM.querySelector('.commits-listing>ol>li');
                 if(!lastDOM){
                     reject();
                     return;
@@ -1818,12 +1817,11 @@ ${css}
                 var timeDOM = lastDOM.querySelector("relative-time");
                 if(timeDOM)time = Date.parse(new Date(timeDOM.getAttribute('datetime')));
 
-                var codeDOM = lastDOM.querySelector(".flex-shrink-0:nth-last-child(1)");
+                var codeDOM = lastDOM.querySelector(".commit-title .message");
                 if(codeDOM)code = codeDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
 
-                var commitDOM = lastDOM.querySelector(".text-gray-dark");
+                var commitDOM = lastDOM.querySelector(".commit-links-group .sha");
                 if(commitDOM)commit = commitDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
-
                 var v = {
                     update_time:time,
                     code:code,
@@ -1886,6 +1884,7 @@ ${css}
             /*剔除表格以外的内容*/
             var re = (/^\|.*\|$/gm);
             var table = "";
+            console.log("test",parseTable(data));
             resolve( parseTable(data) );
         });
     }
