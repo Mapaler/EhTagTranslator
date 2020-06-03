@@ -9,7 +9,7 @@
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(index\.php)?\?.*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(tag|uploader)/.*$/
 // @include     /^https?://(exhentai\.org|e-hentai\.org)/(doujinshi|manga|artistcg|gamecg|western|non-h|imageset|cosplay|asianporn|misc).*$/
-// @version     2.0.0
+// @version     2.1.0
 // @grant       GM_setClipboard
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
@@ -124,14 +124,18 @@ var gdtlObj = function(){
 				btn.onclick = function(){
 					var str = href;
 					var typeName = "单纯地址";
-					if (caption == "图") //只按Ctrl
+					if (caption == "图")
 					{
 						str = "![图](" + href + ")";
 						typeName = "MD格式图片地址";
-					}else if (caption == "隐") //只按Alt
+					}else if (caption == "隐")
 					{
 						str = "![图](# \"" + href + "\")";
-						typeName = "隐藏的MD格式图片地址";
+						typeName = "R18 MD格式图片地址";
+					}else if (caption == "限")
+					{
+						str = "![图](## \"" + href + "\")";
+						typeName = "R18G限制级 MD格式图片地址";
 					}
 					GM_setClipboard(str);
 					spawnNotification(str,href,"已复制到剪贴板 - " +　typeName);
@@ -145,6 +149,7 @@ var gdtlObj = function(){
 			ul.appendChild(creat_li("纯",this.getSrc()));
 			ul.appendChild(creat_li("图",this.getSrc()));
 			ul.appendChild(creat_li("隐",this.getSrc()));
+			ul.appendChild(creat_li("限",this.getSrc()));
 			dom.appendChild(ul);
 		},
 	}

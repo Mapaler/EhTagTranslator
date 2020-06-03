@@ -11,29 +11,46 @@
 // @description:zh-TW	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
 // @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
+// @include     *://github.com/EhTagTranslation/Database*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.9
+// @version     2.9.1
 // @grant       none
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
+//-@grant       GM_xmlhttpRequest
+//-@grant       GM_getValue
+//-@grant       GM_setValue
+//-@grant       GM_deleteValue
+//-@grant       GM_listValues
 // ==/UserScript==
 
 (function() {
-var wiki_URL="https://github.com/Mapaler/EhTagTranslator/wiki"; //GitHub wiki 的地址
-var wiki_version_filename="version"; //版本的地址
-var rows_filename="rows"; //行名的地址
+var newRe = location.pathname.indexOf("EhTagTranslation/Database")>=0; //是否已经迁移
+var wiki_URL= newRe ? //GitHub wiki 的地址
+			  "https://github.com/EhTagTranslation/Database/tree/master/" : //新的组织项目地址
+			  "https://github.com/Mapaler/EhTagTranslator/wiki"; //传统Wiki地址
+var wiki_version_filename = "version"; //版本的地址
+var rows_filename = newRe?"database/rows.md":"rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
 var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
-var lang = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
-var scriptVersion = "LocalDebug"; //本程序的版本
+var scriptVersion = "unknown"; //本程序的版本
 var scriptName = "EhTagBuilder"; //本程序的名称
 if (typeof(GM_info)!="undefined")
 {
 	scriptVersion = GM_info.script.version.replace(/(^\s*)|(\s*$)/g, "");
-	scriptName = GM_info.script.localizedName || GM_info.script.name_i18n[lang] || GM_info.script.name;
+	if (GM_info.script.name_i18n)
+	{
+		var i18n = (navigator.language||navigator.userLanguage).replace("-","_"); //获取浏览器语言
+		scriptName = GM_info.script.name_i18n[i18n]; //支持Tampermonkey
+	}
+	else
+	{
+		scriptName = GM_info.script.localizedName || //支持Greasemonkey 油猴子 3.x
+					 GM_info.script.name; //支持Violentmonkey 暴力猴
+	}
 }
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
-var database_structure_version = 4; //当前数据库结构版本，用于提醒是否需要更新脚本
+var database_structure_version = newRe?5:4; //当前数据库结构版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -115,57 +132,49 @@ if(typeof(GM_listValues) == "undefined")
 
 var ds = [];
 var rowObj = function(){
-	var obj = {
-		name:"",
-		cname:[],
-		info:[],
-		tags:[],
-		links:[],
-		addTagFromName: function(rowObj)
-		{
-			if (rowObj == undefined) rowObj = this;
-			GM_xmlhttpRequest({
-				method: "GET",
-				url: wiki_URL + (rowObj.name.length?"/"+rowObj.name:""),
-				onload: function(response) {
-					var page_get_w = document.querySelector("#ETB_page-get");
-					if (page_get_w)
-					{
-						var statetxt = page_get_w.querySelector(".page-get-" + rowObj.name);
-						statetxt.classList.add("page-load");
-						statetxt.innerHTML = "获取成功";
-					}
-					console.debug("正在处理 %s %s 页面",rowObj.name,
-						rowObj.cname
-							.filter(function(item){return item.type==0;})
-							.map(function(item){return item.text;})
-							.join("")
-					);
-					dealTags(response.responseText,rowObj);
-				}
-			});
-		},
-	}
-	return obj;
+	this.name = "";
+	this.cname = [];
+	this.info = [];
+	this.tags = [];
+	this.links = [];
+}
+rowObj.prototype.addTagFromName = function(rowObj)
+{
+	if (rowObj == undefined) rowObj = this;
+	GM_xmlhttpRequest({
+		method: "GET",
+		//url: wiki_URL + (rowObj.name.length?"/"+rowObj.name:""),
+		url: rowObj.links[0]?rowObj.links[0].href:(wiki_URL + (rowObj.name.length?"/"+rowObj.name:"")),
+		onload: function(response) {
+			var page_get_w = document.querySelector("#ETB_page-get");
+			if (page_get_w)
+			{
+				var statetxt = page_get_w.querySelector(".page-get-" + rowObj.name);
+				statetxt.classList.add("page-load");
+				statetxt.innerHTML = "获取成功";
+			}
+			console.debug("正在处理 %s %s 页面",rowObj.name,
+				rowObj.cname
+					.filter(function(item){return item.type==0;})
+					.map(function(item){return item.text;})
+					.join("")
+			);
+			dealTags(response.responseText,rowObj);
+		}
+	});
 }
 var tagObj = function(){
-	var obj = {
-		type:0,
-		name:"",
-		cname:[],
-		info:[],
-		links:[],
-	}
-	return obj;
+	this.type = 0;
+	this.name = "";
+	this.cname = [];
+	this.info = [];
+	this.links = [];
 }
 //一条新的外部链接
 var linkObj = function(text,href,title){
-	var obj = {
-		text:text||"",
-		href:href||"",
-		title:title||"",
-	}
-	return obj;
+	this.text = text||"";
+	this.href = href||"";
+	this.title = title||"";
 }
 
 
@@ -173,25 +182,31 @@ var linkObj = function(text,href,title){
 function dealVersion(response)
 {
 	var PageDOM = new DOMParser().parseFromString(response, "text/html");
-	
-				
-	var wiki_version = PageDOM.querySelector("#wiki-body div [title=database-structure-version]");
-	if (!wiki_version)
+	var wiki_version_Dom;
+	if (newRe)
+	{ //新仓库的结构版本
+		wiki_version_Dom = PageDOM.querySelector("#LC1");
+	}else
+	{ //wiki的结构版本
+		wiki_version_Dom = PageDOM.querySelector("a[title='database-structure-version']");
+	}
+
+	if (!wiki_version_Dom)
 	{
 		alert("未找到数据库结构版本，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
 		return;
 	}
-	var new_wiki_version = Number(wiki_version.textContent.replace(/\D/ig,""));
+	var wiki_version = Number(wiki_version_Dom.textContent.replace(/\D/ig,""));
 
 	var page_get_w = document.querySelector("#ETB_page-get");
 	if (page_get_w)
 	{
 		var statetxt = page_get_w.querySelector(".page-get-wiki-version");
 		statetxt.classList.add("page-load");
-		statetxt.innerHTML = "最新版本" + new_wiki_version + "，当前" + database_structure_version;
+		statetxt.innerHTML = (newRe?"ETT组织仓库":"传统Wiki仓库")+"最新版本" + wiki_version + "，当前" + database_structure_version;
 	}
 	
-	if (new_wiki_version > database_structure_version)
+	if (wiki_version > database_structure_version)
 	{
 		alert("Wiki数据库结构已更新，你的 " + scriptName + " 版本可能已经不适用新的数据库，请更新你的脚本。");
 		return;
@@ -210,7 +225,7 @@ function dealRows(response, dataset)
 		statetxt.innerHTML = "获取成功";
 	}
 				
-	var table = PageDOM.querySelector("#wiki-body div table").tBodies[0];
+	var table = PageDOM.querySelector((newRe?"#readme":"#wiki-body")+" .markdown-body table").tBodies[0];
 	
 	rowsCount = table.rows.length;
 	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
@@ -284,7 +299,7 @@ function InfoToArray(infoDom)
 			//type，0是文字，1是换行，2是图片，3是链接
 			var InfoObj = {type:0};
 			switch (node.nodeName) {
-				case "#text":
+				case "#text":case "G-EMOJI":
 					InfoObj.type = 0;
 					if (node.textContent == "\n")
 						continue;
@@ -390,7 +405,7 @@ function dealTags(response, rowdataset)
 	var rowTags = rowdataset.tags;
 	var PageDOM = new DOMParser().parseFromString(response, "text/html");
 	
-	var table = PageDOM.querySelector("#wiki-body div table");
+	var table = PageDOM.querySelector((newRe?"#readme":"#wiki-body")+" .markdown-body table");
 	if (table == undefined)
 	{
 		alert(PageDOM.title + "\n该页面未发现数据表格，可能存在格式错误。")
@@ -612,6 +627,7 @@ function createOutputCSS(dataset, createInfo, createInfoImage, createCnameImage)
 //样式信息说明
 	cssAry.push(
  "/* EhTagTranslator 用户样式版，由 " + scriptName + " v" + scriptVersion + " 构建"
+," * 数据来源于" + wiki_URL
 ," * 构建时间为"
 ," * " + date.toString()
 ," */"
@@ -1123,11 +1139,7 @@ function buildSVG(mode,check)
 			break;
 			
 		case "css":
-			innerHTML = '<img width="14" height="16" class="octicon octicon-question select-menu-item-icon" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAIAAACp9tltAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAAsSAAALEgHS3X78AAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAApZJREFUKJFNwX1MzHEcB/D35/v9/s7lXKqj0p0T1vXg2lIeh+thjZE/1Iw/8mwyjBn+sdmwGWZmy6LokllGm5mHYVYbmzIydTJlMtGTqJau7n6p3+/79a/XiywWEe2wEgAQEWcQRDwc1tnfyamcgTHFCMR+j4aEOzGm7N5GIjASds0pjPi+Tr36Rq3R9GlfkitxtpM7ZrKYGRuu1wjOeWx0PAgktUe1ra1vGzxJ3syFeWNJS662tOBd+/7l1oy4WYxIMGjTLE5j0rx07vHmokMnjuQxxgAAUEr19/efOXwwQwGAYCTsFnfNnSerc4vz8/ODwWBlZWVHR0dUVFRhYWFKSgrnHFAABJFms7hf1H28euUwgMbXDc/qb7oS4t/cbWt7/nTKfI9dH4OSgBLBkdHqaw96un6GQiEAuTl5PT2HAi3Nka6xNDLS+fhMp0OCQYFbBIuQoxzGUHA8JydX07SszKyCgvWbtu+c7s2oqns53251x8XdbmpG6jznt/rSz88upnvcfr/fMAz1n97e3i25q7rLLnjdLqakmgyFf/0cXOhxl5cd8fm8B/aXVFSUDwwMAEhISHAlp2qaRgSmlDRC+vHS+2Fr/Bw3bpd/Obq7+n3jsW1bt0opAfSOjO4or+obHhFKKjk+YUr4/f5AIFBadWt48OP4ROSekhIi0nW9a/BPVvHBD5fPCgBSmoAyTdPn82VnZ5umSUSMMV3XT5467Vm5ZlHe2vv+UgEo4nzv+qWF6/Izl61MW+CNjY2TUra1t79qal5StCsnPT1SSCgIEOM224rF3tbuITkR8CZPdnUFHz78GuSpRcfOR0RY7EJZmVJQFDFFm+uMBTAcDDGNHA4bQQ0OhSdMiy3KwUgxIgb143vnP5/yHx0OlzuwAAAAAElFTkSuQmCC"/>';
-			break;
-
-		case "js":
-			innerHTML = '<img width="15" height="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAA3NCSVQICAjb4U/gAAABKVBMVEX///9/QABAIAB/QAAAAAB/QAAAAABAIAAAAAB9PgBJJAB/QABAIAB/QABmMwB+PgB9PgBcLgB/QAB0OgB/QAB/QAB4PABlPhNJJABEIgB6Qgj/6bv/57j/5bH/5a//5K3/46n/4qb/4aX/4aP/353/4KD/35//3pn/3Zf/3JP/25H/24//2o330YX30IPgwIDgv37ft3XTt4PStYHXqmDPoVufqWafqGHHl1CfomKfomWfl3GflXCflWmflGuxhku3gz6sf0OveTSSfFSmdzuQe1KncCudbTKTbTufZiOTaDJAb0CPUxGYOSpnRS96QghjRS9/QACJOCqEOCpzOgBrNgBmMwBjMgBfMABlKh9cLgBfKh4QPBBTKgBPKABGJABAIAAAJgAAHQCEX9KOAAAAY3RSTlMAEREiIjMzRERVZnd3iIiqqqq7u8zd3d3d3e7///////////////////////////////////////////////////////////////////////////////////////////////89N3vSAAAACXBIWXMAAAsSAAALEgHS3X78AAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biAzMCBNYXIgMjAwOCAxNzoyMjo0NyAtMDUwMNSe+EoAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAA4ElEQVQImTWPaVsBYRhGnxEasiVjj8rwLl5vZafFkjCInpI21fD/fwTTxfl0zrf7BtjhODqO7R0OvNrbn+nZpxfxyzR/T6K2/wzhZPHxPp//HG7DFfD3pahgRci+P+CC+AAlp+SaUC5xEIdRy8jTWvOi2iDcaI1g2GszfbxMj5c52u4MIdKr0+xqnVytM6TeiYB7VqDZu9vEzX2GFGZuUCbisXSePk2dFR8EAigor56/X59ePqeXctsQ7ApOdV0nTHSD1hHNKOcZY7xsaA5rruILo0XYp+z+2J2qqjrtlm4AX+Ek7puqLocAAAAASUVORK5CYII="/>';
+			innerHTML = '<svg width="16" height="16" viewBox="0 0 64 64" version="1.1" class="octicon octicon-question select-menu-item-icon"><defs><path d="M0 14.995C0 6.714 6.713 0 14.995 0h34.01C57.286 0 64 6.713 64 14.995v34.01C64 57.287 57.287 64 49.005 64h-34.01C6.714 64 0 57.287 0 49.005v-34.01z" id="a"/></defs><g fill="none" fill-rule="evenodd"><mask id="b" fill="#fff"><use xlink:href="#a"/></mask><use fill-opacity="0" fill="#FFF" xlink:href="#a"/><path fill="#2ECC71" mask="url(#b)" d="M30 0v39H0V0z"/><path fill="#E74C3C" mask="url(#b)" d="M64 0v21H34V0z"/><path fill="#F39C12" mask="url(#b)" d="M30 43v21H0V43z"/><path fill="#3498DB" mask="url(#b)" d="M64 25.5v39H34v-39z"/></g></svg>';
 			break;
 
 		case "json":
@@ -1135,7 +1147,7 @@ function buildSVG(mode,check)
 			break;
 
 		case "eh":
-			innerHTML = '<img width="14" height="12" class="octicon" aria-hidden="true" src="data:image/gif;base64,R0lGODlhDgAMAIAAAGYGEf///yH5BAEHAAEALAAAAAAOAAwAAAIghB2JcZ0M1HlvOQrlorZF5HlZuFURVErayZ2kuU4qVAAAOw=="/>';
+			innerHTML = '<svg class="octicon" style="margin:2px 2px;" width="12" height="12" viewBox="0 0 180 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="EH" fill="#000000" transform="translate(0.000000, 13.000000)"><polygon id="Path-2" points="0 0.202883984 0 153.452455 63.9237403 153.452455 63.9237403 128.434878 25.3357783 128.434878 25.3357783 89.8192926 51.0881973 89.8192926 51.0881973 64.4842269 25.815364 64.4842269 25.815364 26.0161147 63.9458219 26.0161147 63.9458219 0"></polygon><polygon id="Path-3" points="102.413793 0.499934441 102.413793 153.799341 128.267497 153.799341 128.267497 89.8145927 153.883139 89.8145927 153.883139 153.360711 179.611922 153.360711 179.611922 0 154.060738 0 154.060738 63.8323757 128.389266 63.8323757 128.389266 0.125830495"></polygon><rect id="Rectangle" x="63.6206897" y="64.9220339" width="26.3793103" height="26.2779661"></rect></g></svg>';
 			break;
 			
 		default:
