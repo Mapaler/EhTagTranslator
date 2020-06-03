@@ -12,7 +12,7 @@
 // @description:zh-HK	從Wiki獲取EhTagTranslater資料庫，將E紳士TAG翻譯為中文
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.8.8
+// @version     2.8.9
 // @grant       none
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
@@ -940,6 +940,10 @@ function buildButton(title, icon, modal)
 	span.innerHTML += title;
 	button.appendChild(span);
 	select_menu.appendChild(modal);
+	
+	button.onclick = function(){
+		modal.style.display = "block";
+	}
 	return li;
 }
 
@@ -975,14 +979,11 @@ function buildMenuModal(mode, id, stitle, filters, lists, sstyle)
 	switch (mode) {
 		case "window":
 			modal_holder.style.display = "block";
+		case "menu":		
+		default:
 			CloseSvg.onclick = function(){
 				modal_holder.style.display = "none";
 			}
-			break;
-
-		case "menu":		
-		default:
-			break;
 	}
 	
 	var title = document.createElement("span");
