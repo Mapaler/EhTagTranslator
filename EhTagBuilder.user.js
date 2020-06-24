@@ -13,7 +13,7 @@
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @include     *://github.com/EhTagTranslation/Database*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.9.0
+// @version     2.9.1
 // @grant       none
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
@@ -32,7 +32,7 @@ var wiki_URL= newRe ? //GitHub wiki 的地址
 var wiki_version_filename = "version"; //版本的地址
 var rows_filename = newRe?"database/rows.md":"rows"; //行名的地址
 var buttonInserPlace = document.querySelector(".pagehead-actions"); //按钮插入位置
-var windowInserPlace = document.querySelector(".reponav"); //窗口插入位置
+var windowInserPlace = document.querySelector(".UnderlineNav"); //窗口插入位置
 var scriptVersion = "unknown"; //本程序的版本
 var scriptName = "EhTagBuilder"; //本程序的名称
 if (typeof(GM_info)!="undefined")
@@ -948,6 +948,9 @@ function buildButton(title, icon, modal)
 	li.appendChild(select_menu);
 	var button = document.createElement("button");
 	button.className = "btn btn-sm select-menu-button js-menu-target css-truncate";
+	button.onclick = function(){
+		modal.style.display = "block";
+	}
 	select_menu.appendChild(button);
 	var span = document.createElement("span");
 	span.className = "js-select-button";
@@ -987,13 +990,13 @@ function buildMenuModal(mode, id, stitle, filters, lists, sstyle)
 	
 	var CloseSvg = buildSVG("Close");
 	header.appendChild(CloseSvg);
+	CloseSvg.onclick = function(){
+		modal_holder.style.display = "none";
+	}
 
 	switch (mode) {
 		case "window":
 			modal_holder.style.display = "block";
-			CloseSvg.onclick = function(){
-				modal_holder.style.display = "none";
-			}
 			break;
 
 		case "menu":		
