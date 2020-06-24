@@ -959,6 +959,10 @@ function buildButton(title, icon, modal)
 	span.innerHTML += title;
 	button.appendChild(span);
 	select_menu.appendChild(modal);
+	
+	button.onclick = function(){
+		modal.style.display = "block";
+	}
 	return li;
 }
 
@@ -997,11 +1001,6 @@ function buildMenuModal(mode, id, stitle, filters, lists, sstyle)
 	switch (mode) {
 		case "window":
 			modal_holder.style.display = "block";
-			break;
-
-		case "menu":		
-		default:
-			break;
 	}
 	
 	var title = document.createElement("span");
