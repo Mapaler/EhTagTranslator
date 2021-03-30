@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=43
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=43
-// @version     1.3.14
+// @version     1.3.15
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -490,9 +490,9 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
     unsafeWindow.wikiUpdate = autoUpdate;
     MutationObserver = window.MutationObserver;
 
-    var version_URL="https://github.com/EhTagTranslation/Database/commits"; //GitHub wiki 的地址
-    var wiki_raw_URL="https://raw.githubusercontent.com/EhTagTranslation/Database/master/database"; //GitHub wiki 的原始文件地址
-    var rows_filename="rows"; //行名的地址
+    const version_URL="https://github.com/EhTagTranslation/Database/commits"; //GitHub wiki 的地址
+    const wiki_raw_URL="https://raw.githubusercontent.com/EhTagTranslation/Database/master/database"; //GitHub wiki 的原始文件地址
+    const rows_filename="rows"; //行名的地址
     var pluginVersion = "未获取到版本"; //本程序的默认版本
     var pluginName = "EhTagSyringe"; //本程序的默认名称
     if (typeof(GM_info)!="undefined")
@@ -1805,7 +1805,7 @@ ${css}
             PromiseRequest.get(version_URL+'?t='+new Date().getTime()).then(function (response) {
                 var parser = new DOMParser();
                 var PageDOM = parser.parseFromString(response, "text/html");
-                var lastDOM = PageDOM.querySelector('.commits-listing>ol>li');
+                var lastDOM = PageDOM.querySelector('#repo-content-pjax-container .TimelineItem');
                 if(!lastDOM){
                     reject();
                     return;
@@ -1815,13 +1815,13 @@ ${css}
                 var commit = "";
 
                 var timeDOM = lastDOM.querySelector("relative-time");
-                if(timeDOM)time = Date.parse(new Date(timeDOM.getAttribute('datetime')));
+                if(timeDOM)time = Date.parse(timeDOM.getAttribute('datetime'));
 
-                var codeDOM = lastDOM.querySelector(".commit-links-group .sha");
-                if(codeDOM)code = codeDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
+                var codeDOM = lastDOM.querySelector("clipboard-copy");
+                if(codeDOM)code = codeDOM.getAttribute('value');
 
-                var commitDOM = lastDOM.querySelector(".commit-title .message");
-                if(commitDOM)commit = commitDOM.innerText.replace(/(^\s*)|(\s*$)/g, "");
+                var commitDOM = lastDOM.querySelector(".Link--primary");
+                if(commitDOM)commit = commitDOM.textContent.trim();
                 var v = {
                     update_time:time,
                     code:code,
