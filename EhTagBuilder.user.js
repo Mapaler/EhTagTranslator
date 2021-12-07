@@ -13,7 +13,7 @@
 // @include     *://github.com/Mapaler/EhTagTranslator*
 // @include     *://github.com/EhTagTranslation/Database*
 // @icon        http://exhentai.org/favicon.ico
-// @version     2.9.1
+// @version     2.9.2
 // @grant       none
 // @author      Mapaler <mapaler@163.com>
 // @copyright	2017+, Mapaler <mapaler@163.com>
@@ -50,7 +50,7 @@ if (typeof(GM_info)!="undefined")
 	}
 }
 var optionVersion = 1; //当前设置版本，用于提醒是否需要重置设置
-var database_structure_version = newRe?5:4; //当前数据库结构版本，用于提醒是否需要更新脚本
+var database_structure_version = newRe?6:4; //当前数据库结构版本，用于提醒是否需要更新脚本
 var downOverCheckHook; //检测下载是否完成的循环函数
 var rowsCount = 0; //行名总数
 var rowsCurrent = 0; //当前下载行名
@@ -160,7 +160,17 @@ rowObj.prototype.addTagFromName = function(rowObj)
 					.join("")
 			);
 			dealTags(response.responseText,rowObj);
-		}
+		},
+		onerror: function(response) {
+			var page_get_w = document.querySelector("#ETB_page-get");
+			if (page_get_w)
+			{
+				var statetxt = page_get_w.querySelector(".page-get-" + rowObj.name);
+				statetxt.classList.add("page-load");
+				statetxt.innerHTML = "页面获取错误";
+			}
+			rowsCurrent++;
+		},
 	});
 }
 var tagObj = function(){
@@ -224,8 +234,8 @@ function dealRows(response, dataset)
 		statetxt.classList.add("page-load");
 		statetxt.innerHTML = "获取成功";
 	}
-				
-	var table = PageDOM.querySelector((newRe?"#readme":"#wiki-body")+" .markdown-body table").tBodies[0];
+
+	var table = PageDOM.querySelector(newRe?"#readme .markdown-body table:nth-of-type(2)":"#wiki-body .markdown-body table").tBodies[0];
 	
 	rowsCount = table.rows.length;
 	for(var ri=0, rilen=table.rows.length; ri<rilen; ri++)
@@ -282,7 +292,7 @@ function LinksToArray(linksDom)
 	var as = linksDom.querySelectorAll("a");
 	for (var ai=0;ai<as.length;ai++)
 	{
-    var a = as[ai];
+    	var a = as[ai];
 		arr.push(new linkObj(a.textContent,a.href,a.title));
 	}
 	return arr;
@@ -334,6 +344,8 @@ function InfoToArray(infoDom)
 					break;
 				default: //未知的其他格式
 					console.error("发现未知的其他Node格式：" + node.nodeName,node,"来自",infoDom);
+					InfoObj.type = 0;
+					InfoObj.text = node.textContent;
 					continue;
 			}
 			arr.push(InfoObj);
@@ -404,8 +416,8 @@ function dealTags(response, rowdataset)
 {
 	var rowTags = rowdataset.tags;
 	var PageDOM = new DOMParser().parseFromString(response, "text/html");
-	
-	var table = PageDOM.querySelector((newRe?"#readme":"#wiki-body")+" .markdown-body table");
+
+	var table = PageDOM.querySelector(newRe?"#readme .markdown-body table:nth-of-type(2)":"#wiki-body .markdown-body table");
 	if (table == undefined)
 	{
 		alert(PageDOM.title + "\n该页面未发现数据表格，可能存在格式错误。")
