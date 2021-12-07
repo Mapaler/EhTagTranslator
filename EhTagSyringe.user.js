@@ -21,7 +21,7 @@
 // @require     https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js
 // @resource    template         https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-builder-menu.html?v=43
 // @resource    ets-prompt       https://raw.githubusercontent.com/Mapaler/EhTagTranslator/master/template/ets-prompt.html?v=43
-// @version     1.3.15
+// @version     1.3.16
 // @run-at      document-start
 // @inject-into page
 // @grant       unsafeWindow
@@ -1264,7 +1264,10 @@ var Aria2 = (function (_isGM, _arrFn, _merge, _format, _isFunction) {
         console.time('EhTagSyringe Load Enema');
         let tags = tagsData;
         console.timeEnd('EhTagSyringe Load Enema');
-        if(!tags)return;
+        if(!tags) {
+            AddGlobalStyle(baseStyle.public);
+            return;
+        }
 
         console.time('EhTagSyringe Infusion');
         unsafeWindow.tags = tags;
